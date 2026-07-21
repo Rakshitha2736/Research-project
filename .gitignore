@@ -1,9 +1,33 @@
 __pycache__/
 *.py[cod]
+*$py.class
 .ipynb_checkpoints/
 .venv/
 venv/
+.env
+
+# Large data artifacts (keep folder structure via .gitkeep)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*.csv
+data/processed/*.npy
+data/processed/*.json
+!data/processed/.gitkeep
+
+# Model weights / scalers (keep folder)
+models/*.pt
+models/*.joblib
 models/*.pkl
 models/*.h5
+!models/.gitkeep
+
+# Generated reports / logs (keep figures policy flexible)
 results/*.png
 results/*.csv
+reports/*.txt
+reports/*_log.txt
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp

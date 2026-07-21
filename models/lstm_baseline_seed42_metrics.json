@@ -1,0 +1,12 @@
+{
+  "stopped_epoch": 38,
+  "best_epoch": 23,
+  "best_val_loss_scaled": 0.00038565188279976535,
+  "test_metrics_mm": {
+    "MSE": 98.68077087402344,
+    "RMSE": 9.93381955111041,
+    "MAE": 3.6974895000457764,
+    "R2": 0.30015108565895166
+  },
+  "sample_station": "Port Blair_11.67_92.72_73"
+}

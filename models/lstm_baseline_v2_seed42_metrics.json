@@ -1,0 +1,15 @@
+{
+  "stopped_epoch": 35,
+  "best_epoch": 20,
+  "best_val_loss_scaled": 0.0003468788915415547,
+  "test_metrics_mm": {
+    "MSE": 88.70658874511719,
+    "RMSE": 9.418417528710286,
+    "MAE": 3.8285250663757324,
+    "R2": 0.37088848348133807
+  },
+  "sample_station": "Port Blair_11.67_92.72_73",
+  "persistence_baseline_rmse": 11.5559,
+  "device": "cuda",
+  "batch_size": 256
+}
