@@ -1,4 +1,4 @@
-5"""
+"""
 Phase 5 v2 — Sequences with past rainfall in X (8 features).
 
 X uses rainfall on days 1..30 only; y is rainfall on day 31.

@@ -31,3 +31,26 @@ reports/*_log.txt
 .DS_Store
 Thumbs.db
 *.swp
+
+
+@"
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Python virtual environment
+env/
+venv/
+
+# Model checkpoints (optional if too large)
+*.pt
+*.pth
+
+# Large datasets (optional)
+# data/raw/
+"@ | Out-File -Encoding utf8 .gitignore

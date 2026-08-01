@@ -34,6 +34,166 @@ class LSTMBaseline(nn.Module):
         return self.fc(last).squeeze(-1)  # (batch,)
 
 
+class CNNLSTMTemporalBaseline(nn.Module):
+    """
+    Temporal CNN-LSTM ablation.
+    NOTE: This is NOT the base paper's spatial CNN-LSTM (paper Sec 3.3.3),
+    which convolves over a 2D lat/lon grid. This variant convolves over
+    the TIME axis instead, since no valid spatial grid exists for
+    irregular station data. Included as a supplementary ablation only.
+    """
+
+    def __init__(
+        self,
+        n_features: int = 8,
+        conv_channels: tuple[int, int] = (16, 32),
+        lstm_hidden: int = 64,
+        lstm_layers: int = 2,
+        use_pooling: bool = False,
+    ):
+        super().__init__()
+        c1, c2 = conv_channels
+
+        self.conv1 = nn.Conv1d(n_features, c1, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv1d(c1, c2, kernel_size=3, padding=1)
+        self.relu = nn.ReLU()
+
+        self.use_pooling = use_pooling
+        if use_pooling:
+            # kernel=2, stride=1, padding=0 keeps length close to original
+            # (29 instead of 30) - opt-in only, not the default.
+            self.pool = nn.MaxPool1d(kernel_size=2, stride=1)
+
+        self.lstm = nn.LSTM(
+            input_size=c2,
+            hidden_size=lstm_hidden,
+            num_layers=lstm_layers,
+            batch_first=True,
+        )
+        self.fc = nn.Linear(lstm_hidden, 1)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, 30, 8)
+        x = x.transpose(1, 2)          # (B, 8, 30)
+        x = self.relu(self.conv1(x))   # (B, 16, 30)
+        x = self.relu(self.conv2(x))   # (B, 32, 30)
+        if self.use_pooling:
+            x = self.pool(x)           # (B, 32, ~29)
+        x = x.transpose(1, 2)          # (B, T, 32)
+
+        lstm_out, _ = self.lstm(x)     # (B, T, 64)
+        last_hidden = lstm_out[:, -1, :]  # (B, 64)
+
+        out = self.fc(last_hidden)     # (B, 1)
+        return out.squeeze(-1)         # (B,)
+
+
+class AdditiveAttention(nn.Module):
+    """Bahdanau-style additive attention over LSTM hidden states."""
+
+    def __init__(self, hidden_dim: int):
+        super().__init__()
+        self.W = nn.Linear(hidden_dim, hidden_dim, bias=True)
+        self.v = nn.Linear(hidden_dim, 1, bias=False)
+
+    def forward(self, lstm_outputs: torch.Tensor):
+        # lstm_outputs: (B, T, H)
+        scores = self.v(torch.tanh(self.W(lstm_outputs)))   # (B, T, 1)
+        weights = torch.softmax(scores, dim=1)               # (B, T, 1)
+        context = torch.sum(weights * lstm_outputs, dim=1)   # (B, H)
+        return context, weights.squeeze(-1)                  # weights: (B, T)
+
+
+class CNNLSTMAttention(nn.Module):
+    """
+    Temporal CNN-LSTM with additive attention over LSTM hidden states.
+    Attention placed AFTER the LSTM (not before), following the pattern
+    in cited literature (LSTM-SelfAttention, CNN-Attention-BiLSTM for
+    precipitation forecasting): LSTM builds contextualized per-day
+    representations, attention then weights their relevance.
+    """
+
+    def __init__(
+        self,
+        n_features: int = 8,
+        conv_channels: tuple[int, int] = (16, 32),
+        lstm_hidden: int = 64,
+        lstm_layers: int = 2,
+    ):
+        super().__init__()
+        c1, c2 = conv_channels
+
+        self.conv1 = nn.Conv1d(n_features, c1, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv1d(c1, c2, kernel_size=3, padding=1)
+        self.relu = nn.ReLU()
+
+        self.lstm = nn.LSTM(
+            input_size=c2,
+            hidden_size=lstm_hidden,
+            num_layers=lstm_layers,
+            batch_first=True,
+        )
+        self.attention = AdditiveAttention(lstm_hidden)
+        self.fc = nn.Linear(lstm_hidden, 1)
+
+    def forward(self, x: torch.Tensor, return_attention: bool = False):
+        # x: (B, 30, 8)
+        x = x.transpose(1, 2)          # (B, 8, 30)
+        x = self.relu(self.conv1(x))   # (B, 16, 30)
+        x = self.relu(self.conv2(x))   # (B, 32, 30)
+        x = x.transpose(1, 2)          # (B, 30, 32)
+
+        lstm_out, _ = self.lstm(x)     # (B, 30, 64) - ALL hidden states
+        context, attn_weights = self.attention(lstm_out)  # (B,64), (B,30)
+
+        out = self.fc(context).squeeze(-1)  # (B,)
+
+        if return_attention:
+            return out, attn_weights
+        return out
+
+
+class TransformerEncoderBaseline(nn.Module):
+    """Pre-norm Transformer encoder -> last timestep -> FC (scalar rainfall).
+
+    Adapted from base-paper Sec 3.3.4 for per-station (non-spatial) output.
+    Input: (batch, seq_len, input_size) with input_size=8 (v2 feature set).
+    """
+
+    def __init__(
+        self,
+        input_size: int = 8,
+        d_model: int = 64,
+        nhead: int = 4,
+        num_layers: int = 2,
+        dim_feedforward: int = 256,
+        dropout: float = 0.1,
+        seq_len: int = 30,
+    ) -> None:
+        super().__init__()
+        self.input_proj = nn.Linear(input_size, d_model)
+        self.pos_embed = nn.Parameter(torch.zeros(1, seq_len, d_model))
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=nhead,
+            dim_feedforward=dim_feedforward,
+            dropout=dropout,
+            activation="gelu",
+            batch_first=True,
+            norm_first=True,
+        )
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.fc = nn.Linear(d_model, 1)
+        nn.init.normal_(self.pos_embed, mean=0.0, std=0.02)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (batch, seq_len, input_size)
+        h = self.input_proj(x) + self.pos_embed[:, : x.size(1), :]
+        h = self.encoder(h)
+        last = h[:, -1, :]
+        return self.fc(last).squeeze(-1)  # (batch,)
+
+
 class GNNLSTM(nn.Module):
     """Per-day shared-weight 2-layer GCN encoder -> per-station LSTM -> FC.
 

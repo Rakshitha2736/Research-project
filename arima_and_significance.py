@@ -123,9 +123,11 @@ def lstm_predict_mm(y_test_scaled: np.ndarray, scaler_y) -> np.ndarray:
 
 
 def diebold_mariano(e1_sq: np.ndarray, e2_sq: np.ndarray, h: int = 1) -> float:
-    """Two-sided DM p-value with Harvey-Leybourne-Newbold small-sample correction.
+    """Two-sided DM p-value with HAC/Newey-West (Bartlett) LRV and HLN correction.
 
-    Loss differential d = e1_sq - e2_sq. For h=1 only lag-0 autocovariance is used.
+    Loss differential d = e1_sq - e2_sq.
+    Long-run variance uses Bartlett kernel with max lag L = h-1
+    (weight w_k = 1 - k/h). For h=1 only lag-0 (gamma0) is used.
     """
     d = e1_sq - e2_sq
     n = d.size
@@ -134,7 +136,9 @@ def diebold_mariano(e1_sq: np.ndarray, e2_sq: np.ndarray, h: int = 1) -> float:
     lrv = gamma0
     for k in range(1, h):
         gk = np.mean((d[k:] - dbar) * (d[:-k] - dbar))
-        lrv += 2.0 * gk
+        w = 1.0 - k / h  # Bartlett / Newey-West: 1 - k/(L+1), L=h-1
+        lrv += 2.0 * w * gk
+    lrv = max(float(lrv), float(gamma0) * 1e-12, 1e-18)
     dm = dbar / np.sqrt(lrv / n)
     hln = np.sqrt((n + 1 - 2 * h + h * (h - 1) / n) / n)
     dm_star = dm * hln
