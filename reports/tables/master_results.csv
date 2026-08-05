@@ -10,7 +10,15 @@ GNN-LSTM (mean ± std),1,Multi Seed,"13,42,123",9.7476 ± 0.0441,Not Available,N
 GNN-LSTM (mean ± std),2,Multi Seed,"13,42,123",10.4880 ± 0.0880,Not Available,Not Available,Not Available,mean±std RMSE from mh_multiseed_monitor.log
 GNN-LSTM (mean ± std),3,Multi Seed,"13,42,123",10.7174 ± 0.0628,Not Available,Not Available,Not Available,mean±std RMSE from mh_multiseed_monitor.log
 GNN-LSTM (mean ± std),4,Multi Seed,"13,42,123",10.9702 ± 0.0326,Not Available,Not Available,Not Available,mean±std RMSE from mh_multiseed_monitor.log
-CNN-LSTM-Temporal,1,Single Seed,42,9.4835,3.6760,89.9367,0.3622,CPU FP32 re-eval of seed-42 checkpoint; no multi-horizon runs exist for this model
-Transformer Encoder,1,Single Seed,42,9.4355,3.8225,89.0289,0.3686,CPU FP32 re-eval of seed-42 checkpoint; no multi-horizon runs exist for this model
+CNN-LSTM+Attention (mean ± std),1,Multi Seed,"13,42,123",9.4440 ± 0.0342,3.7732 ± 0.2649,Not Available,0.3675 ± 0.0046,3-seed CUDA+autocast aggregate from train_cnn_lstm_multiseed_significance.py
+CNN-LSTM+Attention (mean ± std),2,Multi Seed,"13,42,123",10.2555 ± 0.0277,4.1864 ± 0.0865,Not Available,0.2575 ± 0.0040,3-seed CUDA+autocast; from train_cnn_lstm_h23_multiseed_significance.py
+CNN-LSTM+Attention (mean ± std),3,Multi Seed,"13,42,123",10.5346 ± 0.0788,4.2053 ± 0.3377,Not Available,0.2193 ± 0.0117,3-seed CUDA+autocast; from train_cnn_lstm_h23_multiseed_significance.py
+CNN-LSTM+Attention (mean ± std),4,Multi Seed,"13,42,123",10.6294 ± 0.0941,4.2423 ± 0.0768,Not Available,0.2107 ± 0.0140,3-seed CUDA+autocast; from train_cnn_lstm_h4_multiseed_significance.py
+CNN-LSTM-Temporal (seed 42),1,Single Seed,42,9.4835,3.6768,89.9375,0.3622,ORIGINAL CUDA+autocast training-run stdout from train_cnn_lstm_temporal_h1.py (no metrics JSON); NOT CPU FP32 re-eval
+CNN-LSTM-Temporal (mean ± std),1,Multi Seed,"13,42,123",9.4300 ± 0.0470,3.6221 ± 0.0852,Not Available,0.3693 ± 0.0063,3-seed CUDA+autocast aggregate from train_cnn_lstm_multiseed_significance.py
+CNN-LSTM-Temporal (mean ± std),2,Multi Seed,"13,42,123",10.2680 ± 0.0399,4.1193 ± 0.0904,Not Available,0.2556 ± 0.0058,3-seed CUDA+autocast; from train_cnn_lstm_h23_multiseed_significance.py
+CNN-LSTM-Temporal (mean ± std),3,Multi Seed,"13,42,123",10.5196 ± 0.0758,4.0867 ± 0.1046,Not Available,0.2215 ± 0.0112,3-seed CUDA+autocast; from train_cnn_lstm_h23_multiseed_significance.py
+CNN-LSTM-Temporal (mean ± std),4,Multi Seed,"13,42,123",10.7516 ± 0.0257,4.2533 ± 0.1051,Not Available,0.1925 ± 0.0039,3-seed CUDA+autocast; from train_cnn_lstm_h4_multiseed_significance.py
+Transformer Encoder (seed 42),1,Single Seed,42,9.4355,3.8262,89.0289,0.3686,ORIGINAL CUDA+autocast training-run stdout from train_transformer_h1.py (no metrics JSON); NOT CPU FP32 re-eval (prior master MAE 3.8225 was FP32 drift)
 Persistence Baseline,1,Not Applicable,n/a,11.5559,Not Available,Not Available,Not Available,from lstm_baseline_v2_seed42_metrics.json; only RMSE was recorded
 ARIMA (30-station sample),1,Not Applicable,n/a,Not Available,Not Available,Not Available,Not Available,ARIMA was run on a random 30/414 station sample only; per-station rolling results printed to stdout but not saved as aggregate metrics — see arima_and_significance.py

@@ -1,0 +1,10 @@
+Comparison,Forecast_Horizon,Seeds_Used,DM_p_value,Paired_t_p_value,Bootstrap_95CI_lo,Bootstrap_95CI_hi,CI_Definition,Significant_at_0.05,Notes
+GNN_vs_LSTM,1,42,7.183245e-08,7.183245e-08,0.1820,0.3775,RMSE_GNN - RMSE_LSTM,Yes,HAC lag=0 (h=1); recomputed via diebold_mariano(h=1) on seed-42 masked preds; matches mh_multiseed_monitor.log
+GNN_vs_LSTM,2,42,1.279135e-25,2.669069e-26,0.2825,0.4019,RMSE_GNN - RMSE_LSTM,Yes,HAC lag=1 (h=2); recomputed via diebold_mariano(h=2); ignore pre-HAC DM lines in mh_multiseed_monitor.log (those equal paired-t / lag-0)
+GNN_vs_LSTM,3,42,6.899672e-32,9.848719e-33,0.2250,0.3081,RMSE_GNN - RMSE_LSTM,Yes,HAC lag=2 (h=3); recomputed via diebold_mariano(h=3); ignore pre-HAC DM lines in mh_multiseed_monitor.log
+GNN_vs_LSTM,4,42,6.975498e-40,0.000000e+00,0.3107,0.4082,RMSE_GNN - RMSE_LSTM,Yes,HAC lag=3 (h=4); recomputed via diebold_mariano(h=4); ignore pre-HAC DM lines in mh_multiseed_monitor.log; paired-t underflows to 0.0
+Attention_vs_Temporal,1,42,1.120503e-01,1.120503e-01,-0.0772,0.0088,RMSE_attn - RMSE_temp,No,HAC lag=0 (h=1); full test set; from train_cnn_lstm_multiseed_significance.py
+Attention_vs_Temporal,2,42,6.371710e-04,6.371710e-04,-0.0652,-0.0244,RMSE_attn - RMSE_temp,Yes,HAC lag=1 (h=2); from train_cnn_lstm_h23_multiseed_significance.py
+Attention_vs_Temporal,3,42,7.498644e-01,7.498644e-01,-0.0322,0.0212,RMSE_attn - RMSE_temp,No,HAC lag=2 (h=3); from train_cnn_lstm_h23_multiseed_significance.py
+Attention_vs_Temporal,4,42,1.685128e-09,5.006386e-20,-0.1787,-0.1152,RMSE_attn - RMSE_temp,Yes,HAC lag=3 (h=4); from train_cnn_lstm_h4_multiseed_significance.py
+Attention_vs_LSTM,1,42,1.678886e-01,1.678886e-01,-0.0097,0.0780,RMSE_attn - RMSE_lstm,No,HAC lag=0 (h=1); from train_cnn_lstm_multiseed_significance.py

@@ -1,6 +1,6 @@
 # Final Repository Audit
 
-**Date:** 2026-07-29
+**Date:** 2026-08-05 (results tables refreshed; training not re-run; all metrics sourced from original training-run logs, not fresh inference)
 **Scope:** Complete inspection of the RainfallPrediction repository
 **Constraint:** Model development frozen — no architecture changes, no new models, no re-running experiments
 
@@ -10,11 +10,11 @@
 
 This project is an **adaptation and extension** of the base paper, not a literal reproduction. The base paper proposes a spatial CNN-LSTM-Attention architecture that convolves over a regular 2D lat/lon grid. Because our Indian station data is irregularly spaced (414 stations with no grid structure), the paper's spatial CNN cannot be applied directly. Instead, this project:
 
-1. **Replaces the spatial CNN with a GNN** (Graph Convolutional Network) operating on a distance-based station graph — an approach the base paper itself identifies as a direction for future work.
-2. Retains the paper's LSTM backbone and per-station scalar regression formulation.
-3. Adds supplementary ablations (temporal CNN-LSTM, Transformer encoder) as secondary comparators.
+1. **Primary contribution — temporal extension:** CNN-LSTM with **additive (Bahdanau) attention** after the LSTM, so all 30 contextualized hidden states are kept and reweighted (vs. last-timestep-only). A non-attention temporal CNN-LSTM is the controlled comparator.
+2. **Secondary contribution — spatial investigation:** a **GNN-LSTM** on a distance-based station graph, replacing the paper's grid CNN for irregular networks (a direction the base paper flags as future work).
+3. Retains the paper's LSTM backbone and per-station scalar regression formulation; Transformer encoder remains a supplementary h=1 ablation.
 
-This framing should be stated explicitly in any thesis or paper: the project **extends** the base paper's methodology to handle irregular station networks, it does **not** claim to fully reproduce the base paper's spatial CNN results.
+This framing should be stated explicitly in any thesis or paper: attention is the **primary temporal extension**; the GNN is a **secondary spatial investigation**. The project does **not** claim to fully reproduce the base paper's spatial CNN results.
 
 ---
 
@@ -36,17 +36,19 @@ This framing should be stated explicitly in any thesis or paper: the project **e
 ### Model Training
 - [x] LSTM v2 baseline h=1,2,3,4 (seeds 13, 42, 123 — multi-seed at every horizon)
 - [x] GNN-LSTM h=1,2,3,4 (seeds 13, 42, 123 — multi-seed at every horizon)
-- [x] CNN-LSTM-Temporal h=1 only (seed 42 — single-seed, supplementary ablation)
+- [x] CNN-LSTM+Attention h=1,2,3,4 (seeds 13, 42, 123 — multi-seed at every horizon; primary temporal extension)
+- [x] CNN-LSTM-Temporal h=1,2,3,4 (seeds 13, 42, 123 — multi-seed; non-attention comparator)
 - [x] Transformer Encoder h=1 only (seed 42 — single-seed, supplementary ablation)
 - [x] ARIMA baseline (30 of 414 stations — random sample, not full coverage)
 - [x] Persistence baseline
 
 ### Evaluation
 - [x] All metrics in mm/day (inverse-transformed)
-- [x] Multi-seed aggregation (mean ± std) for LSTM and GNN-LSTM
-- [x] Diebold-Mariano significance test (all 4 horizons, LSTM vs GNN-LSTM)
+- [x] Multi-seed aggregation (mean ± std) for LSTM, GNN-LSTM, CNN-LSTM+Attention, CNN-LSTM-Temporal
+- [x] Diebold-Mariano significance test (all 4 horizons, LSTM vs GNN-LSTM; Attention vs Temporal)
 - [x] Paired t-test (all 4 horizons)
 - [x] Bootstrap 95% CI (1000 resamples, all 4 horizons)
+- [x] Attention-weight interpretability plot (h=4 mean α over test set)
 
 ### Documentation
 - [x] README.md (complete project description)
@@ -88,9 +90,11 @@ This framing should be stated explicitly in any thesis or paper: the project **e
 | `REPRODUCE.md` | Complete reproduction instructions |
 | `PROJECT_STATUS.md` | Project completion status |
 | `FINAL_AUDIT.md` | This file |
-| `reports/tables/master_results.csv` | Consolidated results table |
+| `reports/tables/master_results.csv` | Consolidated results table (incl. Attention + Temporal multi-seed) |
+| `reports/tables/significance_results.csv` | Pairwise DM / paired-t / bootstrap CI: GNN_vs_LSTM (h=1–4), Attention_vs_Temporal (h=1–4), Attention_vs_LSTM (h=1) |
 | `reports/tables/` | Directory created |
 | `reports/logs/` | Directory created |
+| `reports/figures/attention_weights_h4_mean.png` | Mean attention profile (h=4, seed 42) |
 
 ---
 
@@ -110,8 +114,8 @@ These are non-critical enhancements that do **not** affect research validity:
 
 1. **Naming consistency:** Rename h=1 checkpoints to `lstm_h1_seed*.pt` / `gnn_lstm_h1_seed*.pt` for uniformity (currently `lstm_baseline_v2_seed*.pt` and `gnn_lstm_seed*.pt`)
 2. **Stale JSON:** `lstm_baseline_v2_multiseed_summary.json` seed-42 RMSE (9.4584) differs from current checkpoint eval (~9.4184); could be refreshed
-3. **Ablation multi-seed:** CNN-LSTM and Transformer only trained with seed 42; multi-seed would strengthen ablation claims but is not required given their role as secondary comparators
-4. **Save ablation metrics to JSON:** CNN-LSTM and Transformer do not save metrics JSON files (metrics were printed to stdout during training and re-evaluated for this audit via CPU FP32 inference)
+3. **Transformer remains single-seed (seed 42) at h=1 only** — optional multi-seed / multi-horizon would strengthen that ablation but is not the primary claim.
+4. **Save CNN multi-seed metrics to JSON:** aggregate numbers live in `master_results.csv` / stdout from multiseed scripts; optional per-seed JSON would match LSTM's h=1 pattern.
 5. **Move root-level log files:** `*.log` files in project root could be moved to `reports/logs/`
 6. **Add notebook 03:** Numbering gap (02→04) documented but could be filled or re-numbered
 7. **ARIMA full-coverage:** ARIMA was evaluated on a random 30-station sample only; full 414-station ARIMA is computationally expensive and not essential given ARIMA's role as a classical reference point
@@ -133,10 +137,18 @@ The following metrics are marked "Not Available" and the reasons are:
 
 ## 7. Stated Limitations (carried forward from project audit)
 
-1. **CNN-LSTM-Temporal and Transformer are single-seed (seed 42) ablations at h=1 only.** They were not trained with seeds 13/123 or at horizons h=2,3,4. Their role is supplementary comparison, not primary contribution. Any thesis table should footnote this.
+1. **Transformer remains a single-seed (seed 42) ablation at h=1 only.** CNN-LSTM+Attention and CNN-LSTM-Temporal are now multi-seed at h=1–4; footnote Transformer as supplementary only.
 2. **ARIMA coverage is 30/414 stations.** The ARIMA baseline was evaluated on a random 30-station sample due to computational cost of rolling ARIMA. This is adequate as a classical reference but should not be presented as a full-coverage comparison.
 3. **AMP sensitivity:** PyTorch's Automatic Mixed Precision (`torch.amp.autocast`) uses float16 for some operations during training and evaluation, which introduces small rounding differences versus pure float32 — in this project, that shifts RMSE by ~0.0005 depending on which path is used. The canonical results in `mh_multiseed_monitor.log` were produced under CUDA+autocast (matching the training path) and should be the numbers cited in any paper; re-evaluating the same checkpoints in pure FP32 (e.g. on CPU) will not match exactly.
 4. **Stale multiseed summary JSON:** `lstm_baseline_v2_multiseed_summary.json` was written by an earlier run of `train_lstm_baseline_v2_multiseed.py` and records seed-42 RMSE as 9.4584, but the seed-42 checkpoint was subsequently retrained (the current checkpoint evaluates to ~9.4184 per `lstm_baseline_v2_seed42_metrics.json`). The JSON summary was never refreshed after retraining, so it disagrees with the actual checkpoint. The canonical multi-horizon table in `mh_multiseed_monitor.log` uses the current checkpoints and supersedes this file.
+5. **MAE-vs-RMSE divergence:** relative to the non-attention temporal CNN-LSTM, attention often **reduces RMSE** (and is DM-significant at h=2 and h=4) but **does not always reduce MAE** (e.g. higher mean MAE at several horizons). Thesis claims should treat RMSE/DM as the primary error comparison and state MAE explicitly as a limitation of the “attention always helps” narrative.
+6. **Non-monotonic Attn-vs-Temporal significance across horizons is unexplained:** DM/bootstrap favor attention at **h=2** and **h=4**, but **h=1** and **h=3** are non-significant (CIs include 0). No causal mechanism for this odd/even or mid-horizon pattern has been established; it must be reported as an open finding, not over-interpreted.
+
+### Attention interpretability (h=4, seed 42)
+
+Mean attention over the full h=4 test set (`reports/figures/attention_weights_h4_mean.png`):
+- Peak mean weight at **day-position 30** (oldest day in the 30-day window; axis 1=most recent … 30=oldest).
+- Recent-7-days attention share ≈ **0.2335**; oldest-7-days share ≈ **0.2464** (near-even split, not strongly recency-biased).
 
 ---
 
@@ -144,15 +156,15 @@ The following metrics are marked "Not Available" and the reasons are:
 
 **YES.**
 
-This project is an **adaptation and extension** of the base paper — replacing the spatial CNN (which requires a regular grid) with a GNN (which handles irregular station networks), as suggested in the base paper's own Future Work section. All experimental results for this adapted methodology are complete, verified, and documented.
+This project is an **adaptation and extension** of the base paper: **additive attention** is the primary temporal extension; the **GNN** is a secondary spatial investigation for irregular stations (paper future-work direction). All experimental results for this adapted methodology are complete, verified, and documented.
 
 Key thesis-ready artifacts:
-- Canonical results table (4 horizons × 2 primary models, 3 seeds each)
-- Statistical significance at every horizon (DM p < 1e-7)
-- Bootstrap confidence intervals confirming LSTM outperforms GNN-LSTM
-- Two supplementary ablations (CNN-LSTM-Temporal, Transformer) at h=1
+- Canonical results table (LSTM, GNN-LSTM, CNN-LSTM+Attention, CNN-LSTM-Temporal × 4 horizons, 3 seeds)
+- Attn-vs-Temporal significance: significant at h=2/h=4, non-significant at h=1/h=3 (non-monotonic; unexplained) — see `significance_results.csv`
+- LSTM vs GNN-LSTM significance at every horizon; bootstrap CIs
+- Attention interpretability figure (`attention_weights_h4_mean.png`)
+- Supplementary Transformer ablation at h=1 (single seed)
 - `reports/tables/master_results.csv` for paper tables
-- `reports/figures/` for paper figures
 - Independent verification report (92/100 integrity score)
 
 ---
@@ -173,11 +185,13 @@ Key thesis-ready artifacts:
 **YES.**
 
 All planned experiments have been executed:
-- 2 primary model architectures (LSTM, GNN-LSTM) trained and evaluated across 4 horizons with 3 seeds each
-- 2 secondary ablation architectures (CNN-LSTM-Temporal, Transformer) trained at h=1 with seed 42
-- 2 classical baselines (Persistence, ARIMA on 30-station sample)
-- Statistical significance testing completed at all horizons
-- Results independently verified
+- Primary temporal extension: CNN-LSTM+Attention (and Temporal comparator) across 4 horizons × 3 seeds
+- Secondary spatial investigation: GNN-LSTM across 4 horizons × 3 seeds; LSTM backbone baseline likewise
+- Supplementary Transformer ablation at h=1 (seed 42)
+- Classical baselines (Persistence, ARIMA on 30-station sample)
+- Attn-vs-Temporal and LSTM-vs-GNN significance testing completed at all horizons
+- Attention-weight interpretability at h=4
+- Results independently verified for the pre-attention LSTM/GNN package; Attention/Temporal metrics recorded in master/significance tables from the CUDA+autocast training scripts
 
 ---
 

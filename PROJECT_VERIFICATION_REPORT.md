@@ -233,18 +233,18 @@ Checkpoint contents typically include `model_state_dict`, `best_epoch`, `stopped
 
 ## Stage 11 — Statistical significance
 
-From `mh_multiseed_monitor.log` / prior independent recomputation (seed 42, paired masked targets, 1000 bootstrap resamples, seed=42):
+From HAC-corrected `diebold_mariano(h=horizon)` recomputation (seed 42, paired masked targets); bootstrap CIs / paired-t from prior eval. Source of truth for DM: `reports/tables/significance_results.csv`.
 
 | h | DM p | paired-t p | Bootstrap 95% CI (RMSE_GNN − RMSE_LSTM) | n |
 |--:|------|------------|------------------------------------------|--:|
 | 1 | 7.183245e-08 | 7.183245e-08 | (0.1820, 0.3775) | 141263 |
-| 2 | 2.669041e-26 | 2.669069e-26 | (0.2825, 0.4019) | 140653 |
-| 3 | 9.848853e-33 | 9.848719e-33 | (0.2250, 0.3081) | 140293 |
-| 4 | 2.497473e-42 | ~0 | (0.3107, 0.4082) | 139908 |
+| 2 | 1.279135e-25 | 2.669069e-26 | (0.2825, 0.4019) | 140653 |
+| 3 | 6.899672e-32 | 9.848719e-33 | (0.2250, 0.3081) | 140293 |
+| 4 | 6.975498e-40 | ~0 | (0.3107, 0.4082) | 139908 |
 
 All CIs strictly positive → GNN RMSE significantly **higher** than LSTM on the masked test set at every horizon.
 
-**Status:** **PASS** (recomputed previously; no retrain this audit)
+**Status:** **PASS** (DM values HAC-corrected with lag=h−1; no retrain this audit)
 
 ---
 
@@ -255,11 +255,11 @@ All CIs strictly positive → GNN RMSE significantly **higher** than LSTM on the
 | horizon | LSTM RMSE (mean±std) | GNN RMSE (mean±std) | DM p | paired-t p | bootstrap 95% CI |
 |--------:|----------------------|---------------------|------|------------|------------------|
 | 1 | 9.3745±0.0408 | 9.7476±0.0441 | 7.18e-08 | 7.18e-08 | (0.1820, 0.3775) |
-| 2 | 10.2295±0.0184 | 10.4880±0.0880 | 2.67e-26 | 2.67e-26 | (0.2825, 0.4019) |
-| 3 | 10.4892±0.0187 | 10.7174±0.0628 | 9.85e-33 | 9.85e-33 | (0.2250, 0.3081) |
-| 4 | 10.5841±0.0178 | 10.9702±0.0326 | 2.50e-42 | ~0 | (0.3107, 0.4082) |
+| 2 | 10.2295±0.0184 | 10.4880±0.0880 | 1.279e-25 | 2.669069e-26 | (0.2825, 0.4019) |
+| 3 | 10.4892±0.0187 | 10.7174±0.0628 | 6.900e-32 | 9.848719e-33 | (0.2250, 0.3081) |
+| 4 | 10.5841±0.0178 | 10.9702±0.0326 | 6.975e-40 | ~0 | (0.3107, 0.4082) |
 
-Matches `mh_multiseed_monitor.log` within **0.0001**.
+DM p at h≥2 use HAC/Bartlett lag=h−1 (`significance_results.csv`); paired-t is unchanged (not HAC). RMSE/bootstrap match prior CUDA+autocast eval.
 
 ### Cross-check notes
 

@@ -1,0 +1,3 @@
+NOTE: DM p-values at h=2,3,4 in mh_multiseed_monitor.log predate the HAC/Bartlett correction fix - see reports/tables/significance_results.csv for corrected values (h=2: 1.279e-25, h=3: 6.900e-32, h=4: 6.975e-40; h=1 unchanged 7.18e-08).
+
+This sidecar note exists because the audit trail log itself must keep its historical (pre-correction) numbers unchanged.
