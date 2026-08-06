@@ -108,6 +108,22 @@ This framing should be stated explicitly in any thesis or paper: attention is th
 
 ---
 
+## 5a. Threshold / categorical skill (eval-only addition)
+
+Run `python eval_threshold_skill.py` (default: h=1..4 × seeds 13/42/123 × LSTM/Temporal/Attention + Persistence).
+Helpers: `src/metrics_rainfall.py`.
+
+Outputs:
+- `reports/tables/threshold_skill.csv` / `threshold_skill_summary.csv` — POD, FAR, CSI, Bias, HSS at 0.1/1/5/10 mm
+- `reports/tables/intensity_bins.csv` / `intensity_bins_summary.csv` — RMSE/MAE by observed intensity bin
+- `reports/tables/tolerance_accuracy.csv` / `tolerance_accuracy_summary.csv` — |err|≤1/2/5 mm
+
+No training; architecture unchanged. Use summary CSVs for thesis tables.
+
+**Headline (CSI @ 1 mm, mean±std over 3 seeds):** Persistence has the highest CSI at every horizon (e.g. h=1 CSI ≈ 0.58) because DL models run very high POD (~0.89–0.94) but also high FAR (~0.46–0.53) — typical MSE-regression over-forecasting of rain events. Among DL models, rankings vs Temporal/LSTM vary by horizon (see `threshold_skill_summary.csv`). Intensity bins show RMSE exploding on ≥10 mm days (~25 mm RMSE for Attention h=1). Thesis claim: report continuous RMSE **and** categorical skill; do not imply MSE optimality transfers to CSI.
+
+---
+
 ## 5. Remaining Optional Improvements
 
 These are non-critical enhancements that do **not** affect research validity:
@@ -149,6 +165,18 @@ The following metrics are marked "Not Available" and the reasons are:
 Mean attention over the full h=4 test set (`reports/figures/attention_weights_h4_mean.png`):
 - Peak mean weight at **day-position 30** (oldest day in the 30-day window; axis 1=most recent … 30=oldest).
 - Recent-7-days attention share ≈ **0.2335**; oldest-7-days share ≈ **0.2464** (near-even split, not strongly recency-biased).
+
+**Conditioned attention (architecture frozen):** run
+`python analyze_attention_conditioned.py` (default h=4; optional `--horizons 1 4`).
+Helpers live in `src/eval_attention.py`. Outputs:
+- `reports/tables/attention_conditioned_h{h}.csv` — wet/dry, JJAS vs non-monsoon, high/low error strata
+- `reports/tables/attention_conditioned_contrasts_h{h}.csv` — bootstrap 95% CIs on recent-7 share and entropy contrasts
+- `reports/figures/attention_conditioned_h{h}_{wet_dry,monsoon,error,entropy_wet_dry}.png`
+
+Key empirical findings (seed 42, τ=1 mm, already generated for h=1 and h=4):
+- **h=1 is strongly recency-biased** (peak day-position **1**; recent-7 share ≈ **0.61**). Wet and JJAS samples focus even more on recent days (recent-7 Δ wet−dry ≈ +0.044; monsoon−non ≈ +0.094; CIs exclude 0) and have **lower** attention entropy (more peaked).
+- **h=4 is near-uniform / oldest-peaked** (peak day-position **30**; recent-7 ≈ **0.23**). Conditioning shifts are tiny in magnitude (~0.003–0.005 on recent-7) though CIs still exclude 0 — practically a flat policy.
+- This horizon-dependent attention regime is a useful interpretability result for discussing why Attn-vs-Temporal significance is non-monotonic; do **not** over-claim causality without h=2/3 replication.
 
 ---
 
