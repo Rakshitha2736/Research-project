@@ -1,0 +1,13 @@
+Horizon,Model,RMSE_mean,RMSE_std,MAE_mean,MAE_std,R2_mean,R2_std,Delta_RMSE_vs_LSTM,Delta_RMSE_vs_previous_stage,Delta_RMSE_seed42_vs_LSTM,Delta_RMSE_seed42_vs_previous_stage,Significant_vs_LSTM,Significant_vs_previous_stage,Seed_Direction_Mismatch,Notes
+1,LSTM,9.3745,0.0408,Not Available,Not Available,Not Available,Not Available,0,0,0,0,N/A,N/A,No,
+1,CNN-LSTM-Temporal,9.4300,0.0470,3.6221,0.0852,0.3693,0.0063,0.0555,0.0555,0.0651,0.0651,Yes,Yes,No,
+1,CNN-LSTM+Attention,9.4440,0.0342,3.7732,0.2649,0.3675,0.0046,0.0695,0.0140,0.0326,-0.0325,No,No,Yes,"3-seed mean shows Attention slightly worse than Temporal (+0.0140 RMSE), but seed-42 shows Attention better (-0.0326) - seed-to-seed variance; treat as a limitation of single-seed significance testing, not a confirmed directional finding. Consistent with non-significant test result (CI includes 0)."
+2,LSTM,10.2295,0.0184,Not Available,Not Available,Not Available,Not Available,0,0,0,0,N/A,N/A,No,
+2,CNN-LSTM-Temporal,10.2680,0.0399,4.1193,0.0904,0.2556,0.0058,0.0385,0.0385,0.0456,0.0456,Yes,Yes,No,
+2,CNN-LSTM+Attention,10.2555,0.0277,4.1864,0.0865,0.2575,0.0040,0.0260,-0.0125,0.0009,-0.0447,Not tested,Yes,No,
+3,LSTM,10.4892,0.0187,Not Available,Not Available,Not Available,Not Available,0,0,0,0,N/A,N/A,No,
+3,CNN-LSTM-Temporal,10.5196,0.0758,4.0867,0.1046,0.2215,0.0112,0.0304,0.0304,-0.0343,-0.0343,Yes,Yes,Yes,"3-seed mean shows Temporal slightly worse than LSTM (+0.0304 RMSE), but seed-42 specifically shows Temporal significantly better - this discrepancy reflects seed-to-seed variance at h=3 and should be reported as a limitation of single-seed significance testing in the thesis, not as a confirmed directional finding."
+3,CNN-LSTM+Attention,10.5346,0.0788,4.2053,0.3377,0.2193,0.0117,0.0454,0.0150,-0.0399,-0.0056,Not tested,No,Yes,"3-seed mean shows Attention slightly worse than Temporal (+0.0150 RMSE), but seed-42 shows Attention better (-0.0056) - seed-to-seed variance; treat as a limitation of single-seed significance testing, not a confirmed directional finding. Consistent with non-significant test result (CI includes 0)."
+4,LSTM,10.5841,0.0178,Not Available,Not Available,Not Available,Not Available,0,0,0,0,N/A,N/A,No,
+4,CNN-LSTM-Temporal,10.7516,0.0257,4.2533,0.1051,0.1925,0.0039,0.1675,0.1675,0.1745,0.1745,Yes,Yes,No,
+4,CNN-LSTM+Attention,10.6294,0.0941,4.2423,0.0768,0.2107,0.0140,0.0453,-0.1222,0.0277,-0.1468,Not tested,Yes,No,

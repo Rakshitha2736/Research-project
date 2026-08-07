@@ -8,3 +8,7 @@ Attention_vs_Temporal,2,42,6.371710e-04,6.371710e-04,-0.0652,-0.0244,RMSE_attn -
 Attention_vs_Temporal,3,42,7.498644e-01,7.498644e-01,-0.0322,0.0212,RMSE_attn - RMSE_temp,No,HAC lag=2 (h=3); from train_cnn_lstm_h23_multiseed_significance.py
 Attention_vs_Temporal,4,42,1.685128e-09,5.006386e-20,-0.1787,-0.1152,RMSE_attn - RMSE_temp,Yes,HAC lag=3 (h=4); from train_cnn_lstm_h4_multiseed_significance.py
 Attention_vs_LSTM,1,42,1.678886e-01,1.678886e-01,-0.0097,0.0780,RMSE_attn - RMSE_lstm,No,HAC lag=0 (h=1); from train_cnn_lstm_multiseed_significance.py
+Temporal_vs_LSTM,1,42,1.006211e-02,1.006210e-02,0.0142,0.1166,RMSE_temp - RMSE_lstm,Yes,"HAC lag=0 (h=1); inference-only from seed-42 ckpts; build_ablation_study.py"
+Temporal_vs_LSTM,2,42,4.417199e-04,4.667487e-05,0.0232,0.0640,RMSE_temp - RMSE_lstm,Yes,"HAC lag=1 (h=2); inference-only from seed-42 ckpts; build_ablation_study.py"
+Temporal_vs_LSTM,3,42,1.313207e-02,8.255352e-04,-0.0559,-0.0150,RMSE_temp - RMSE_lstm,Yes,"HAC lag=2 (h=3); inference-only from seed-42 ckpts; build_ablation_study.py"
+Temporal_vs_LSTM,4,42,4.475524e-13,1.096770e-30,0.1472,0.2029,RMSE_temp - RMSE_lstm,Yes,"HAC lag=3 (h=4); inference-only from seed-42 ckpts; build_ablation_study.py"
