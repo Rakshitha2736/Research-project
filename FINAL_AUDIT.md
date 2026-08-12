@@ -120,7 +120,49 @@ Outputs:
 
 No training; architecture unchanged. Use summary CSVs for thesis tables.
 
+**Provenance note (rain/no-rain contingency):** Rain/no-rain contingency counts in `threshold_skill.csv` were computed via a separate CUDA+autocast inference session (`eval_threshold_skill.py`, 2026-08-05) on the same seed-42/13/123 checkpoints used throughout this project, not literally reused prediction arrays from the original significance-testing session. Because `CNNLSTMAttention` and `CNNLSTMTemporalBaseline` contain no dropout or batch-normalization layers, forward-pass outputs are deterministic given fixed weights, device, and precision mode, so this re-inference is expected to be numerically equivalent to the original evaluation to within floating-point tolerance. This is a documented provenance note, not a re-run of training or a new experiment. Downstream rain/no-rain Precision/Recall/F1 tables derived from these counts (e.g. `reports/tables/rain_classification_metrics.csv`) inherit this provenance.
+
 **Headline (CSI @ 1 mm, mean±std over 3 seeds):** Persistence has the highest CSI at every horizon (e.g. h=1 CSI ≈ 0.58) because DL models run very high POD (~0.89–0.94) but also high FAR (~0.46–0.53) — typical MSE-regression over-forecasting of rain events. Among DL models, rankings vs Temporal/LSTM vary by horizon (see `threshold_skill_summary.csv`). Intensity bins show RMSE exploding on ≥10 mm days (~25 mm RMSE for Attention h=1). Thesis claim: report continuous RMSE **and** categorical skill; do not imply MSE optimality transfers to CSI.
+
+---
+
+## 5b. Extreme vs Normal rainfall subset evaluation (eval-only addition)
+
+Run `python eval_extreme_rainfall.py` (seed 42 only; LSTM / Temporal / Attention; h=1..4). Splits each test set by the **true-target 95th percentile** and reports RMSE/MAE/R² on Extreme vs Normal subsets.
+
+Outputs:
+- `reports/tables/extreme_rainfall_evaluation.csv`
+- `reports/figures/extreme_rainfall_rmse_comparison.png`
+
+**Provenance note (extreme-day metrics):** Extreme/Normal RMSE/MAE/R² in `extreme_rainfall_evaluation.csv` were computed via a **separate** CUDA+autocast re-inference session (`eval_extreme_rainfall.py`) on the same seed-42 checkpoints used throughout this project, not literally reused prediction arrays from the original significance-testing session or from `eval_threshold_skill.py`. Because `CNNLSTMAttention` and `CNNLSTMTemporalBaseline` contain no dropout or batch-normalization layers, forward-pass outputs are deterministic given fixed weights, device, and precision mode, so this re-inference is expected to be numerically equivalent to those earlier evaluations to within floating-point tolerance. This is a documented provenance note (same precedent as Feature 3 / §5a), not a re-run of training or a new experiment.
+
+**R² on Normal subset:** R² values on the Normal subset are negative for all models/horizons. This is an expected statistical artifact of computing R² on a variance-truncated subset (the 95% of days with lowest rainfall have very low target variance, shrinking R²'s denominator disproportionately to the model's absolute error), NOT evidence the models perform poorly on typical days — their absolute RMSE/MAE on the Normal subset (~4.3–5.0 mm RMSE) is in fact considerably better than their Extreme-subset performance (~36–45 mm RMSE), consistent with expectations. RMSE and MAE, not R², should be used to interpret Normal-vs-Extreme performance in this table. *(Note: CNN-LSTM-Temporal at h=4 Normal is a near-zero exception with R² ≈ +0.029; the artifact still applies — do not interpret subset R² as overall skill.)*
+
+**Absolute Extreme-RMSE ranking:** LSTM has the lowest absolute Extreme-RMSE at h=1–2; CNN-LSTM+Attention has the lowest absolute Extreme-RMSE at h=3–4.
+
+---
+
+## 5c. Attention Extreme vs Normal comparison (eval-only addition)
+
+Run `python analyze_attention_extreme_vs_normal.py` (Attention seed 42; h=1..4). Splits attention weights by the **same** true-target 95th-percentile Extreme/Normal definition as §5b.
+
+Outputs:
+- `reports/tables/attention_extreme_vs_normal.csv`
+- `reports/figures/attention_extreme_vs_normal_h{1,2,3,4}.png`
+
+**Provenance note:** Horizons **h=1 and h=4** reuse already-saved `data/processed/attention_weights_h*_seed42.npy`. Horizons **h=2 and h=3** required a **separate** CUDA+autocast inference session (`analyze_attention_extreme_vs_normal.py`) on the same seed-42 Attention checkpoints; weights were saved as new cache files. This is not literally reused arrays from significance testing or from `eval_threshold_skill.py` / `eval_extreme_rainfall.py`. Because `CNNLSTMAttention` has no dropout or batch-normalization, eval-mode forward passes are deterministic given fixed weights/device/precision — expected numerical equivalence within floating-point tolerance. Documented provenance (same convention as §5a / §5b), not training or a new modeling experiment.
+
+**Finding sketch:** Peak day-position is identical for Extreme vs Normal within each horizon (day 1 at h=1–3; day 30 at h=4). Mann-Whitney tests on day-30 weights reject equality (large N), but absolute mean differences are tiny (~0.0002–0.005); interpret as statistically detectable but practically small profile shifts, not a qualitatively different attention policy on extreme days.
+
+---
+
+## 5d. Station-wise geographic error map (eval-only addition)
+
+Run `python eval_station_wise_error.py` (Attention seed 42; h=1 and h=4). Per-station RMSE/MAE on the test set; maps in `reports/figures/station_error_map_h{1,4}.png`; table `reports/tables/station_wise_error.csv`.
+
+**Provenance note:** Continuous `y_pred` arrays were not on disk; predictions come from a **separate** CUDA+autocast inference session on `cnn_lstm_attention_h{1,4}_seed42.pt`, with `station_id` from `rebuild_test_meta` and lat/lon from `feature_engineered_v2.csv` (same Features 3–5 convention).
+
+**Cross-reference to §5b:** The strong correlation between station RMSE and station rainfall variance (r=0.89–0.93) is consistent with, and best interpreted alongside, the Extreme Rainfall Subset Evaluation (Feature 4 / Section 5b): high-RMSE stations are largely those with more frequent or more severe extreme-rainfall days, and all three deep learning models (LSTM, Temporal, Attention) showed 8–10× worse RMSE on extreme vs normal days regardless of station. This map does not indicate a distinct new failure mode — it is the geographic expression of the same extreme-rainfall difficulty already documented in Section 5b.
 
 ---
 
@@ -158,7 +200,11 @@ The following metrics are marked "Not Available" and the reasons are:
 3. **AMP sensitivity:** PyTorch's Automatic Mixed Precision (`torch.amp.autocast`) uses float16 for some operations during training and evaluation, which introduces small rounding differences versus pure float32 — in this project, that shifts RMSE by ~0.0005 depending on which path is used. The canonical results in `mh_multiseed_monitor.log` were produced under CUDA+autocast (matching the training path) and should be the numbers cited in any paper; re-evaluating the same checkpoints in pure FP32 (e.g. on CPU) will not match exactly.
 4. **Stale multiseed summary JSON:** `lstm_baseline_v2_multiseed_summary.json` was written by an earlier run of `train_lstm_baseline_v2_multiseed.py` and records seed-42 RMSE as 9.4584, but the seed-42 checkpoint was subsequently retrained (the current checkpoint evaluates to ~9.4184 per `lstm_baseline_v2_seed42_metrics.json`). The JSON summary was never refreshed after retraining, so it disagrees with the actual checkpoint. The canonical multi-horizon table in `mh_multiseed_monitor.log` uses the current checkpoints and supersedes this file.
 5. **MAE-vs-RMSE divergence:** relative to the non-attention temporal CNN-LSTM, attention often **reduces RMSE** (and is DM-significant at h=2 and h=4) but **does not always reduce MAE** (e.g. higher mean MAE at several horizons). Thesis claims should treat RMSE/DM as the primary error comparison and state MAE explicitly as a limitation of the “attention always helps” narrative.
-6. **Non-monotonic Attn-vs-Temporal significance across horizons is unexplained:** DM/bootstrap favor attention at **h=2** and **h=4**, but **h=1** and **h=3** are non-significant (CIs include 0). No causal mechanism for this odd/even or mid-horizon pattern has been established; it must be reported as an open finding, not over-interpreted.
+6. **Non-monotonic Attn-vs-Temporal significance across horizons:** DM/bootstrap favor attention at **h=2** and **h=4**, but **h=1** and **h=3** are non-significant (CIs include 0). This pattern is plausibly explained by attention's learned strategy shifting from a sharp, persistence-like recency focus at h=1 (day-position **1** / most-recent-day weight = 0.456, ~28× the mid-window baseline ≈0.016) to a much flatter, mildly oldest-day-favoring strategy at h=4 (day-position **30**; range 0.0095, near-uniform). Attention appears to add little beyond what a recency-biased model already captures at h=1, but learns a distinct long-range strategy at h=4 — consistent with h=4 showing both the largest RMSE improvement and strongest significance in this study. h=2/h=3's intermediate, non-significant results remain only partially explained and should still be reported as an open finding. See also §5c and all-samples mean attention profiles.
+
+   Seasonal breakdown reveals that while CNN-LSTM+Attention significantly outperforms CNN-LSTM-Temporal at h=4 (per ablation/significance testing), it does NOT outperform the plain LSTM baseline at h=4 - LSTM is numerically best or tied in every season at this horizon, though Attention-vs-LSTM was not formally significance-tested at h=4 (only at h=1, where the difference was non-significant). This distinction is important: this project's finding is that attention improves upon the CNN-LSTM baseline specifically, not that attention surpasses the simpler LSTM architecture. Additionally, Attention's h=4 Winter R² (0.001) is the weakest of any model/season/horizon combination, suggesting its aggregate h=4 improvement over Temporal is not uniform across seasonal conditions.
+
+7. **External validity / near-duplicate stations (thesis Limitations):** External validity audit (`reports/tables/external_validity_audit.json`) confirms the dataset reflects genuine, physically plausible Indian weather: correct geographic bounds, correct identification of Meghalaya as a high-rainfall extreme and western Rajasthan as a low-rainfall extreme, correct monsoon seasonality (8.5x JJAS/DJF ratio), and correct elevation-temperature relationships. One data source limitation was identified: 124 station-ID pairs (typically nearby city/airport aliases, e.g. same city listed under 2+ names, 4-35km apart) share long runs of identical rainfall values, indicating these are not fully independent measurement sources despite being treated as distinct stations in the 414-station panel. This has negligible impact on the project's core temporal train/val/test methodology and significance testing (given the very large effect sizes and p-values reported), and if anything would bias the GNN spatial-extension comparison in the GNN's favor (near-duplicate neighbors are trivially predictive) — the GNN's failure to outperform plain LSTM despite this potential advantage strengthens rather than weakens that finding.
 
 ### Attention interpretability (h=4, seed 42)
 

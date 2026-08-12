@@ -1,0 +1,114 @@
+{
+  "answer_was_interpolation_before_split": true,
+  "pipeline_order": [
+    "Drop missing rainfall (no rainfall interpolation)",
+    "Station_name-wise linear interpolate min_temp, max_temp (limit_direction=both) on FULL series",
+    "Station_name-wise median fill residual min_temp, max_temp on FULL series",
+    "Station_name-wise median fill wind_speed, air_pressure on FULL series",
+    "Global median fallback if needed",
+    "Feature engineering",
+    "Chronological split by TARGET date only when building sequences"
+  ],
+  "train_end": "2022-12-31",
+  "n_rows_after_rainfall_drop": 712785,
+  "n_train_period_rows": 398697,
+  "variables": {
+    "rainfall": {
+      "interpolated": false,
+      "method": "dropna only",
+      "train_rows_future_dependent_fill": 0
+    },
+    "avg_temp": {
+      "interpolated": false,
+      "method": "none (0 missing after rainfall drop)",
+      "train_rows_originally_missing": 0,
+      "train_rows_future_dependent_fill": 0
+    },
+    "min_temp": {
+      "method": "linear interpolate (both) + station median",
+      "train_rows_originally_missing": 12051,
+      "train_rows_future_dependent_fill": 0,
+      "pct_of_all_train_period_rows": 0.0,
+      "pct_of_train_missing_rows": 0.0,
+      "stations_affected": 0
+    },
+    "max_temp": {
+      "method": "linear interpolate (both) + station median",
+      "train_rows_originally_missing": 34641,
+      "train_rows_future_dependent_fill": 0,
+      "pct_of_all_train_period_rows": 0.0,
+      "pct_of_train_missing_rows": 0.0,
+      "stations_affected": 0
+    },
+    "wind_speed": {
+      "method": "station median fill",
+      "train_rows_originally_missing": 84376,
+      "train_rows_future_dependent_fill": 83039,
+      "pct_of_all_train_period_rows": 20.8276,
+      "pct_of_train_missing_rows": 98.4154,
+      "stations_affected": 185
+    },
+    "air_pressure": {
+      "method": "station median fill",
+      "train_rows_originally_missing": 94717,
+      "train_rows_future_dependent_fill": 94717,
+      "pct_of_all_train_period_rows": 23.7566,
+      "pct_of_train_missing_rows": 100.0,
+      "stations_affected": 187
+    }
+  },
+  "temp_linear_component_only": {
+    "min_temp_train_rows": 0,
+    "max_temp_train_rows": 0,
+    "either_train_rows": 0,
+    "stations": 0
+  },
+  "train_row_totals": {
+    "n_train_rows_any_future_dependent_covariate": 94965,
+    "pct_train_rows": 23.8188,
+    "stations_any": 187,
+    "stations_temp": 0,
+    "stations_wind": 185,
+    "stations_pressure": 187
+  },
+  "sequence_impact_h1_train": {
+    "total_train_sequences": 270109,
+    "sequences_with_any_future_dependent_covariate_in_30day_window": 8653,
+    "pct_train_sequences_any_covariate": 3.2035,
+    "sequences_with_future_dependent_LINEAR_temp_in_window": 0,
+    "pct_train_sequences_linear_temp_only": 0.0
+  },
+  "leakage_classification": {
+    "true_target_leakage": false,
+    "covariate_leakage": true,
+    "severity": "minor",
+    "explanation": "Rainfall is never imputed; target day is excluded from X. Only covariates (temps via linear+median; wind/pressure via median) can use post-2022 observations when filling train-period gaps.",
+    "refined": "Dominant path is station-median fill of wind_speed and air_pressure before split. Temperature linear interpolation does not cross the 2022/2023 boundary. Only 3.2% of h=1 train sequences contain any future-dependent covariate day."
+  },
+  "validity_conclusion": {
+    "published_results_remain_valid": true,
+    "caveat": "Directionally valid for model comparison; not free of preprocessing covariate leakage. Do not claim leakage-free preprocessing.",
+    "should_preprocessing_be_changed": true,
+    "recommended_change": "Fit interpolate/median using only dates <= train_end, then transform val/test. Run a sensitivity retrain if thesis claims hinge on exact RMSE."
+  },
+  "median_shift_magnitudes": {
+    "wind_speed_kmh": {
+      "mean_abs_delta": 1.0231,
+      "p50": 0.9,
+      "p95": 2.6,
+      "max": 3.0
+    },
+    "air_pressure_hPa": {
+      "mean_abs_delta": 0.9465,
+      "p50": 0.9,
+      "p95": 1.95,
+      "max": 3.3
+    },
+    "note": "delta = |full-series station median - train-only station median| for train missing rows where they differ"
+  },
+  "temp_linear_cross_split_gaps": {
+    "min_temp": 0,
+    "max_temp": 0,
+    "interpretation": "No train-period missing temperature uses a post-2022 observation as the next linear-interpolation endpoint."
+  }
+}

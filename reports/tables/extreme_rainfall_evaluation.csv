@@ -1,0 +1,29 @@
+# NOTES (do not parse as data; pandas: read_csv(..., comment="#"))
+# R2 values on the Normal subset are negative for all models/horizons. This is an expected statistical artifact of computing R2 on a variance-truncated subset (the 95% of days with lowest rainfall have very low target variance, shrinking R2's denominator disproportionately to the model's absolute error), NOT evidence the models perform poorly on typical days - their absolute RMSE/MAE on the Normal subset (~4.3-5.0 mm RMSE) is in fact considerably better than their Extreme-subset performance (~36-45 mm RMSE), consistent with expectations. RMSE and MAE, not R2, should be used to interpret Normal-vs-Extreme performance in this table.
+# Exception (documented): CNN-LSTM-Temporal h=4 Normal R2 is near-zero positive (~+0.029); interpret with RMSE/MAE anyway.
+# Absolute Extreme-RMSE ranking: LSTM has the lowest absolute Extreme-RMSE at h=1-2; CNN-LSTM+Attention has the lowest absolute Extreme-RMSE at h=3-4.
+Model,Horizon,Subset,N_samples,Threshold_mm,RMSE,MAE,R2
+LSTM,1,Extreme,7069,21.5,36.456773,26.298857,-0.563516
+LSTM,1,Normal,134194,21.5,4.83384,2.644845,-0.372691
+CNN-LSTM-Temporal,1,Extreme,7069,21.5,37.335,26.882149,-0.639752
+CNN-LSTM-Temporal,1,Normal,134194,21.5,4.609552,2.45438,-0.248262
+CNN-LSTM+Attention,1,Extreme,7069,21.5,37.898374,27.627148,-0.689612
+CNN-LSTM+Attention,1,Normal,134194,21.5,4.285557,2.288941,-0.078954
+LSTM,2,Extreme,7062,21.5,40.292513,29.385708,-0.903563
+LSTM,2,Normal,133591,21.5,4.967481,3.210036,-0.447834
+CNN-LSTM-Temporal,2,Extreme,7062,21.5,41.727757,31.04188,-1.041591
+CNN-LSTM-Temporal,2,Normal,133591,21.5,4.408995,2.741649,-0.140579
+CNN-LSTM+Attention,2,Extreme,7062,21.5,41.167433,30.369406,-0.98713
+CNN-LSTM+Attention,2,Normal,133591,21.5,4.574629,2.766173,-0.227886
+LSTM,3,Extreme,7032,21.6,42.608832,31.923063,-1.125378
+LSTM,3,Normal,133261,21.6,4.4614,3.018117,-0.161117
+CNN-LSTM-Temporal,3,Extreme,7032,21.6,42.535334,31.908724,-1.118053
+CNN-LSTM-Temporal,3,Normal,133261,21.6,4.413412,2.698731,-0.136273
+CNN-LSTM+Attention,3,Extreme,7032,21.6,41.251823,30.070522,-0.992156
+CNN-LSTM+Attention,3,Normal,133261,21.6,5.003012,3.249163,-0.460148
+LSTM,4,Extreme,7004,21.700001,43.411198,32.711292,-1.189255
+LSTM,4,Normal,132904,21.700001,4.338289,2.669362,-0.091079
+CNN-LSTM-Temporal,4,Extreme,7004,21.700001,44.701394,34.12048,-1.321319
+CNN-LSTM-Temporal,4,Normal,132904,21.700001,4.092892,2.55394,0.028864
+CNN-LSTM+Attention,4,Extreme,7004,21.700001,42.546561,31.521286,-1.102915
+CNN-LSTM+Attention,4,Normal,132904,21.700001,4.832708,2.898017,-0.353943

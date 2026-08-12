@@ -1,0 +1,730 @@
+{
+  "n_rows": 712785,
+  "n_stations": 414,
+  "global_mean_daily_mm": 5.267532565921,
+  "step1_geographic_bounds": {
+    "bbox_used": {
+      "lat": [
+        6.0,
+        37.5
+      ],
+      "lon": [
+        68.0,
+        97.5
+      ]
+    },
+    "n_outside": 0,
+    "outside_stations": [],
+    "lat_range": [
+      7.9833,
+      34.0833
+    ],
+    "lon_range": [
+      68.85,
+      95.3833
+    ],
+    "pass": true
+  },
+  "step2_known_extremes": {
+    "dataset_mean_scaled_annual_mm": 1807.0992489289108,
+    "dataset_median_scaled_annual_mm": 1483.0189685458427,
+    "meghalaya_or_cherrapunji_region": [
+      {
+        "station_id": "Cherrapunji_25.25_91.73_1312",
+        "station_name": "Cherrapunji",
+        "state": "ML",
+        "latitude": 25.25,
+        "longitude": 91.733,
+        "elevation": 1312.0,
+        "mean_annual_all_years": 2323.238,
+        "mean_annual_ge180days": 4601.225,
+        "n_years": 8,
+        "n_years_ge180": 4,
+        "mean_daily": 12.449,
+        "scaled_annual_mean_daily_x365": 4546.885
+      },
+      {
+        "station_id": "Shillong_25.57_91.88_1598",
+        "station_name": "Shillong",
+        "state": "ML",
+        "latitude": 25.567,
+        "longitude": 91.883,
+        "elevation": 1598.0,
+        "mean_annual_all_years": 1762.427,
+        "mean_annual_ge180days": 2152.889,
+        "n_years": 11,
+        "n_years_ge180": 9,
+        "mean_daily": 7.773,
+        "scaled_annual_mean_daily_x365": 2839.211
+      },
+      {
+        "station_id": "Barapani / Bara Pani_25.7_91.97_893",
+        "station_name": "Barapani / Bara Pani",
+        "state": "ML",
+        "latitude": 25.7,
+        "longitude": 91.967,
+        "elevation": 893.0,
+        "mean_annual_all_years": 1998.6,
+        "mean_annual_ge180days": 2496.875,
+        "n_years": 5,
+        "n_years_ge180": 4,
+        "mean_daily": 6.711,
+        "scaled_annual_mean_daily_x365": 2451.271
+      }
+    ],
+    "rajasthan_desert_region": [
+      {
+        "station_id": "Ajmer_26.45_74.62_485",
+        "station_name": "Ajmer",
+        "state": "RJ",
+        "latitude": 26.45,
+        "longitude": 74.617,
+        "elevation": 485.0,
+        "mean_annual_all_years": 569.02,
+        "mean_annual_ge180days": 869.875,
+        "n_years": 10,
+        "n_years_ge180": 4,
+        "mean_daily": 3.109,
+        "scaled_annual_mean_daily_x365": 1135.708
+      },
+      {
+        "station_id": "Jodhpur_26.3_73.02_217",
+        "station_name": "Jodhpur",
+        "state": "RJ",
+        "latitude": 26.3,
+        "longitude": 73.017,
+        "elevation": 217.0,
+        "mean_annual_all_years": 373.927,
+        "mean_annual_ge180days": 494.85,
+        "n_years": 11,
+        "n_years_ge180": 4,
+        "mean_daily": 2.27,
+        "scaled_annual_mean_daily_x365": 829.109
+      },
+      {
+        "station_id": "Churu_28.25_74.92_290",
+        "station_name": "Churu",
+        "state": "RJ",
+        "latitude": 28.25,
+        "longitude": 74.917,
+        "elevation": 290.0,
+        "mean_annual_all_years": 337.773,
+        "mean_annual_ge180days": 533.575,
+        "n_years": 11,
+        "n_years_ge180": 4,
+        "mean_daily": 2.006,
+        "scaled_annual_mean_daily_x365": 732.768
+      },
+      {
+        "station_id": "Jaisalmer_26.9_70.92_231",
+        "station_name": "Jaisalmer",
+        "state": "RJ",
+        "latitude": 26.9,
+        "longitude": 70.917,
+        "elevation": 231.0,
+        "mean_annual_all_years": 283.891,
+        "mean_annual_ge180days": 413.225,
+        "n_years": 11,
+        "n_years_ge180": 4,
+        "mean_daily": 1.797,
+        "scaled_annual_mean_daily_x365": 656.273
+      },
+      {
+        "station_id": "Barmer_25.75_71.38_193",
+        "station_name": "Barmer",
+        "state": "RJ",
+        "latitude": 25.75,
+        "longitude": 71.383,
+        "elevation": 193.0,
+        "mean_annual_all_years": 298.4,
+        "mean_annual_ge180days": 428.525,
+        "n_years": 10,
+        "n_years_ge180": 4,
+        "mean_daily": 1.776,
+        "scaled_annual_mean_daily_x365": 648.754
+      },
+      {
+        "station_id": "Sikar_27.62_75.13_431",
+        "station_name": "Sikar",
+        "state": "RJ",
+        "latitude": 27.617,
+        "longitude": 75.133,
+        "elevation": 431.0,
+        "mean_annual_all_years": 395.84,
+        "mean_annual_ge180days": 489.3,
+        "n_years": 5,
+        "n_years_ge180": 4,
+        "mean_daily": 1.329,
+        "scaled_annual_mean_daily_x365": 485.496
+      },
+      {
+        "station_id": "Bikaner_28.0_73.3_223",
+        "station_name": "Bikaner",
+        "state": "RJ",
+        "latitude": 28.0,
+        "longitude": 73.3,
+        "elevation": 223.0,
+        "mean_annual_all_years": 157.83,
+        "mean_annual_ge180days": 307.225,
+        "n_years": 10,
+        "n_years_ge180": 4,
+        "mean_daily": 1.021,
+        "scaled_annual_mean_daily_x365": 372.881
+      },
+      {
+        "station_id": "Phalodi_27.13_72.37_233",
+        "station_name": "Phalodi",
+        "state": "RJ",
+        "latitude": 27.133,
+        "longitude": 72.367,
+        "elevation": 233.0,
+        "mean_annual_all_years": 217.22,
+        "mean_annual_ge180days": 271.475,
+        "n_years": 5,
+        "n_years_ge180": 4,
+        "mean_daily": 0.729,
+        "scaled_annual_mean_daily_x365": 266.419
+      }
+    ],
+    "wet_notably_higher_than_dataset_mean": true,
+    "dry_notably_lower_than_dataset_mean": true,
+    "wet_note": "Wet-region stations scaled annual mean range 2451\u20134547 mm vs dataset mean 1807 mm",
+    "dry_note": "Dry-region stations scaled annual mean range 266\u20131136 mm vs dataset mean 1807 mm",
+    "pass": true,
+    "caveat": "Annual totals use observed days only; sparse years understate true annual rainfall. scaled_annual_mean_daily_x365 = mean_daily * 365.25 is the primary cross-station intensity metric."
+  },
+  "step3_seasonal": {
+    "mean_daily_mm_by_month": {
+      "Jan": 0.9994896207273295,
+      "Feb": 0.6861418156161806,
+      "Mar": 1.1420048579970103,
+      "Apr": 1.8128073152337858,
+      "May": 4.408398611280727,
+      "Jun": 8.56251345532831,
+      "Jul": 12.69865896867633,
+      "Aug": 9.854699643608571,
+      "Sep": 8.898538767868759,
+      "Oct": 4.994860669660125,
+      "Nov": 2.9691487388724034,
+      "Dec": 1.842821375186846
+    },
+    "jjas_mean_daily_mm": 10.003602708870492,
+    "djf_mean_daily_mm": 1.1761509371767853,
+    "jjas_over_djf_ratio": 8.505373241365591,
+    "pass": true,
+    "note": "JJAS/DJF ratio = 8.51x (pass if >= 3)"
+  },
+  "step4_temperature_elevation": {
+    "highest_elevation_stations": [
+      {
+        "station_id": "Shimla_31.1_77.17_2205",
+        "station_name": "Shimla",
+        "state": "HP",
+        "elevation": 2205,
+        "latitude": 31.1,
+        "longitude": 77.1667
+      },
+      {
+        "station_id": "Udhagamandalam_11.4_76.73_2236",
+        "station_name": "Udhagamandalam",
+        "state": "TN",
+        "elevation": 2236,
+        "latitude": 11.4,
+        "longitude": 76.7333
+      },
+      {
+        "station_id": "Mukteshwar Kumaon_29.47_79.65_2310",
+        "station_name": "Mukteshwar Kumaon",
+        "state": "UP",
+        "elevation": 2310,
+        "latitude": 29.4667,
+        "longitude": 79.65
+      },
+      {
+        "station_id": "Kodaikanal_10.23_77.47_2339",
+        "station_name": "Kodaikanal",
+        "state": "TN",
+        "elevation": 2339,
+        "latitude": 10.2333,
+        "longitude": 77.4667
+      },
+      {
+        "station_id": "Gulmarg_34.05_74.4_2652",
+        "station_name": "Gulmarg",
+        "state": "JK",
+        "elevation": 2652,
+        "latitude": 34.05,
+        "longitude": 74.4
+      }
+    ],
+    "lowest_nonzero_elevation_stations": [
+      {
+        "station_id": "Minicoy_8.3_73.15_1",
+        "station_name": "Minicoy",
+        "state": "LD",
+        "elevation": 1,
+        "latitude": 8.3,
+        "longitude": 73.15
+      },
+      {
+        "station_id": "Cochin / Willingdon_9.95_76.27_1",
+        "station_name": "Cochin / Willingdon",
+        "state": "KL",
+        "elevation": 1,
+        "latitude": 9.95,
+        "longitude": 76.2667
+      },
+      {
+        "station_id": "Fort Cochin_9.97_76.23_2",
+        "station_name": "Fort Cochin",
+        "state": "KL",
+        "elevation": 2,
+        "latitude": 9.9667,
+        "longitude": 76.2333
+      },
+      {
+        "station_id": "Kakinada_16.95_82.23_2",
+        "station_name": "Kakinada",
+        "state": "AP",
+        "elevation": 2,
+        "latitude": 16.95,
+        "longitude": 82.2333
+      },
+      {
+        "station_id": "Alapuzha_9.55_76.42_2",
+        "station_name": "Alapuzha",
+        "state": "KL",
+        "elevation": 2,
+        "latitude": 9.55,
+        "longitude": 76.4167
+      }
+    ],
+    "mean_avg_temp_high5": 13.108706411698536,
+    "mean_avg_temp_low5": 27.45775147928994,
+    "high5_colder_than_low5": true,
+    "delta_high_minus_low_C": -14.349045067591403,
+    "latitude_controlled_checks": [
+      {
+        "high_station": "Shimla_31.1_77.17_2205",
+        "high_name": "Shimla",
+        "high_elev": 2205.0,
+        "high_lat": 31.1,
+        "high_mean_avg_temp": 14.52106450157871,
+        "low_comparators": [
+          "Tehri_30.4_78.48_0",
+          "Bhuntar_31.83_77.17_0",
+          "Manali_32.27_77.17_0"
+        ],
+        "low_mean_avg_temp": 21.371650943396222,
+        "high_colder": true,
+        "delta_C": -6.850586441817512
+      },
+      {
+        "high_station": "Udhagamandalam_11.4_76.73_2236",
+        "high_name": "Udhagamandalam",
+        "high_elev": 2236.0,
+        "high_lat": 11.4,
+        "high_mean_avg_temp": 15.0125,
+        "low_comparators": [
+          "Parangipettai_11.5_79.77_3",
+          "Nilambur_11.28_76.23_0",
+          "Kozhikode_11.25_75.78_4"
+        ],
+        "low_mean_avg_temp": 27.74010918432884,
+        "high_colder": true,
+        "delta_C": -12.727609184328841
+      },
+      {
+        "high_station": "Mukteshwar Kumaon_29.47_79.65_2310",
+        "high_name": "Mukteshwar Kumaon",
+        "high_elev": 2310.0,
+        "high_lat": 29.4667,
+        "high_mean_avg_temp": 14.429334540516072,
+        "low_comparators": [
+          "Moradabad_28.83_78.75_0",
+          "Rohtak_28.83_76.58_0",
+          "Tehri_30.4_78.48_0"
+        ],
+        "low_mean_avg_temp": 23.13199717047866,
+        "high_colder": true,
+        "delta_C": -8.702662629962587
+      },
+      {
+        "high_station": "Kodaikanal_10.23_77.47_2339",
+        "high_name": "Kodaikanal",
+        "high_elev": 2339.0,
+        "high_lat": 10.2333,
+        "high_mean_avg_temp": 13.336155913978494,
+        "low_comparators": [
+          "Cochin Int. Airport / K?ladi_10.15_76.4_8",
+          "Atiramapattinam_10.33_79.38_4",
+          "Fort Cochin_9.97_76.23_2"
+        ],
+        "low_mean_avg_temp": 26.889182530795075,
+        "high_colder": true,
+        "delta_C": -13.553026616816581
+      },
+      {
+        "high_station": "Gulmarg_34.05_74.4_2652",
+        "high_name": "Gulmarg",
+        "high_elev": 2652.0,
+        "high_lat": 34.05,
+        "high_mean_avg_temp": 6.912634408602151,
+        "low_comparators": [
+          "Qazi Gund_33.58_75.08_0",
+          "Manali_32.27_77.17_0",
+          "Bhuntar_31.83_77.17_0"
+        ],
+        "low_mean_avg_temp": 21.531074168797954,
+        "high_colder": true,
+        "delta_C": -14.618439760195802
+      }
+    ],
+    "pass": true
+  },
+  "step5_duplicate_sequences": {
+    "min_run_days": 30,
+    "criterion": "FAIL if two distinct station_ids share >=30 consecutive calendar days with identical rainfall AND the matching run contains at least one non-zero day (all-zero dry spells are expected and ignored)",
+    "n_pairs_with_ge30_consecutive_identical_nonzero_rain_runs": 124,
+    "top_pairs": [
+      {
+        "station_a": "M. O. Ranchi_23.32_85.32_652",
+        "station_b": "Ranchi / Silwai_23.43_85.4_647",
+        "max_consecutive_identical_rain_days_nonzero_run": 1441,
+        "max_consecutive_identical_including_zeros": 1441,
+        "run_start": "2021-01-02",
+        "run_end": "2024-12-12",
+        "n_shared_dates": 2242,
+        "n_shared_exact_equal_rain": 2242,
+        "distance_km": 15.50449935193026,
+        "name_a": "M. O. Ranchi",
+        "name_b": "Ranchi / Silwai"
+      },
+      {
+        "station_a": "Udaipur_24.58_73.7_581",
+        "station_b": "Udaipur Dabok_24.62_73.88_509",
+        "max_consecutive_identical_rain_days_nonzero_run": 1438,
+        "max_consecutive_identical_including_zeros": 1438,
+        "run_start": "2021-01-02",
+        "run_end": "2024-12-09",
+        "n_shared_dates": 1987,
+        "n_shared_exact_equal_rain": 1987,
+        "distance_km": 18.900554724072645,
+        "name_a": "Udaipur",
+        "name_b": "Udaipur Dabok"
+      },
+      {
+        "station_a": "Udaipur Dabok_24.62_73.88_509",
+        "station_b": "Udaipur_24.58_73.7_581",
+        "max_consecutive_identical_rain_days_nonzero_run": 1438,
+        "max_consecutive_identical_including_zeros": 1438,
+        "run_start": "2021-01-02",
+        "run_end": "2024-12-09",
+        "n_shared_dates": 1987,
+        "n_shared_exact_equal_rain": 1987,
+        "distance_km": 18.900554724072645,
+        "name_a": "Udaipur Dabok",
+        "name_b": "Udaipur"
+      },
+      {
+        "station_a": "Cochin / Willingdon_9.95_76.27_1",
+        "station_b": "Fort Cochin_9.97_76.23_2",
+        "max_consecutive_identical_rain_days_nonzero_run": 1334,
+        "max_consecutive_identical_including_zeros": 1334,
+        "run_start": "2021-01-02",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1489,
+        "distance_km": 4.102307034378297,
+        "name_a": "Cochin / Willingdon",
+        "name_b": "Fort Cochin"
+      },
+      {
+        "station_a": "Calicut / Kondotti_11.14_75.96_104",
+        "station_b": "Nilambur_11.28_76.23_0",
+        "max_consecutive_identical_rain_days_nonzero_run": 1333,
+        "max_consecutive_identical_including_zeros": 1333,
+        "run_start": "2021-01-03",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1488,
+        "n_shared_exact_equal_rain": 1488,
+        "distance_km": 34.42113248490793,
+        "name_a": "Calicut / Kondotti",
+        "name_b": "Nilambur"
+      },
+      {
+        "station_a": "Daman / Dam?n_20.43_72.84_10",
+        "station_b": "Daman_20.42_72.85_0",
+        "max_consecutive_identical_rain_days_nonzero_run": 1169,
+        "max_consecutive_identical_including_zeros": 1169,
+        "run_start": "2021-06-16",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1326,
+        "n_shared_exact_equal_rain": 1326,
+        "distance_km": 2.0918193547716473,
+        "name_a": "Daman / Dam?n",
+        "name_b": "Daman"
+      },
+      {
+        "station_a": "Daman_20.42_72.85_0",
+        "station_b": "Daman / Dam?n_20.43_72.84_10",
+        "max_consecutive_identical_rain_days_nonzero_run": 1169,
+        "max_consecutive_identical_including_zeros": 1169,
+        "run_start": "2021-06-16",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1326,
+        "n_shared_exact_equal_rain": 1326,
+        "distance_km": 2.0918193547716473,
+        "name_a": "Daman",
+        "name_b": "Daman / Dam?n"
+      },
+      {
+        "station_a": "Nagpur Mayo Hospital_21.15_79.12_311",
+        "station_b": "Nagpur Sonegaon_21.1_79.05_308",
+        "max_consecutive_identical_rain_days_nonzero_run": 927,
+        "max_consecutive_identical_including_zeros": 927,
+        "run_start": "2022-05-28",
+        "run_end": "2024-12-09",
+        "n_shared_dates": 1185,
+        "n_shared_exact_equal_rain": 1185,
+        "distance_km": 8.875430472595385,
+        "name_a": "Nagpur Mayo Hospital",
+        "name_b": "Nagpur Sonegaon"
+      },
+      {
+        "station_a": "Bellary_15.15_76.85_448",
+        "station_b": "Jindal Vijaynagar_15.18_76.63_489",
+        "max_consecutive_identical_rain_days_nonzero_run": 841,
+        "max_consecutive_identical_including_zeros": 841,
+        "run_start": "2022-05-10",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1267,
+        "distance_km": 23.43333624394767,
+        "name_a": "Bellary",
+        "name_b": "Jindal Vijaynagar"
+      },
+      {
+        "station_a": "Lucknow_26.87_80.93_110",
+        "station_b": "Lucknow / Amausi_26.75_80.88_122",
+        "max_consecutive_identical_rain_days_nonzero_run": 826,
+        "max_consecutive_identical_including_zeros": 826,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-30",
+        "n_shared_dates": 1704,
+        "n_shared_exact_equal_rain": 1704,
+        "distance_km": 13.892856771141382,
+        "name_a": "Lucknow",
+        "name_b": "Lucknow / Amausi"
+      },
+      {
+        "station_a": "Lucknow / Amausi_26.75_80.88_122",
+        "station_b": "Lucknow_26.87_80.93_110",
+        "max_consecutive_identical_rain_days_nonzero_run": 826,
+        "max_consecutive_identical_including_zeros": 826,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-30",
+        "n_shared_dates": 1704,
+        "n_shared_exact_equal_rain": 1704,
+        "distance_km": 13.892856771141382,
+        "name_a": "Lucknow / Amausi",
+        "name_b": "Lucknow"
+      },
+      {
+        "station_a": "Coimbatore_11.0_76.97_407",
+        "station_b": "Coimbatore / Peelamedu_11.03_77.05_396",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 2145,
+        "n_shared_exact_equal_rain": 2145,
+        "distance_km": 9.816939191943586,
+        "name_a": "Coimbatore",
+        "name_b": "Coimbatore / Peelamedu"
+      },
+      {
+        "station_a": "Baroda / Vadodara_22.3_73.25_34",
+        "station_b": "Baroda Aerodrome_22.33_73.27_37",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1489,
+        "distance_km": 4.081878579921215,
+        "name_a": "Baroda / Vadodara",
+        "name_b": "Baroda Aerodrome"
+      },
+      {
+        "station_a": "Moradabad_28.83_78.75_0",
+        "station_b": "Rampur_28.75_79.0_191",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1304,
+        "n_shared_exact_equal_rain": 1304,
+        "distance_km": 26.06356266155354,
+        "name_a": "Moradabad",
+        "name_b": "Rampur"
+      },
+      {
+        "station_a": "Kanpur / Chakeri_26.4_80.4_123",
+        "station_b": "Kanpur_26.43_80.37_125",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1489,
+        "distance_km": 4.970668411722505,
+        "name_a": "Kanpur / Chakeri",
+        "name_b": "Kanpur"
+      },
+      {
+        "station_a": "Agra_27.15_77.97_168",
+        "station_b": "Agra_27.17_78.03_168",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 980,
+        "n_shared_exact_equal_rain": 980,
+        "distance_km": 6.845771357128403,
+        "name_a": "Agra",
+        "name_b": "Agra"
+      },
+      {
+        "station_a": "Aurangabad_19.88_75.33_579",
+        "station_b": "Aurangabad Chikalthan Aerodrome_19.85_75.4_582",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1571,
+        "n_shared_exact_equal_rain": 1571,
+        "distance_km": 7.897185246784615,
+        "name_a": "Aurangabad",
+        "name_b": "Aurangabad Chikalthan Aerodrome"
+      },
+      {
+        "station_a": "Jamshedpur_22.82_86.18_128",
+        "station_b": "Jamshedpur_22.82_86.18_140",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1489,
+        "distance_km": 0.0,
+        "name_a": "Jamshedpur",
+        "name_b": "Jamshedpur"
+      },
+      {
+        "station_a": "Pbo Raipur_21.22_81.67_294",
+        "station_b": "Raipur / Phundardih_21.22_81.67_294",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1491,
+        "n_shared_exact_equal_rain": 1491,
+        "distance_km": 0.0,
+        "name_a": "Pbo Raipur",
+        "name_b": "Raipur / Phundardih"
+      },
+      {
+        "station_a": "Dharmpur_30.9_77.02_1986",
+        "station_b": "Shimla_31.1_77.17_2205",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 2217,
+        "n_shared_exact_equal_rain": 2217,
+        "distance_km": 26.438103283902798,
+        "name_a": "Dharmpur",
+        "name_b": "Shimla"
+      },
+      {
+        "station_a": "Kanpur_26.43_80.37_125",
+        "station_b": "Kanpur / Chakeri_26.4_80.4_123",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1489,
+        "distance_km": 4.970668411722505,
+        "name_a": "Kanpur",
+        "name_b": "Kanpur / Chakeri"
+      },
+      {
+        "station_a": "Jamshedpur_22.82_86.18_140",
+        "station_b": "Jamshedpur_22.82_86.18_128",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1489,
+        "n_shared_exact_equal_rain": 1489,
+        "distance_km": 0.0,
+        "name_a": "Jamshedpur",
+        "name_b": "Jamshedpur"
+      },
+      {
+        "station_a": "Aurangabad Chikalthan Aerodrome_19.85_75.4_582",
+        "station_b": "Aurangabad_19.88_75.33_579",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 1571,
+        "n_shared_exact_equal_rain": 1571,
+        "distance_km": 7.897185246784615,
+        "name_a": "Aurangabad Chikalthan Aerodrome",
+        "name_b": "Aurangabad"
+      },
+      {
+        "station_a": "Coimbatore / Peelamedu_11.03_77.05_396",
+        "station_b": "Coimbatore_11.0_76.97_407",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 2145,
+        "n_shared_exact_equal_rain": 2145,
+        "distance_km": 9.816939191943586,
+        "name_a": "Coimbatore / Peelamedu",
+        "name_b": "Coimbatore"
+      },
+      {
+        "station_a": "Akola_20.7_77.03_280",
+        "station_b": "Akola_20.7_77.07_305",
+        "max_consecutive_identical_rain_days_nonzero_run": 823,
+        "max_consecutive_identical_including_zeros": 823,
+        "run_start": "2022-05-28",
+        "run_end": "2024-08-27",
+        "n_shared_dates": 2010,
+        "n_shared_exact_equal_rain": 1816,
+        "distance_km": 3.474155448820351,
+        "name_a": "Akola",
+        "name_b": "Akola"
+      }
+    ],
+    "pass": false
+  },
+  "step6_summary": {
+    "checks": {
+      "geographic_bounds": true,
+      "known_extremes": true,
+      "seasonal_monsoon": true,
+      "temperature_elevation": true,
+      "no_copied_rainfall_runs": false
+    },
+    "n_passed": 4,
+    "n_total": 5,
+    "overall_verdict": "MIXED \u2014 broadly plausible Indian weather patterns, but one or more external checks failed and need disclosure"
+  }
+}

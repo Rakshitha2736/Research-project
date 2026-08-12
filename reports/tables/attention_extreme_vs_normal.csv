@@ -1,0 +1,13 @@
+# NOTES (pandas: read_csv(..., comment="#"))
+# Attention Extreme vs Normal split uses the same true-target 95th-percentile thresholds as extreme_rainfall_evaluation.csv.
+# Day-position convention: 1=most recent ... 30=oldest (matches attention_weights_h4_mean.png).
+# Provenance: h=1 and h=4 reuse saved attention_weights_h*_seed42.npy; h=2 and h=3 from a separate CUDA+autocast inference session (analyze_attention_extreme_vs_normal.py) on the same seed-42 Attention checkpoints — distinct run, not literally reused arrays from significance testing; deterministic in eval mode (no dropout/BN).
+Horizon,Subset,Peak_Day_Position,Recent_7d_Share,Oldest_7d_Share,N_samples
+1,Extreme,1,0.607733,0.142364,7069
+1,Normal,1,0.609293,0.131247,134194
+2,Extreme,1,0.242903,0.235883,7062
+2,Normal,1,0.237383,0.234421,133591
+3,Extreme,1,0.268745,0.222442,7032
+3,Normal,1,0.255524,0.227305,133261
+4,Extreme,30,0.238092,0.246279,7004
+4,Normal,30,0.233245,0.246397,132904

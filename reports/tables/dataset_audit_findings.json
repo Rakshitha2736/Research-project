@@ -1,0 +1,729 @@
+{
+  "excel_meta": {
+    "sheets": [
+      "Sheet1"
+    ],
+    "creator": "openpyxl",
+    "title": null,
+    "subject": null,
+    "description": null,
+    "keywords": null,
+    "category": null,
+    "lastModifiedBy": "Amey Morye",
+    "created": "2025-02-11 14:18:47",
+    "modified": "2025-02-11 14:30:49",
+    "bytes": 64579550
+  },
+  "raw": {
+    "shape": [
+      970339,
+      15
+    ],
+    "columns": [
+      "date_of_record",
+      "month",
+      "season",
+      "station_name",
+      "state",
+      "district",
+      "avg_temp",
+      "min_temp",
+      "max_temp",
+      "wind_speed",
+      "air_pressure",
+      "elevation",
+      "latitude",
+      "longitude",
+      "rainfall"
+    ],
+    "dtypes": {
+      "date_of_record": "datetime64[us]",
+      "month": "str",
+      "season": "str",
+      "station_name": "str",
+      "state": "str",
+      "district": "str",
+      "avg_temp": "float64",
+      "min_temp": "float64",
+      "max_temp": "float64",
+      "wind_speed": "float64",
+      "air_pressure": "float64",
+      "elevation": "int64",
+      "latitude": "float64",
+      "longitude": "float64",
+      "rainfall": "float64"
+    },
+    "missing": {
+      "date_of_record": 0,
+      "month": 0,
+      "season": 0,
+      "station_name": 0,
+      "state": 0,
+      "district": 0,
+      "avg_temp": 0,
+      "min_temp": 43898,
+      "max_temp": 110598,
+      "wind_speed": 274444,
+      "air_pressure": 304664,
+      "elevation": 0,
+      "latitude": 0,
+      "longitude": 0,
+      "rainfall": 257554
+    },
+    "missing_pct": {
+      "date_of_record": 0.0,
+      "month": 0.0,
+      "season": 0.0,
+      "station_name": 0.0,
+      "state": 0.0,
+      "district": 0.0,
+      "avg_temp": 0.0,
+      "min_temp": 4.523985947179285,
+      "max_temp": 11.397872289993497,
+      "wind_speed": 28.283311296361376,
+      "air_pressure": 31.397686787813335,
+      "elevation": 0.0,
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "rainfall": 26.54268250580467
+    },
+    "full_dup_rows": 0,
+    "head": [
+      {
+        "date_of_record": "2021-01-02",
+        "month": "January",
+        "season": "Winter",
+        "station_name": "Gulmarg",
+        "state": "JK",
+        "district": "Baramulla",
+        "avg_temp": "-2.2",
+        "min_temp": "-6.6",
+        "max_temp": "-0.8",
+        "wind_speed": "2.2",
+        "air_pressure": "1020.0",
+        "elevation": "2652",
+        "latitude": "34.05",
+        "longitude": "74.4",
+        "rainfall": "0.1"
+      },
+      {
+        "date_of_record": "2021-01-03",
+        "month": "January",
+        "season": "Winter",
+        "station_name": "Gulmarg",
+        "state": "JK",
+        "district": "Baramulla",
+        "avg_temp": "-3.6",
+        "min_temp": "-4.6",
+        "max_temp": "-1.8",
+        "wind_speed": "3.7",
+        "air_pressure": "1019.5",
+        "elevation": "2652",
+        "latitude": "34.05",
+        "longitude": "74.4",
+        "rainfall": "4.4"
+      },
+      {
+        "date_of_record": "2021-01-04",
+        "month": "January",
+        "season": "Winter",
+        "station_name": "Gulmarg",
+        "state": "JK",
+        "district": "Baramulla",
+        "avg_temp": "-3.0",
+        "min_temp": "-4.5",
+        "max_temp": "-1.1",
+        "wind_speed": "2.1",
+        "air_pressure": "1022.0",
+        "elevation": "2652",
+        "latitude": "34.05",
+        "longitude": "74.4",
+        "rainfall": "2.3"
+      },
+      {
+        "date_of_record": "2021-01-05",
+        "month": "January",
+        "season": "Winter",
+        "station_name": "Gulmarg",
+        "state": "JK",
+        "district": "Baramulla",
+        "avg_temp": "-3.3",
+        "min_temp": "-5.1",
+        "max_temp": "-1.2",
+        "wind_speed": "2.8",
+        "air_pressure": "1015.6",
+        "elevation": "2652",
+        "latitude": "34.05",
+        "longitude": "74.4",
+        "rainfall": "35.0"
+      },
+      {
+        "date_of_record": "2021-01-06",
+        "month": "January",
+        "season": "Winter",
+        "station_name": "Gulmarg",
+        "state": "JK",
+        "district": "Baramulla",
+        "avg_temp": "-3.9",
+        "min_temp": "-8.3",
+        "max_temp": "-1.0",
+        "wind_speed": "3.4",
+        "air_pressure": "1015.3",
+        "elevation": "2652",
+        "latitude": "34.05",
+        "longitude": "74.4",
+        "rainfall": "25.5"
+      }
+    ],
+    "date_min": "2015-01-01 00:00:00",
+    "date_max": "2025-02-10 00:00:00",
+    "date_nat": 0,
+    "n_station_name": 406,
+    "n_state": 32,
+    "n_district": 314
+  },
+  "clean": {
+    "shape": [
+      712785,
+      15
+    ],
+    "columns": [
+      "date_of_record",
+      "month",
+      "season",
+      "station_name",
+      "state",
+      "district",
+      "avg_temp",
+      "min_temp",
+      "max_temp",
+      "wind_speed",
+      "air_pressure",
+      "elevation",
+      "latitude",
+      "longitude",
+      "rainfall"
+    ],
+    "date_min": "2015-01-01",
+    "date_max": "2025-02-10",
+    "years_span": 10.11088295687885,
+    "n_station_name": 406,
+    "full_dup_rows": 0,
+    "missing": {
+      "date_of_record": 0,
+      "month": 0,
+      "season": 0,
+      "station_name": 0,
+      "state": 0,
+      "district": 0,
+      "avg_temp": 0,
+      "min_temp": 0,
+      "max_temp": 0,
+      "wind_speed": 0,
+      "air_pressure": 0,
+      "elevation": 0,
+      "latitude": 0,
+      "longitude": 0,
+      "rainfall": 0
+    }
+  },
+  "feat": {
+    "shape": [
+      712785,
+      16
+    ],
+    "n_station_id": 414,
+    "n_station_name": 406,
+    "n_state": 32,
+    "states": [
+      "AN",
+      "AP",
+      "AR",
+      "AS",
+      "BR",
+      "CH",
+      "CT",
+      "DD",
+      "DL",
+      "GA",
+      "GJ",
+      "HP",
+      "HR",
+      "JK",
+      "KA",
+      "KL",
+      "LD",
+      "MH",
+      "ML",
+      "MN",
+      "MP",
+      "MZ",
+      "NL",
+      "OR",
+      "PB",
+      "PY",
+      "RJ",
+      "SK",
+      "TN",
+      "TR",
+      "UP",
+      "WB"
+    ],
+    "date_min": "2015-01-01",
+    "date_max": "2025-02-10",
+    "years_span": 10.11088295687885,
+    "dup_station_date": 0
+  },
+  "geo": {
+    "lat": {
+      "count": 712785,
+      "missing": 0,
+      "min": 7.9833,
+      "p01": 8.4667,
+      "p50": 21.65,
+      "p99": 33.5833,
+      "max": 34.0833,
+      "mean": 20.756896576246696,
+      "std": 6.411394012601552,
+      "neg": 0,
+      "zero": 0
+    },
+    "lon": {
+      "count": 712785,
+      "missing": 0,
+      "min": 68.85,
+      "p01": 69.6667,
+      "p50": 78.0833,
+      "p99": 94.1167,
+      "max": 95.3833,
+      "mean": 79.67896467027225,
+      "std": 5.968168486240146,
+      "neg": 0,
+      "zero": 0
+    },
+    "elev": {
+      "count": 712785,
+      "missing": 0,
+      "min": 0.0,
+      "p01": 0.0,
+      "p50": 140.0,
+      "p99": 2205.0,
+      "max": 2652.0,
+      "mean": 310.456847436464,
+      "std": 431.23609731178857,
+      "neg": 0,
+      "zero": 59198
+    },
+    "lat_outside_india": 0,
+    "lon_outside_india": 0,
+    "elev_zero": 59198,
+    "elev_neg": 0,
+    "unique_coords": 411,
+    "stations_per_unique_coord": 1.0072992700729928
+  },
+  "station_name_collisions": {
+    "n_names_with_multiple_coords": 8,
+    "examples": [
+      {
+        "station_name": "Agra",
+        "latitude": 2,
+        "longitude": 2,
+        "elevation": 1
+      },
+      {
+        "station_name": "Akola",
+        "latitude": 1,
+        "longitude": 2,
+        "elevation": 2
+      },
+      {
+        "station_name": "Car Nicobar",
+        "latitude": 2,
+        "longitude": 2,
+        "elevation": 2
+      },
+      {
+        "station_name": "Jamshedpur",
+        "latitude": 1,
+        "longitude": 1,
+        "elevation": 2
+      },
+      {
+        "station_name": "Madurai",
+        "latitude": 2,
+        "longitude": 2,
+        "elevation": 2
+      },
+      {
+        "station_name": "Siliguri",
+        "latitude": 2,
+        "longitude": 2,
+        "elevation": 2
+      },
+      {
+        "station_name": "Srinagar",
+        "latitude": 2,
+        "longitude": 2,
+        "elevation": 2
+      },
+      {
+        "station_name": "Thiruvananthapuram",
+        "latitude": 2,
+        "longitude": 1,
+        "elevation": 2
+      }
+    ],
+    "delta_name_to_id": 8
+  },
+  "distributions_clean": {
+    "avg_temp": {
+      "count": 712785,
+      "missing": 0,
+      "min": -10.4,
+      "p01": 9.3,
+      "p50": 26.6,
+      "p99": 35.2,
+      "max": 43.2,
+      "mean": 25.457442145948637,
+      "std": 5.315845996003386,
+      "neg": 429,
+      "zero": 12
+    },
+    "min_temp": {
+      "count": 712785,
+      "missing": 0,
+      "min": -18.5,
+      "p01": 3.5,
+      "p50": 22.6,
+      "p99": 29.3,
+      "max": 36.6,
+      "mean": 20.858593054006466,
+      "std": 5.823979821587295,
+      "neg": 2573,
+      "zero": 162
+    },
+    "max_temp": {
+      "count": 712785,
+      "missing": 0,
+      "min": -5.6,
+      "p01": 15.2,
+      "p50": 31.1,
+      "p99": 42.4,
+      "max": 52.4,
+      "mean": 30.849958192161736,
+      "std": 5.357317868044734,
+      "neg": 144,
+      "zero": 10
+    },
+    "wind_speed": {
+      "count": 712785,
+      "missing": 0,
+      "min": 0.0,
+      "p01": 2.5,
+      "p50": 8.4,
+      "p99": 26.4,
+      "max": 66.6,
+      "mean": 9.478510420393247,
+      "std": 4.865475590863038,
+      "neg": 0,
+      "zero": 50
+    },
+    "air_pressure": {
+      "count": 712785,
+      "missing": 0,
+      "min": 960.8,
+      "p01": 997.4,
+      "p50": 1009.4,
+      "p99": 1020.0,
+      "max": 1036.5,
+      "mean": 1009.3823643174309,
+      "std": 4.950475566999654,
+      "neg": 0,
+      "zero": 0
+    },
+    "rainfall": {
+      "count": 712785,
+      "missing": 0,
+      "min": 0.0,
+      "p01": 0.0,
+      "p50": 0.0,
+      "p99": 68.1,
+      "max": 485.9,
+      "mean": 5.267532565921,
+      "std": 14.444142068063776,
+      "neg": 0,
+      "zero": 366240
+    },
+    "elevation": {
+      "count": 712785,
+      "missing": 0,
+      "min": 0.0,
+      "p01": 0.0,
+      "p50": 140.0,
+      "p99": 2205.0,
+      "max": 2652.0,
+      "mean": 310.456847436464,
+      "std": 431.23609731178857,
+      "neg": 0,
+      "zero": 59198
+    }
+  },
+  "impossible": {
+    "rainfall_neg": 0,
+    "rainfall_gt_500": 0,
+    "rainfall_gt_1000": 0,
+    "rainfall_max": 485.9,
+    "min_gt_max_temp": 438,
+    "avg_outside_min_max": 3356,
+    "temp_lt_m40": 0,
+    "temp_gt_60": 0,
+    "wind_neg": 0,
+    "wind_gt_100": 0,
+    "pressure_lt_800": 0,
+    "pressure_gt_1100": 0,
+    "pressure_units_hint_mean": 1009.3823643174309
+  },
+  "impossible_raw": {
+    "rainfall_neg": 0,
+    "rainfall_gt_500": 0,
+    "rainfall_max": 485.9,
+    "min_gt_max_temp": 1,
+    "avg_outside_minmax": 46
+  },
+  "spatial": {
+    "stations_per_state": {
+      "MP": 41,
+      "MH": 40,
+      "AP": 34,
+      "KA": 34,
+      "UP": 32,
+      "TN": 30,
+      "GJ": 25,
+      "WB": 25,
+      "RJ": 22,
+      "BR": 17,
+      "KL": 17,
+      "OR": 16,
+      "AS": 15,
+      "HP": 11,
+      "AN": 8,
+      "JK": 7,
+      "HR": 6,
+      "PB": 6,
+      "LD": 4,
+      "ML": 3,
+      "GA": 3,
+      "DD": 2,
+      "DL": 2,
+      "CT": 2,
+      "TR": 2,
+      "PY": 2,
+      "MZ": 2,
+      "NL": 2,
+      "AR": 1,
+      "CH": 1,
+      "MN": 1,
+      "SK": 1
+    },
+    "top5_share": 0.43719806763285024,
+    "bottom10_states": {
+      "DL": 2,
+      "CT": 2,
+      "TR": 2,
+      "PY": 2,
+      "MZ": 2,
+      "NL": 2,
+      "AR": 1,
+      "CH": 1,
+      "MN": 1,
+      "SK": 1
+    },
+    "n_states": 32
+  },
+  "temporal_by_year": {
+    "2015": 13699,
+    "2016": 18033,
+    "2017": 19232,
+    "2018": 18797,
+    "2019": 21839,
+    "2020": 22583,
+    "2021": 137028,
+    "2022": 147486,
+    "2023": 149786,
+    "2024": 147529,
+    "2025": 16773
+  },
+  "cleaning_impact": {
+    "raw_rows": 970339,
+    "clean_rows": 712785,
+    "dropped": 257554,
+    "drop_pct": 26.54268250580467,
+    "raw_rainfall_missing_pct": 26.54268250580467
+  },
+  "garbled_station_names": {
+    "n_rows": 31443,
+    "n_unique_names": 19,
+    "examples": [
+      "Ambala / Amb?la",
+      "Chandigarh / S?rajpur",
+      "Chintamani / Sugut?ru",
+      "Cochin / K?ladi",
+      "Cochin Int. Airport / K?ladi",
+      "Daman / Dam?n",
+      "Dehradun / R?ni Pokhri",
+      "Fursatganj / R?e Bareli",
+      "Haveri / H?veri",
+      "Jammu / R?mb?gh",
+      "Ludhiana / Dor?ha",
+      "Manipur Road / R?jb?ri",
+      "Ondal / And?l",
+      "Panagarh / P?n?garh",
+      "Pathankot / Path?nkot",
+      "Port Blair / Portblair / Austin?b?d",
+      "Rajahmundry / R?j?nagaram",
+      "Rajnandgaon / R?j N?ndgaon",
+      "Washim / W?sh?m"
+    ]
+  },
+  "near_duplicate_coords": {
+    "coords_with_multiple_station_ids": 4,
+    "max_ids_per_coord": 2
+  },
+  "ignored_raw_columns": [
+    "month",
+    "season"
+  ],
+  "sequence_metadata_v2": {
+    "version": 2,
+    "feature_cols": [
+      "avg_temp",
+      "min_temp",
+      "max_temp",
+      "wind_speed",
+      "air_pressure",
+      "rainfall",
+      "doy_sin",
+      "doy_cos"
+    ],
+    "target_col": "rainfall",
+    "seq_len": 30,
+    "rainfall_in_X": "days 1-30 only; target day excluded",
+    "leakage_checks_passed": 561092,
+    "splits": {
+      "train": "2015-01-01 .. 2022-12-31",
+      "val": "2023-01-01 .. 2023-12-31",
+      "test": "2024-01-01 .. 2025-02-10"
+    },
+    "n_stations_used": 414,
+    "counts": {
+      "train": 270109,
+      "val": 149720,
+      "test": 141263
+    },
+    "shapes": {
+      "X_train_v2": [
+        270109,
+        30,
+        8
+      ],
+      "X_val_v2": [
+        149720,
+        30,
+        8
+      ],
+      "X_test_v2": [
+        141263,
+        30,
+        8
+      ],
+      "y_train_v2": [
+        270109
+      ],
+      "y_val_v2": [
+        149720
+      ],
+      "y_test_v2": [
+        141263
+      ]
+    }
+  },
+  "scaler_audit": {
+    "x_data_min": [
+      -9.300000190734863,
+      -13.100000381469727,
+      -4.099999904632568,
+      0.0,
+      982.4000244140625,
+      0.0,
+      -0.9999631643295288,
+      -1.0
+    ],
+    "x_data_max": [
+      43.20000076293945,
+      34.599998474121094,
+      52.400001525878906,
+      66.5999984741211,
+      1034.4000244140625,
+      480.1000061035156,
+      0.9999631643295288,
+      1.0
+    ],
+    "y_data_min": 0.0,
+    "y_data_max": 480.1000061035156,
+    "y_train_mm_max": 480.0999755859375,
+    "y_val_mm_max": 472.20001220703125,
+    "y_test_mm_max": 485.89996337890625,
+    "val_exceeds_train_y_max": false,
+    "test_exceeds_train_y_max": true,
+    "X_shapes": {
+      "train": [
+        270109,
+        30,
+        8
+      ],
+      "val": [
+        149720,
+        30,
+        8
+      ],
+      "test": [
+        141263,
+        30,
+        8
+      ]
+    },
+    "y_scaled_ranges": {
+      "train": [
+        0.0,
+        1.0
+      ],
+      "val": [
+        0.0,
+        0.9835451245307922
+      ],
+      "test": [
+        0.0,
+        1.0120807886123657
+      ]
+    }
+  },
+  "split_documented": {
+    "train_end": "2022-12-31",
+    "val": "2023",
+    "test": "2024-01-01 to 2025-02-10"
+  },
+  "rainfall_regime": {
+    "zero_pct": 51.381552642101056,
+    "lt_01_pct": 51.381552642101056,
+    "lt_1_pct": 62.70684708572711,
+    "gte_10_pct": 14.512651079918909,
+    "gte_50_pct": 1.9225993813001114,
+    "jjas_share_of_total_rain": 71.6419341918707
+  },
+  "avg_vs_minmax_mid": {
+    "mean_abs_diff": 0.7677545000861149,
+    "p95_abs_diff": 2.075000000000003,
+    "gt_2C_pct": 5.32657112593559,
+    "gt_5C_pct": 0.2923742783588319
+  }
+}
