@@ -128,7 +128,7 @@ Possible as a baseline, but RF does not natively model ordered temporal dependen
 - LSTM: sequential dependency modeling.
 - Attention: weighted focus over timesteps → better interpretability + often better skill on sparse rain events.
 
-Your current LSTM is the **locked baseline**. CNN-LSTM-Attention is the **upgrade path**, not yet implemented.
+Your current LSTM is the **locked baseline**. CNN-LSTM+Attention (additive Bahdanau attention over LSTM hidden states) is **implemented**, trained across seeds {13,42,123} and horizons h=1–4, and statistically compared against LSTM and CNN-LSTM-Temporal (see FINAL_AUDIT.md / `ablation_study.csv` / `significance_results.csv`). Result: significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM.
 
 ---
 
@@ -265,11 +265,11 @@ Orchestrator: `python run_pipeline.py` runs steps **clean → features → audit
 | **Why** | Scaled MSE is not human-interpretable; report mm/day. |
 | **How** | `inverse_transform` predictions and true y, then RMSE/MAE/R². |
 
-### Stage 9 — Future CNN-LSTM-Attention
+### Stage 9 — CNN-LSTM+Attention (implemented)
 | | |
 |--|--|
 | **Why** | Improve local pattern extraction + focus on informative days. |
-| **Status** | Planned; baseline locked first for fair comparison. |
+| **Status** | Implemented: seeds {13,42,123}, horizons h=1–4; significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM (see `ablation_study.csv` / `significance_results.csv`). |
 
 ---
 
@@ -933,12 +933,12 @@ Standard regression suite; RMSE comparable to persistence; R² shows skill vs pr
 | LSTM multi-seed | Done — research-ready baseline |
 | Persistence comparison | Recorded in metrics |
 | Climatology baseline script | README says Done — **weak evidence in repo**; admit if asked |
-| CNN-LSTM-Attention / GNN | Future — 0% code |
+| CNN-LSTM+Attention / GNN | Done — Attention: seeds {13,42,123}, h=1–4; significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM. GNN: implemented; does not beat LSTM |
 | Extra metrics / paper ablations | Future |
 
 **First-review readiness:** ~**60–70%** of full research vision; **~100%** of Phase-1 baseline pipeline.  
 **Production-ready (research):** pipeline + locked LSTM v2.  
-**Remaining:** advanced model, richer metrics, spatial models, write-up.
+**Remaining:** write-up, doc/artifact hygiene; paper-faithful spatial CNN still not applicable to irregular stations.
 
 ---
 
@@ -1072,7 +1072,7 @@ Cleaning, contiguous sequences, splits, metrics — **only the model changes**. 
 47. **Attention role?** — Soft-select informative days.  
 48. **What stays fixed for fair compare?** — Data, splits, metrics.  
 49. **Novelty (careful)?** — Rigorous Indian station pipeline with target-date leakage asserts, train-only scalers, and locked multi-seed baseline for fair advanced-model comparison (covariate imputation limitation documented in FINAL_AUDIT.md) — not “first LSTM ever.”  
-50. **Biggest limitation?** — No advanced architecture yet; moderate R²; unused spatial dependence.
+50. **Biggest limitation?** — Moderate R²; Attention improves on CNN-LSTM-Temporal at h=2/h=4 but is not shown to outperform plain LSTM; GNN does not beat LSTM; paper spatial CNN not applicable.
 
 ---
 
@@ -1082,7 +1082,7 @@ Cleaning, contiguous sequences, splits, metrics — **only the model changes**. 
 Chronological split, train-only scalers, target excluded from X with 561k asserts, metrics after inverse-transform, multi-seed std only 0.06.
 
 **M2. Isn’t R²=0.37 weak?**  
-Meaningful vs persistence (~0.05). Reported honestly; CNN-LSTM-Attention is the improvement path.
+Meaningful vs persistence (~0.05). Reported honestly. CNN-LSTM+Attention is implemented (significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM).
 
 **M3. Why LSTM not Transformer?**  
 Phase-1 baseline aligned with paper Sec 3.3.1; short windows (30); strong and cheap locked baseline first.

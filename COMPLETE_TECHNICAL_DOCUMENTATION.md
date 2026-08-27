@@ -879,7 +879,7 @@ N/A unless productization starts.
 | Empty `data/external`, `results/`, `reports/logs/` | Placeholders |
 | Notebook 03 | Intentionally absent |
 | Spatial CNN-LSTM-Attention | Missing vs paper primary architecture |
-| Attention module | Not implemented as separate class |
+| Attention module (`CNNLSTMAttention`) | Implemented (additive Bahdanau over LSTM hidden states); seeds {13,42,123}, h=1–4; significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM |
 | Ablation metrics JSON | Missing |
 | ARIMA saved aggregates | Missing |
 | Base paper PDF / citation | **Missing from repository** |
@@ -941,7 +941,7 @@ Grid-based spatial-temporal deep learning for rainfall regression (details beyon
 | Per-station / scalar rainfall target | mm/day regression | Implemented exactly | |
 | Spatial CNN on lat/lon grid (Sec 3.3.3) | **Not implemented** | Missing | Irregular 414 stations; no valid 2D grid |
 | Replace spatial CNN with GNN (paper future work per FINAL_AUDIT) | `GNNLSTM` + kNN graph | Implemented (extension) | Core novelty of this project |
-| CNN-LSTM-Attention full stack | Temporal CNN-LSTM only; **no Attention class** | Partially / Modified | Ablation ≠ paper architecture |
+| CNN-LSTM+Attention (project temporal extension) | `CNNLSTMAttention` — additive Bahdanau over LSTM hidden states; seeds {13,42,123}, h=1–4 | Implemented (adaptation) | Significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM (see FINAL_AUDIT.md / `ablation_study.csv` / `significance_results.csv`). Paper spatial CNN-LSTM-Attention stack remains unreproduced. |
 | Transformer (Sec 3.3.4) | `TransformerEncoderBaseline` | Modified / ablation | Per-station non-spatial; h=1 seed42 |
 | Multi-horizon evaluation | h=1..4 with significance | Additional beyond paper (unknown if paper did this) | Cannot confirm paper’s horizons without PDF |
 | Diebold-Mariano / bootstrap | Implemented | Additional | Strengthens claims |
