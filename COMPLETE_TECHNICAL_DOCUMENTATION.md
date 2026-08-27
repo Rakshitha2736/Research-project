@@ -568,7 +568,6 @@ N/A (batch scripts). Closest analogue: CLI invocation → stdout/logs + files on
 | Reproduction docs | Re-run guide | `REPRODUCE.md` | | Complete | Windows-centric |
 | Master results table | Paper tables | `master_results.csv` | | Complete | Some N/As documented |
 | Web app / API / auth | Productization | — | — | **Not started** | Out of current scope |
-| Full CNN-LSTM-Attention (paper primary) | Spatial CNN + Attn stack | — | — | **Not implemented** | Irregular stations; Attention stack missing |
 | Deployment | Cloud/ops | — | — | **Not started** | |
 
 ---
@@ -701,7 +700,7 @@ Ablations (h=1, seed 42, CPU FP32 re-eval in master table): Transformer 9.4355; 
 
 1. Irregular coverage (mean ~0.816); many gaps
 2. Distance kNN graph may be suboptimal
-3. No paper-faithful spatial CNN / Attention stack
+3. No paper-faithful spatial CNN (base paper has no attention mechanism, so this is not applicable to attention). The project's own CNN-LSTM+Attention (Bahdanau attention over LSTM hidden states) is an original extension beyond the base paper, not a reproduction of it - see Part 13 for its implementation status.
 4. Ablations single-seed / h=1 only
 5. ARIMA only 30 stations; metrics not persisted
 6. R² ~0.37 — meaningful vs persistence but far from “solved”
@@ -955,7 +954,7 @@ Grid-based spatial-temporal deep learning for rainfall regression (details beyon
 |----------|-------|
 | Implemented exactly (spirit) | LSTM baseline; window→scalar; Transformer-as-comparator (partial) |
 | Modified | Data domain (India irregular stations); temporal CNN instead of spatial CNN; GNN instead of spatial CNN |
-| Missing | Spatial CNN; full Attention mechanism; paper dataset reproduction; paper citation artifacts |
+| Missing (vs. base paper) | Spatial CNN; paper dataset reproduction; paper citation artifacts. (Note: the base paper itself has no attention mechanism, so "missing attention vs. paper" does not apply - the project's CNN-LSTM+Attention is an original extension, implemented and evaluated, not a paper-comparison item.) |
 | Partially | CNN-LSTM (temporal only); Transformer (single-seed h=1) |
 | Beyond paper | Multi-horizon+multi-seed GNN vs LSTM with DM/bootstrap; temporal density audit; station_id disambiguation; verification reports |
 
@@ -966,7 +965,7 @@ Using in-repo framing as an **adaptation**:
 
 | Lens | Estimate |
 |------|---------:|
-| Literal paper reproduction (spatial CNN-LSTM-Attention) | **~25–35%** (LSTM + partial Transformer; missing spatial CNN & Attention) |
+| Literal paper reproduction (paper's actual architecture: spatial CNN-LSTM, plus separate Transformer comparator - the paper has no attention mechanism) | **~25-35%** (LSTM + partial Transformer implemented; spatial CNN not reproducible on irregular station data) |
 | Stated project goal (adapt paper via GNN for irregular stations + rigorous LSTM baseline) | **~95–100%** of planned experimental scope |
 
 ---

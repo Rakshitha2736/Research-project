@@ -14,7 +14,7 @@
 **Rainfall Prediction using Deep Learning** — predicting tomorrow’s rainfall (in millimetres) from the last 30 days of weather observations at Indian meteorological stations.
 
 **Technical:**  
-A supervised **time-series regression** problem: given a contiguous 30-day multivariate window of station weather features, predict scalar **next-day rainfall** (mm/day) with a **2-layer LSTM** baseline (PyTorch), with a planned upgrade to **CNN–LSTM–Attention**.
+A supervised time-series regression problem: given a contiguous 30-day multivariate window of station weather features, predict scalar next-day rainfall (mm/day). Implemented and compared: a 2-layer LSTM baseline, a temporal CNN-LSTM, and a CNN-LSTM+Attention extension (see Part 17 for results).
 
 ---
 
@@ -94,7 +94,7 @@ Rainfall depends on complex combinations of recent weather. Deep learning can le
 - Nonlinear relationships (temp × humidity-like proxies × season).
 - Temporal dependence (yesterday’s rain informs today).
 - Large tabular time series (~700k+ cleaned rows) — enough data for neural nets.
-- Extensible path to CNN-LSTM-Attention / spatial GNNs later.
+- Extended in this project to CNN-LSTM-Attention (temporal) and GNN-LSTM (spatial) - see Part 17 and the project's GNN evaluation for results.
 
 **Not because “DL is trendy”** — because sequential nonlinear regression fits the data structure.
 
@@ -844,7 +844,7 @@ Class: `LSTMBaseline` in `src/model.py`.
 
 ## 11.5 Why this baseline is honest
 
-Simple, reproducible, multi-seeded, ready for fair comparison against future CNN-LSTM-Attention.
+Simple, reproducible, multi-seeded, and used as the controlled baseline for fair comparison against CNN-LSTM-Attention and GNN-LSTM (see Part 17 and FINAL_AUDIT.md for results).
 
 ---
 
@@ -984,32 +984,39 @@ Standard regression suite; RMSE comparable to persistence; R² shows skill vs pr
 
 ---
 
-# PART 17 — Future Work: CNN–LSTM–Attention
+# PART 17 — Implemented Extension: CNN–LSTM+Attention
 
-## 17.1 Combined architecture
+## 17.1 Implemented architecture
 
 ```text
 Input (B, 30, 8)
-    → CNN along time (local motifs: bursts, fronts, dry spells)
-    → LSTM over CNN features (month-scale memory)
-    → Attention over timesteps (which days mattered)
-    → Context → Dense → rainfall (mm)
+    -> CNN along time (local motifs: bursts, fronts, dry spells)
+    -> LSTM over CNN features (month-scale memory)
+    -> Additive (Bahdanau) attention over LSTM hidden states (which days mattered)
+    -> Context -> Dense -> rainfall (mm)
 ```
 
+Implemented as CNNLSTMAttention, trained across seeds {13,42,123} and horizons h=1-4.
+
 ## 17.2 Why CNN first
-Extract short local patterns before long memory — temporal “feature detectors.”
+Extracts short local patterns before long memory - temporal "feature detectors."
 
 ## 17.3 Why LSTM second
-Compose motifs into a trajectory across the 30-day window.
+Composes motifs into a trajectory across the 30-day window.
 
 ## 17.4 Why Attention last
-Not all days are equal; soft-weights focus on informative days (e.g. recent wet spell).
+Not all days are equal; soft-weights let the model focus on informative days.
 
-## 17.5 Why it should improve rainfall
-Better local sensitivity + focus on sparse rain precursors; aligns with base paper; comparable under **same data protocol**.
+## 17.5 Actual result (not speculative)
+Significantly better than CNN-LSTM-Temporal at h=2 and h=4 (DM/bootstrap 
+significance testing, HAC-corrected). NOT shown to outperform plain LSTM at 
+any horizon - Attention-vs-LSTM was formally tested at h=1 (not significant); 
+LSTM remains numerically best across all seasons at h=4. See FINAL_AUDIT.md, 
+ablation_study.csv, and significance_results.csv for full results.
 
-## 17.6 What stays fixed
-Cleaning, contiguous sequences, splits, metrics — **only the model changes**. That is how you prove improvement scientifically.
+## 17.6 What stayed fixed across all model comparisons
+Cleaning, contiguous sequences, splits, metrics - only the model architecture 
+changed between comparisons, enabling a fair, controlled comparison.
 
 ---
 
