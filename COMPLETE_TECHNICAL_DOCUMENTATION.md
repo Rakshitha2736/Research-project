@@ -975,7 +975,7 @@ Using in-repo framing as an **adaptation**:
 
 **Maturity:** Research-implementation complete; publication stage beginning. Independent verification scorecard 92/100 (integrity ~86/100 after doc hygiene penalties).
 
-**Completed work:** Full leakage-safe data pipeline; multi-horizon LSTM & GNN multi-seed experiments; ablations; classical baselines; significance tests; reproduction docs; master results.
+**Completed work:** Target-date leakage-free and train-only-scaled data pipeline (see FINAL_AUDIT.md for a documented, scope-limited covariate imputation leakage finding, empirically negligible in tested cases but not production-corrected); multi-horizon LSTM & GNN multi-seed experiments; ablations; classical baselines; significance tests; reproduction docs; master results.
 
 **Remaining work:** Thesis/paper writing; doc/artifact hygiene; optional enrichments (ablation multi-seed, full ARIMA, Attention, better graphs).
 

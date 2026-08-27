@@ -277,6 +277,7 @@ DM p at h≥2 use HAC/Bartlett lag=h−1 (`significance_results.csv`); paired-t 
 | No target-day rainfall in X window | **PASS** |
 | Chronological split by target date | **PASS** |
 | Scaler fitted only on training data | **PASS** |
+| Covariate imputation leakage | **CONFIRMED** (see FINAL_AUDIT.md limitations) — full-series `station_name`-grouped statistics computed before train/val/test split; empirically negligible impact in 2 of 5 model architectures tested (LSTM h=1, Attention h=4); not production-corrected |
 | Sequence length = 30 | **PASS** |
 | Horizon = window_end + h with real target obs | **PASS** |
 | Checkpoint integrity (loadable state dicts) | **PASS** |
