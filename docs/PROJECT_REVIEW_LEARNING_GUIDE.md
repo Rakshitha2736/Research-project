@@ -55,7 +55,7 @@ where \(F=8\) (v2 features), \(y\) is rainfall (mm/day), under chronological tra
 | Stakeholder | Why it matters |
 |-------------|----------------|
 | Agriculture | Irrigation, sowing, harvest timing |
-| Flood / disaster mgmt | Heavy-rain risk awareness |
+| Flood / disaster mgmt | Heavy-rain risk awareness (**NOT demonstrated** in this project — no flood-specific validation) |
 | Water resources | Reservoir planning |
 | Urban planning | Drainage, traffic, public safety |
 | Climate science | Understanding local rainfall variability |
@@ -67,7 +67,7 @@ Even a modest improvement over naive baselines (e.g. “tomorrow = today”) is 
 ## 1.5 Who benefits
 
 - **You (researcher):** reproducible ML pipeline + paper-ready baseline.
-- **Mentors / examiners:** clear methodology, leakage-safe evaluation.
+- **Mentors / examiners:** clear methodology; target-date leakage checks and train-only scaling (covariate imputation limitation: see FINAL_AUDIT.md).
 - **Downstream users (future):** decision support if models mature.
 - **Scientific community:** station-level Indian rainfall DL baseline with honest metrics.
 
@@ -1071,7 +1071,7 @@ Cleaning, contiguous sequences, splits, metrics — **only the model changes**. 
 46. **CNN role later?** — Local temporal filters.  
 47. **Attention role?** — Soft-select informative days.  
 48. **What stays fixed for fair compare?** — Data, splits, metrics.  
-49. **Novelty (careful)?** — Rigorous leakage-safe Indian station pipeline + locked multi-seed baseline for fair advanced-model comparison — not “first LSTM ever.”  
+49. **Novelty (careful)?** — Rigorous Indian station pipeline with target-date leakage asserts, train-only scalers, and locked multi-seed baseline for fair advanced-model comparison (covariate imputation limitation documented in FINAL_AUDIT.md) — not “first LSTM ever.”  
 50. **Biggest limitation?** — No advanced architecture yet; moderate R²; unused spatial dependence.
 
 ---
@@ -1099,8 +1099,8 @@ No — used only to group sequences correctly. Spatial modeling is future.
 **M7. Does scaling y hide bad performance?**  
 No — inverse-transform before RMSE/MAE/R².
 
-**M8. Prove no leakage.**  
-Point to asserts in `generate_sequences_v2.py`, metadata splits, train-only scalers, contiguous segments.
+**M8. Prove no target leakage.**  
+Point to asserts in `generate_sequences_v2.py`, metadata splits, train-only scalers, contiguous segments. Separately disclose pre-split covariate imputation leakage (FINAL_AUDIT.md §7.8) — do not claim fully leakage-free preprocessing.
 
 **M9. README says climatology Done but no script?**  
 Persistence is recorded. If climatology isn’t in repo, admit it and offer to add before next review.

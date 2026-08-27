@@ -25,7 +25,7 @@ Folder / package name: `RainfallPrediction`
 
 ## 1.2 Main objective
 
-Build a reproducible, leakage-safe deep-learning system that predicts **daily rainfall in millimetres per day (mm/day)** at Indian meteorological stations from a **contiguous 30-day multivariate weather window**, then rigorously compare:
+Build a reproducible deep-learning system with target-date leakage-free sequence construction and train-only scaling (see FINAL_AUDIT.md for a documented, scope-limited covariate imputation leakage finding, empirically negligible in tested cases but not production-corrected) that predicts **daily rainfall in millimetres per day (mm/day)** at Indian meteorological stations from a **contiguous 30-day multivariate weather window**, then rigorously compare:
 
 | Role | Models |
 |------|--------|
@@ -46,7 +46,7 @@ where:
 - \(y\) = rainfall (mm/day) on day \(t+h\)
 - \(h \in \{1,2,3,4\}\) (1 = next day; 4 = four days ahead)
 - Split is chronological by **target date** (never random shuffle across time)
-- Target-day rainfall must **not** appear in the input window (no leakage)
+- Target-day rainfall must **not** appear in the input window (no target-day leakage)
 
 ## 1.4 Why this project exists
 
@@ -66,7 +66,7 @@ where:
 
 ## 1.6 Real-world use case
 
-Station-level short-horizon rainfall forecasts supporting agriculture, water resources, flood awareness, and urban planning — **as research prototypes**, not an operational forecasting service.
+Station-level short-horizon rainfall forecasts supporting agriculture, water resources, and urban planning — **as research prototypes**, not an operational forecasting service. Flood awareness / flood early-warning utility has **NOT been demonstrated** in this project (no flood-specific event validation).
 
 ## 1.7 Current development stage
 
@@ -946,7 +946,7 @@ Grid-based spatial-temporal deep learning for rainfall regression (details beyon
 | Multi-horizon evaluation | h=1..4 with significance | Additional beyond paper (unknown if paper did this) | Cannot confirm paper’s horizons without PDF |
 | Diebold-Mariano / bootstrap | Implemented | Additional | Strengthens claims |
 | Indian station Excel dataset | Used | Modified data domain | Paper dataset unknown |
-| Leakage-safe contiguous protocol | Strong asserts + audits | Additional engineering rigor | |
+| Target-date leakage-free contiguous protocol (covariate imputation: see FINAL_AUDIT.md) | Strong target-day asserts + audits; covariate imputation not train-only | Additional engineering rigor | |
 | Production API | None | N/A | |
 
 ## 14.3 Summary vs paper
