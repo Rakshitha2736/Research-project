@@ -128,7 +128,7 @@ Possible as a baseline, but RF does not natively model ordered temporal dependen
 - LSTM: sequential dependency modeling.
 - Attention: weighted focus over timesteps → better interpretability + often better skill on sparse rain events.
 
-Your current LSTM is the **locked baseline**. CNN-LSTM+Attention (additive Bahdanau attention over LSTM hidden states) is **implemented**, trained across seeds {13,42,123} and horizons h=1–4, and statistically compared against LSTM and CNN-LSTM-Temporal (see FINAL_AUDIT.md / `ablation_study.csv` / `significance_results.csv`). Result: significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM.
+Your current LSTM is the **locked baseline**. CNN-LSTM+Attention (additive Bahdanau attention over LSTM hidden states) is **implemented**, trained across seeds {13,42,123} and horizons h=1–4, and statistically compared against LSTM and CNN-LSTM-Temporal (see FINAL_AUDIT.md Headline findings / `multiseed_robustness_summary.csv`). Result: Attention-vs-Temporal is Mixed at all 4 horizons (seed-42 h=2/h=4 gains are not unanimous); LSTM is numerically better than Attention in 10 of 12 tests.
 
 ---
 
@@ -269,7 +269,7 @@ Orchestrator: `python run_pipeline.py` runs steps **clean → features → audit
 | | |
 |--|--|
 | **Why** | Improve local pattern extraction + focus on informative days. |
-| **Status** | Implemented: seeds {13,42,123}, horizons h=1–4; significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM (see `ablation_study.csv` / `significance_results.csv`). |
+| **Status** | Implemented: seeds {13,42,123}, horizons h=1–4; Attention-vs-Temporal Mixed at all 4 horizons (seed-42 h=2/h=4 not unanimous); not a reproducible improvement over plain LSTM (see `multiseed_robustness_summary.csv`). |
 
 ---
 
@@ -933,7 +933,7 @@ Standard regression suite; RMSE comparable to persistence; R² shows skill vs pr
 | LSTM multi-seed | Done — research-ready baseline |
 | Persistence comparison | Recorded in metrics |
 | Climatology baseline script | README says Done — **weak evidence in repo**; admit if asked |
-| CNN-LSTM+Attention / GNN | Done — Attention: seeds {13,42,123}, h=1–4; significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM. GNN: implemented; does not beat LSTM |
+| CNN-LSTM+Attention / GNN | Done — Attention: seeds {13,42,123}, h=1–4; vs Temporal Mixed at all horizons (seed-42 h=2/h=4 not unanimous); vs LSTM, LSTM better in 10/12 tests. GNN: LSTM better in 12/12 tests. |
 | Extra metrics / paper ablations | Future |
 
 **First-review readiness:** ~**60–70%** of full research vision; **~100%** of Phase-1 baseline pipeline.  
@@ -1008,16 +1008,25 @@ Composes motifs into a trajectory across the 30-day window.
 Not all days are equal; soft-weights let the model focus on informative days.
 
 ## 17.5 Actual result (not speculative)
-Significantly better than CNN-LSTM-Temporal at h=2 and h=4 (DM/bootstrap 
-significance testing, HAC-corrected). Against plain LSTM: not significant at 
-h=1, h=2, and h=4. At h=3, LSTM significantly outperforms Attention in 2 of 3 
-seeds tested (seeds 13 and 123: DM p=1.09e-13 and p=7.37e-11); the remaining 
-seed (42) shows the reverse (DM p=0.00786, Attention better) — illustrating why 
-single-seed significance testing alone is insufficient, and consistent with the 
-project's broader finding that Attention does not establish a consistent 
-advantage over plain LSTM. LSTM remains numerically best across all seasons at 
-h=4 (descriptive). See FINAL_AUDIT.md, ablation_study.csv, and 
-significance_results.csv for full results.
+Neither candidate extension produces a reproducible improvement over a plain LSTM
+baseline. GNN-LSTM: LSTM significantly better in all 12 tests (4 horizons × 3 seeds)
+without exception — the more robustly evidenced negative result.
+
+Attention vs CNN-LSTM-Temporal: seed 42 alone looked significant at h=2 and h=4.
+The complete 3-seed picture is Mixed at every horizon (h=2: 2/3 Attention, 1/3
+significant reverse; h=4: 2/3 Attention, 1/3 no effect). Neither claimed
+improvement survives unanimous replication.
+
+Attention vs LSTM (12 tests): LSTM numerically better in 10 of 12, significant
+in 6. At h=3 the result is INCONSISTENT: seed 42 DM p=0.00786 (Attention better);
+seeds 13 and 123 DM p=1.09e-13 and p=7.37e-11 (LSTM better). That reversal is
+the concrete example that single-seed significance testing is materially
+unreliable here — a secondary methodological contribution of this work.
+
+LSTM remains numerically best across all seasons at h=4 (descriptive, seed 42).
+See FINAL_AUDIT.md Headline findings, multiseed_robustness_summary.csv, and
+significance_results.csv (seed-level rows retained). The forest plot
+attention_vs_temporal_forest_plot.png shows seed-42 point estimates only.
 
 ## 17.6 What stayed fixed across all model comparisons
 Cleaning, contiguous sequences, splits, metrics - only the model architecture 
@@ -1084,7 +1093,7 @@ changed between comparisons, enabling a fair, controlled comparison.
 47. **Attention role?** — Soft-select informative days.  
 48. **What stays fixed for fair compare?** — Data, splits, metrics.  
 49. **Novelty (careful)?** — Rigorous Indian station pipeline with target-date leakage asserts, train-only scalers, and locked multi-seed baseline for fair advanced-model comparison (covariate imputation limitation documented in FINAL_AUDIT.md) — not “first LSTM ever.”  
-50. **Biggest limitation?** — Moderate R²; Attention improves on CNN-LSTM-Temporal at h=2/h=4 but is not shown to outperform plain LSTM; GNN does not beat LSTM; paper spatial CNN not applicable.
+50. **Biggest limitation?** — Moderate R²; neither GNN nor Attention reproduces an improvement over plain LSTM (GNN 12/12 LSTM better; Attention Mixed vs Temporal and 10/12 LSTM vs Attention); single-seed significance can reverse; paper spatial CNN not applicable.
 
 ---
 
@@ -1094,7 +1103,7 @@ changed between comparisons, enabling a fair, controlled comparison.
 Chronological split, train-only scalers, target excluded from X with 561k asserts, metrics after inverse-transform, multi-seed std only 0.06.
 
 **M2. Isn’t R²=0.37 weak?**  
-Meaningful vs persistence (~0.05). Reported honestly. CNN-LSTM+Attention is implemented (significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM).
+Meaningful vs persistence (~0.05). Reported honestly. CNN-LSTM+Attention is implemented; vs Temporal the seed-42 h=2/h=4 gains are Mixed across 3 seeds, and vs LSTM the model does not establish a reproducible advantage (10/12 tests favor LSTM).
 
 **M3. Why LSTM not Transformer?**  
 Phase-1 baseline aligned with paper Sec 3.3.1; short windows (30); strong and cheap locked baseline first.

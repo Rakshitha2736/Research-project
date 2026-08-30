@@ -81,7 +81,7 @@ RMSE, MAE, MSE, R² (all in mm/day). Statistical tests: Diebold-Mariano, paired 
 - `minmax_scaler.joblib`, `minmax_scaler_y.joblib` (v1)
 
 ### Figures (13 files)
-- Training curves: LSTM, GNN-LSTM, CNN-LSTM, Transformer
+- Training curves: LSTM, GNN-LSTM, temporal CNN-LSTM, Transformer
 - EDA: correlation matrix, rainfall distribution, monthly/seasonal rainfall
 - Station density heatmap, forest plot (GNN vs LSTM)
 
@@ -98,8 +98,10 @@ RMSE, MAE, MSE, R² (all in mm/day). Statistical tests: Diebold-Mariano, paired 
 
 1. **Systematic comparison** of LSTM vs GNN-LSTM for Indian rainfall forecasting across 4 forecast horizons
 2. **Statistical rigor:** multi-seed evaluation (3 seeds), DM test, paired t-test, bootstrap CI at every horizon
-3. **Finding:** Simple per-station LSTM consistently outperforms spatial GNN-LSTM, suggesting that for irregularly-spaced Indian stations with variable temporal coverage, spatial graph convolution does not add predictive value over temporal features alone
-4. **Supplementary ablations:** CNN-LSTM-Temporal and Transformer architectures confirm LSTM competitiveness
+3. **Finding:** Simple per-station LSTM consistently outperforms spatial GNN-LSTM in **all 12** multi-seed tests (4 horizons × 3 seeds). Graph convolution does not add predictive value on this sparse, irregular station network. This is the more robustly evidenced negative architectural result.
+4. **Finding:** CNN-LSTM+Attention does not produce a reproducible improvement over CNN-LSTM-Temporal (Mixed at all 4 horizons) or over plain LSTM (LSTM better in 10/12 tests). Seed-42 “significant at h=2/h=4 vs Temporal” does not survive unanimous replication.
+5. **Methodological contribution:** single-seed significance testing is materially unreliable here (Attention vs LSTM at h=3 reverses between seed 42 and seeds 13/123). Multi-seed evaluation is a minimum standard for this problem.
+6. **Supplementary ablations:** Transformer (h=1, seed 42) confirms LSTM competitiveness; temporal CNN-LSTM is the controlled non-attention comparator (3 seeds, all horizons).
 
 ---
 
@@ -110,7 +112,7 @@ RMSE, MAE, MSE, R² (all in mm/day). Statistical tests: Diebold-Mariano, paired 
 3. **No spatial CNN:** irregular station layout prevents 2D grid-based spatial convolution (base paper approach)
 4. **Single dataset:** results may not generalize to other regions or climate zones
 5. **AMP sensitivity:** evaluation metrics vary by ~0.0005 depending on autocast settings
-6. **Ablation models:** CNN-LSTM and Transformer trained with single seed only
+6. **Ablation models:** Transformer remains single-seed / h=1 only; CNN-LSTM-Temporal and CNN-LSTM+Attention are 3-seed at h=1–4. Attention significance claims must be cited from `multiseed_robustness_summary.csv`, not seed-42-only rows.
 
 ---
 

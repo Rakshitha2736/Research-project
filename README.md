@@ -1,6 +1,6 @@
 # Rainfall Prediction using Deep Learning
 
-**University research project** — comparing LSTM, GNN-LSTM, CNN-LSTM, and Transformer architectures for multi-horizon daily rainfall forecasting at Indian meteorological stations.
+**University research project** — comparing LSTM, GNN-LSTM, temporal CNN-LSTM (and CNN-LSTM+Attention), and Transformer architectures for multi-horizon daily rainfall forecasting at Indian meteorological stations.
 
 ---
 
@@ -10,8 +10,8 @@
 |------|--------|
 | Task | Daily rainfall regression (mm/day) |
 | Input window | 30 contiguous calendar days → predict day 31 (h=1), day 32 (h=2), … day 34 (h=4) |
-| Models | LSTM, GNN-LSTM, CNN-LSTM-Temporal, Transformer Encoder |
-| Seeds | 13, 42, 123 (multi-seed for LSTM and GNN-LSTM) |
+| Models | LSTM, GNN-LSTM, CNN-LSTM-Temporal, CNN-LSTM+Attention, Transformer Encoder |
+| Seeds | 13, 42, 123 (multi-seed for LSTM, GNN-LSTM, CNN-LSTM-Temporal, CNN-LSTM+Attention) |
 | Split | Train ≤ 2022 · Val 2023 · Test 2024–Feb 2025 |
 | Evaluation | All metrics reported in mm/day (inverse-transformed) |
 
@@ -25,7 +25,11 @@
 | CNN-LSTM-Temporal | 9.4835 | seed 42 |
 | Persistence baseline | 11.5559 | n/a |
 
-LSTM outperforms GNN-LSTM at all four horizons (DM test p < 1e-7 at every horizon).
+LSTM outperforms GNN-LSTM at all four horizons and all three seeds (12/12 Diebold-Mariano tests; CIs strictly positive).
+
+**Headline (complete 3-seed evidence).** Neither candidate extension — spatial GNN-LSTM nor CNN-LSTM+Attention — produces a reproducible improvement over a plain LSTM baseline. GNN-LSTM is unconditionally worse (LSTM better in all 12 tests). Attention vs temporal CNN-LSTM looked significant at h=2 and h=4 under seed 42 alone; that result is Mixed across three seeds (neither horizon is unanimous). Attention vs LSTM: LSTM is numerically better in 10 of 12 tests (significant in 6). Single-seed significance can reverse (Attention vs LSTM at h=3: seed 42 vs seeds 13/123). See `reports/tables/multiseed_robustness_summary.csv` and FINAL_AUDIT.md.
+
+**Forest-plot note:** `reports/figures/attention_vs_temporal_forest_plot.png` shows seed-42 point estimates only. See `multiseed_robustness_summary.csv` / `.png` for the complete 3-seed picture, which shows this result is not consistent across seeds.
 
 ---
 
@@ -97,11 +101,17 @@ Eight features used by all models:
 - Graph: 414 nodes, 3,856 edges (distance-based, ≤300 km)
 - Batch=1 date/step, patience=30
 
-### 3. CNN-LSTM-Temporal (ablation)
+### 3. CNN-LSTM-Temporal (controlled comparator)
 - 2-layer Conv1d over time axis (16→32 channels, kernel=3) + 2-layer LSTM (hidden=64)
 - Supplementary ablation; NOT the base paper's spatial CNN (irregular stations prevent 2D grid)
+- Seeds 13, 42, 123 at h=1–4
 
-### 4. Transformer Encoder (ablation)
+### 4. CNN-LSTM+Attention (primary temporal extension)
+- Additive Bahdanau attention over LSTM hidden states on the temporal CNN-LSTM backbone
+- Seeds 13, 42, 123 at h=1–4
+- Does **not** produce a unanimous improvement over CNN-LSTM-Temporal or over plain LSTM (see Headline above)
+
+### 5. Transformer Encoder (ablation)
 - Pre-norm Transformer encoder (d_model=64, nhead=4, 2 layers, GELU, dim_ff=256)
 - Learnable positional embeddings, last-timestep FC readout
 
@@ -131,7 +141,7 @@ Statistical significance: Diebold-Mariano test, paired t-test, bootstrap 95% CI 
 | 3 | 10.4892 ± 0.0187 | 10.7174 ± 0.0628 | 6.900e-32 | (0.2250, 0.3081) |
 | 4 | 10.5841 ± 0.0178 | 10.9702 ± 0.0326 | 6.975e-40 | (0.3107, 0.4082) |
 
-All confidence intervals strictly positive → GNN RMSE is significantly higher than LSTM at every horizon.
+All confidence intervals strictly positive → GNN RMSE is significantly higher than LSTM at every horizon. This GNN result now has 3-seed confirmation at every horizon (12/12; `multiseed_robustness_summary.csv`) and is the more robustly evidenced of the two negative architectural findings.
 
 ---
 
@@ -150,7 +160,7 @@ RainfallPrediction/
 │   └── 05_sequence_generation.ipynb
 ├── reports/
 │   ├── figures/                          # Training curves, EDA plots
-│   ├── tables/                           # master_results.csv
+│   ├── tables/                           # master_results.csv, significance_results.csv, multiseed_robustness_summary.csv
 │   └── logs/                             # (reserved for future logs)
 ├── results/                              # (reserved)
 ├── src/
@@ -170,7 +180,7 @@ RainfallPrediction/
 ├── train_lstm_multihorizon.py            # LSTM h=2,3,4 training
 ├── train_gnn_lstm.py                     # GNN-LSTM h=1 training + evaluation
 ├── train_gnn_lstm_multihorizon.py        # GNN-LSTM h=2,3,4 training
-├── train_cnn_lstm_temporal_h1.py         # CNN-LSTM ablation (h=1)
+├── train_cnn_lstm_temporal_h1.py         # temporal CNN-LSTM ablation (h=1)
 ├── train_transformer_h1.py              # Transformer ablation (h=1)
 ├── multiseed_multihorizon.py             # Full multi-seed multi-horizon eval + significance
 ├── multiseed_gnn_significance.py         # GNN significance testing

@@ -1,8 +1,12 @@
 """
-Attention vs Temporal-CNN-LSTM multi-horizon forest plot.
+Attention vs Temporal-CNN-LSTM multi-horizon forest plot (seed-42 point estimates only).
+
+This plot shows seed-42 point estimates only. See
+multiseed_robustness_summary.csv/.png for the complete 3-seed picture, which
+shows this result is not consistent across seeds.
 
 Read-only sources:
-  - reports/tables/significance_results.csv (Attention_vs_Temporal)
+  - reports/tables/significance_results.csv (Attention_vs_Temporal, seed 42)
   - reports/tables/ablation_study.csv (seed-42 Delta_RMSE vs previous stage)
 
 No training. Does not modify source CSVs.
@@ -43,6 +47,8 @@ def extract_forest_data() -> pd.DataFrame:
     abl = pd.read_csv(ABLATION_CSV)
 
     att_sig = sig[sig["Comparison"] == "Attention_vs_Temporal"].copy()
+    if "Seeds_Used" in att_sig.columns:
+        att_sig = att_sig[att_sig["Seeds_Used"].astype(int) == 42]
     att_abl = abl[abl["Model"] == "CNN-LSTM+Attention"].copy()
 
     rows = []
@@ -187,7 +193,7 @@ def plot_forest(df: pd.DataFrame) -> None:
     ax.set_yticklabels([f"h={h}" for h in HORIZONS])
     ax.set_xlabel("Delta RMSE (Attention - Temporal-CNN-LSTM), mm/day")
     ax.set_title(
-        "CNN-LSTM+Attention vs CNN-LSTM: RMSE Difference by Forecast Horizon"
+        "CNN-LSTM+Attention vs CNN-LSTM-Temporal: RMSE Difference by Forecast Horizon"
     )
     ax.grid(axis="x", linestyle=":", linewidth=0.7, color="#cccccc", zorder=0)
     ax.spines["top"].set_visible(False)

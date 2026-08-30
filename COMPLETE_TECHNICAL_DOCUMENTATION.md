@@ -694,7 +694,9 @@ N/A. Schema evolution is versioned by filenames (`_v2`, `_h2`, etc.).
 
 Ablations (h=1, seed 42, CPU FP32 re-eval in master table): Transformer 9.4355; CNN-LSTM-Temporal 9.4835; Persistence 11.5559.
 
-**Finding:** LSTM significantly outperforms GNN-LSTM at every horizon.
+**Finding:** LSTM significantly outperforms GNN-LSTM at every horizon and every seed (12/12 tests; `multiseed_robustness_summary.csv`). This is the more robustly evidenced negative architectural result.
+
+**Attention (complete 3-seed picture):** neither CNN-LSTM+Attention vs Temporal nor vs LSTM is a unanimous win. Seed-42 tests suggested Attention better than Temporal at h=2 and h=4; 3-seed evaluation is Mixed at all four horizons. Vs LSTM: numerically better for LSTM in 10 of 12 tests (significant in 6). Single-seed significance can reverse (h=3 Attention vs LSTM). See FINAL_AUDIT.md Headline findings.
 
 ## 9.8 Current ML limitations
 
@@ -878,7 +880,7 @@ N/A unless productization starts.
 | Empty `data/external`, `results/`, `reports/logs/` | Placeholders |
 | Notebook 03 | Intentionally absent |
 | Spatial CNN-LSTM-Attention | Missing vs paper primary architecture |
-| Attention module (`CNNLSTMAttention`) | Implemented (additive Bahdanau over LSTM hidden states); seeds {13,42,123}, h=1–4; significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM |
+| Attention module (`CNNLSTMAttention`) | Implemented (additive Bahdanau over LSTM hidden states); seeds {13,42,123}, h=1–4; Attention-vs-Temporal is Mixed at all 4 horizons (seed-42 h=2/h=4 gains are not unanimous); not a reproducible improvement over plain LSTM (10/12 tests favor LSTM) |
 | Ablation metrics JSON | Missing |
 | ARIMA saved aggregates | Missing |
 | Base paper PDF / citation | **Missing from repository** |
@@ -940,7 +942,7 @@ Grid-based spatial-temporal deep learning for rainfall regression (details beyon
 | Per-station / scalar rainfall target | mm/day regression | Implemented exactly | |
 | Spatial CNN on lat/lon grid (Sec 3.3.3) | **Not implemented** | Missing | Irregular 414 stations; no valid 2D grid |
 | Replace spatial CNN with GNN (paper future work per FINAL_AUDIT) | `GNNLSTM` + kNN graph | Implemented (extension) | Core novelty of this project |
-| CNN-LSTM+Attention (project temporal extension) | `CNNLSTMAttention` — additive Bahdanau over LSTM hidden states; seeds {13,42,123}, h=1–4 | Implemented (adaptation) | Significantly better than CNN-LSTM-Temporal at h=2 and h=4; not shown to outperform plain LSTM (see FINAL_AUDIT.md / `ablation_study.csv` / `significance_results.csv`). Paper spatial CNN-LSTM-Attention stack remains unreproduced. |
+| CNN-LSTM+Attention (project temporal extension) | `CNNLSTMAttention` — additive Bahdanau over LSTM hidden states; seeds {13,42,123}, h=1–4 | Implemented (adaptation) | Does not produce a reproducible improvement over CNN-LSTM-Temporal (Mixed at all 4 horizons) or over plain LSTM (LSTM better in 10/12 tests; 6 significant). Seed-42 “significant at h=2/h=4 vs Temporal” is retained as informative, not as the headline. See FINAL_AUDIT.md Headline findings / `multiseed_robustness_summary.csv`. Paper spatial CNN-LSTM-Attention stack remains unreproduced. |
 | Transformer (Sec 3.3.4) | `TransformerEncoderBaseline` | Modified / ablation | Per-station non-spatial; h=1 seed42 |
 | Multi-horizon evaluation | h=1..4 with significance | Additional beyond paper (unknown if paper did this) | Cannot confirm paper’s horizons without PDF |
 | Diebold-Mariano / bootstrap | Implemented | Additional | Strengthens claims |
@@ -978,7 +980,7 @@ Using in-repo framing as an **adaptation**:
 
 **Remaining work:** Thesis/paper writing; doc/artifact hygiene; optional enrichments (ablation multi-seed, full ARIMA, Attention, better graphs).
 
-**Biggest challenges:** Irregular sparse stations blocking spatial CNN; GNN not beating LSTM; daily rainfall inherent difficulty (R²~0.37); AMP/eval-path sensitivity; stale secondary docs/JSON.
+**Biggest challenges:** Irregular sparse stations blocking spatial CNN; GNN not beating LSTM (12/12); Attention not reproducing seed-42 Temporal wins; daily rainfall inherent difficulty (R²~0.37); AMP/eval-path sensitivity; stale secondary docs/JSON.
 
 **Next milestones:**
 1. Thesis narrative with adaptation framing  

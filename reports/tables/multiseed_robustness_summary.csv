@@ -1,0 +1,13 @@
+Comparison,Horizon,Seed13_Direction,Seed13_Sig,Seed42_Direction,Seed42_Sig,Seed123_Direction,Seed123_Sig,Consistency_Verdict,N_Significant_of_3
+GNN_vs_LSTM,1,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
+GNN_vs_LSTM,2,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
+GNN_vs_LSTM,3,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
+GNN_vs_LSTM,4,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
+Attention_vs_Temporal,1,Temporal,Yes,Attention,No,Attention,No,MIXED,1
+Attention_vs_Temporal,2,Temporal,Yes,Attention,Yes,Attention,Yes,MIXED,3
+Attention_vs_Temporal,3,Attention,Yes,Attention,No,Temporal,Yes,MIXED,2
+Attention_vs_Temporal,4,Attention,Yes,Attention,Yes,Temporal,No,MIXED,2
+Attention_vs_LSTM,1,LSTM,Yes,LSTM,No,LSTM,Yes,INCONSISTENT,2
+Attention_vs_LSTM,2,LSTM,Yes,LSTM,No,LSTM,No,MIXED,1
+Attention_vs_LSTM,3,LSTM,Yes,Attention,Yes,LSTM,Yes,INCONSISTENT,3
+Attention_vs_LSTM,4,Attention,No,LSTM,No,LSTM,Yes,MIXED,1

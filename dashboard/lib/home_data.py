@@ -12,7 +12,6 @@ from .paths import (
 )
 
 ABLATION_CSV = TABLES / "ablation_study.csv"
-SIGNIFICANCE_CSV = TABLES / "significance_results.csv"
 
 # Fixed discrete RMSE bins (mm/day) for Feature 6 station map — not continuous.
 RMSE_BIN_EDGES = (0.0, 6.0, 8.0, 10.0, 15.0, float("inf"))
@@ -64,85 +63,53 @@ def load_station_wise_error(horizon: int) -> pd.DataFrame:
     return out.reset_index(drop=True)
 
 
+def _ablation_sig_state(value: object) -> str:
+    """Map ablation Yes / No / Mixed(...) to a three-state label."""
+    s = str(value).strip()
+    if s.startswith("Mixed"):
+        return "Mixed"
+    if s == "Yes":
+        return "Yes"
+    if s in {"No", "N/A", ""}:
+        return "No"
+    return s
+
+
 def build_performance_highlights() -> list[str]:
-    """Auto bullets from ablation_study.csv + significance_results.csv (live %)."""
+    """Auto bullets from ablation_study.csv (3-state Yes/No/Mixed)."""
     abl = pd.read_csv(ABLATION_CSV)
-    sig = pd.read_csv(SIGNIFICANCE_CSV)
+    att_rows = abl[abl["Model"] == "CNN-LSTM+Attention"].copy()
+    att_rows["Horizon"] = att_rows["Horizon"].astype(int)
 
     bullets: list[str] = []
-
-    # Attention vs Temporal significance (verified DM tests)
-    att_sig = sig[sig["Comparison"] == "Attention_vs_Temporal"].copy()
-    att_sig["Forecast_Horizon"] = att_sig["Forecast_Horizon"].astype(int)
-    sig_yes = sorted(
-        att_sig.loc[att_sig["Significant_at_0.05"] == "Yes", "Forecast_Horizon"].tolist()
-    )
-    sig_no = sorted(
-        att_sig.loc[att_sig["Significant_at_0.05"] == "No", "Forecast_Horizon"].tolist()
+    bullets.append(
+        "GNN-LSTM vs LSTM is robust: LSTM significantly outperforms GNN-LSTM "
+        "at all 4 horizons × all 3 seeds (12/12 tests; "
+        "`multiseed_robustness_summary.csv`)."
     )
 
-    # Live % RMSE change: Attention vs Temporal from ablation deltas
-    att_rows = abl[abl["Model"] == "CNN-LSTM+Attention"].copy()
-    temp_rows = abl[abl["Model"] == "CNN-LSTM-Temporal"].set_index("Horizon")
-    pct_bits: list[str] = []
-    for _, r in att_rows.iterrows():
+    mixed_prev = att_rows[
+        att_rows["Significant_vs_previous_stage"].map(_ablation_sig_state) == "Mixed"
+    ]
+    for _, r in mixed_prev.iterrows():
         h = int(r["Horizon"])
-        if r["Significant_vs_previous_stage"] != "Yes":
-            continue
-        temp_rmse = float(temp_rows.loc[h, "RMSE_mean"])
-        delta = float(r["Delta_RMSE_vs_previous_stage"])
-        pct = 100.0 * delta / temp_rmse
-        # Negative delta = lower RMSE = improvement
-        if delta < 0:
-            pct_bits.append(
-                f"h={h} (~{abs(pct):.1f}% RMSE reduction vs CNN-LSTM-Temporal)"
-            )
-        else:
-            pct_bits.append(
-                f"h={h} (~{abs(pct):.1f}% RMSE increase vs CNN-LSTM-Temporal)"
-            )
-
-    if sig_yes and pct_bits:
+        note = str(r["Significant_vs_previous_stage"])
         bullets.append(
-            "Attention significantly improves over CNN-LSTM-Temporal at "
-            + " and ".join(f"h={h}" for h in sig_yes)
-            + ": "
-            + "; ".join(pct_bits)
-            + f" — sourced from `ablation_study.csv` ΔRMSE and "
-            f"`significance_results.csv` Attention_vs_Temporal "
-            f"(Significant_at_0.05=Yes)."
-        )
-    elif sig_yes:
-        bullets.append(
-            "Attention significantly improves over CNN-LSTM-Temporal at "
-            + " and ".join(f"h={h}" for h in sig_yes)
-            + " (`significance_results.csv`, Attention_vs_Temporal)."
+            f"Attention's advantage over CNN-LSTM-Temporal at h={h} does not "
+            f"replicate consistently across seeds ({note}) — see Model Comparison "
+            "for full multi-seed detail (`multiseed_robustness_summary.csv`)."
         )
 
-    if sig_no:
+    mixed_lstm = att_rows[
+        att_rows["Significant_vs_LSTM"].map(_ablation_sig_state) == "Mixed"
+    ]
+    if not mixed_lstm.empty:
         bullets.append(
-            "Attention vs CNN-LSTM-Temporal is not significant at "
-            + " and ".join(f"h={h}" for h in sig_no)
-            + " (`significance_results.csv`)."
+            "Neither extension produces a reproducible improvement over plain "
+            "LSTM: Attention-vs-LSTM is Mixed (seed-dependent) at all 4 horizons "
+            "(LSTM numerically better in 10 of 12 tests, significant in 6). "
+            "Source: `multiseed_robustness_summary.csv`."
         )
-
-    # Honesty: Attention vs LSTM
-    att_lstm = sig[sig["Comparison"] == "Attention_vs_LSTM"]
-    if not att_lstm.empty:
-        row = att_lstm.iloc[0]
-        bullets.append(
-            "Not established to outperform plain LSTM: Attention_vs_LSTM was "
-            f"formally tested at h={int(row['Forecast_Horizon'])} only and was "
-            f"not significant (Significant_at_0.05={row['Significant_at_0.05']}; "
-            "`significance_results.csv`). Ablation 3-seed means also show "
-            "Attention RMSE above LSTM at every horizon."
-        )
-    else:
-        bullets.append(
-            "Not established to outperform plain LSTM "
-            "(`significance_results.csv` / `ablation_study.csv`)."
-        )
-
     return bullets
 
 
@@ -158,47 +125,45 @@ def station_rmse_lookup(station_id: str) -> dict[int, float | None]:
 
 
 def build_comparison_kpis() -> dict:
-    """Three research-result KPIs for Model Comparison (live from verified CSVs).
+    """Research-result KPIs for Model Comparison (live from verified CSVs).
 
-    Cards:
-      1) best Attention-vs-Temporal % RMSE reduction (prefers significant h=4)
-      2) count + list of horizons where Attention_vs_Temporal is significant
-      3) honesty one-liner (not established vs LSTM)
+    Cards use the complete 3-seed picture, not seed-42-only significance flags.
     """
     abl = pd.read_csv(ABLATION_CSV)
-    sig = pd.read_csv(SIGNIFICANCE_CSV)
-
-    att_sig = sig[sig["Comparison"] == "Attention_vs_Temporal"].copy()
-    att_sig["Forecast_Horizon"] = att_sig["Forecast_Horizon"].astype(int)
-    sig_yes = sorted(
-        att_sig.loc[att_sig["Significant_at_0.05"] == "Yes", "Forecast_Horizon"].tolist()
-    )
+    robust_path = TABLES / "multiseed_robustness_summary.csv"
+    robust = pd.read_csv(robust_path) if robust_path.exists() else pd.DataFrame()
 
     att_rows = abl[abl["Model"] == "CNN-LSTM+Attention"].set_index("Horizon")
     temp_rows = abl[abl["Model"] == "CNN-LSTM-Temporal"].set_index("Horizon")
 
-    # Headline effect: h=4 Attention vs Temporal (matches Home highlight formula)
     h4_delta = float(att_rows.loc[4, "Delta_RMSE_vs_previous_stage"])
     h4_temp = float(temp_rows.loc[4, "RMSE_mean"])
     h4_pct = 100.0 * h4_delta / h4_temp
-    h4_sig = str(att_rows.loc[4, "Significant_vs_previous_stage"]) == "Yes"
+    h4_state = _ablation_sig_state(att_rows.loc[4, "Significant_vs_previous_stage"])
 
-    att_lstm = sig[sig["Comparison"] == "Attention_vs_LSTM"]
-    if not att_lstm.empty:
-        caveat = (
-            "Not established to outperform plain LSTM "
-            f"(Attention_vs_LSTM tested at h={int(att_lstm.iloc[0]['Forecast_Horizon'])} "
-            f"only; Significant_at_0.05={att_lstm.iloc[0]['Significant_at_0.05']})."
-        )
-    else:
-        caveat = "Not established to outperform plain LSTM."
+    mixed_horizons = sorted(
+        int(h)
+        for h, r in att_rows.iterrows()
+        if _ablation_sig_state(r["Significant_vs_previous_stage"]) == "Mixed"
+    )
+
+    att_t = robust[robust["Comparison"] == "Attention_vs_Temporal"] if not robust.empty else pd.DataFrame()
+    n_unanimous_attn_temp = (
+        int((att_t["Consistency_Verdict"] == "CONSISTENT").sum()) if not att_t.empty else 0
+    )
+
+    caveat = (
+        "Not established vs LSTM: 10 of 12 tests numerically favor LSTM "
+        "(6 significant). Attention-vs-Temporal is Mixed at all 4 horizons."
+    )
 
     return {
         "h4_pct_reduction": abs(h4_pct) if h4_delta < 0 else -abs(h4_pct),
         "h4_delta_rmse": h4_delta,
-        "h4_significant": h4_sig,
-        "sig_horizons": sig_yes,
-        "n_sig_horizons": len(sig_yes),
+        "h4_significant": h4_state,
+        "sig_horizons": mixed_horizons,
+        "n_sig_horizons": n_unanimous_attn_temp,
+        "n_mixed_horizons": len(mixed_horizons),
         "caveat": caveat,
     }
 

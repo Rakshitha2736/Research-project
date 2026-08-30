@@ -15,6 +15,7 @@ from lib.comparison_data import (
     load_seasonal_h4,
 )
 from lib.home_data import build_comparison_kpis
+from lib.paths import PROJECT_ROOT
 from lib.style import (
     LABEL_3SEED,
     LABEL_SEED42,
@@ -36,14 +37,19 @@ from lib.ui_components import (
 inject_base_css()
 
 HONESTY_CAVEAT = (
-    "While CNN-LSTM+Attention significantly outperforms "
-    "CNN-LSTM-Temporal at h=2 and h=4, it has NOT established a consistent "
-    "advantage over plain LSTM. Attention-vs-LSTM is not significant at "
-    "h=1, h=2, and h=4. At h=3, LSTM significantly outperforms Attention in "
-    "2 of 3 seeds (13 and 123); seed 42 alone shows the reverse — a "
-    "seed-dependent finding, not a resolved Attention win (see "
-    "significance_results.csv / ablation_study.csv). LSTM remains numerically "
-    "best across all seasons at h=4 (seasonal_performance.csv)."
+    "Neither candidate extension — spatial (GNN-LSTM) or temporal "
+    "(CNN-LSTM+Attention) — produces a reproducible improvement over a plain "
+    "LSTM baseline on this dataset. GNN-LSTM is unconditionally worse: LSTM "
+    "significantly outperforms it in all 12 tests (4 horizons × 3 seeds). "
+    "Attention vs CNN-LSTM-Temporal appeared significant at h=2 and h=4 under "
+    "seed 42 alone; neither claimed improvement survives unanimous 3-seed "
+    "replication (h=2: 2/3 favor Attention, 1/3 reverses; h=4: 2/3 favor "
+    "Attention, 1/3 no effect). Direct Attention-vs-LSTM: LSTM is numerically "
+    "better in 10 of 12 tests and significant in 6. Single-seed significance "
+    "is materially unreliable here — Attention vs LSTM at h=3 is significant "
+    "for Attention at seed 42 and significantly reverses at seeds 13 and 123. "
+    "See multiseed_robustness_summary.csv / .png. Seed-42 forest-plot point "
+    "estimates (attention_vs_temporal_forest_plot.png) are seed-42 only."
 )
 
 render_page_header(
@@ -73,20 +79,20 @@ render_section_header("Research results at a glance", LABEL_3SEED)
 render_kpi_row(
     [
         render_kpi_card(
-            label="Best Att. vs Temporal (h=4)",
+            label="3-seed mean Att. vs Temporal (h=4)",
             value=label_val,
             sublabel=(
-                f"Δ={kpis['h4_delta_rmse']:.4f} mm · significant={kpis['h4_significant']} "
-                "· ablation_study.csv"
+                f"Δ={kpis['h4_delta_rmse']:.4f} mm · status={kpis['h4_significant']} "
+                "· not unanimous across seeds · ablation_study.csv"
             ),
             icon="trending-up",
             accent="#14b8a6",
             value_accent=True,
         ),
         render_kpi_card(
-            label="Horizons Att.>Temp significant",
+            label="Att.>Temp unanimous horizons",
             value=str(kpis["n_sig_horizons"]),
-            sublabel=f"α=0.05: {hs} · significance_results.csv",
+            sublabel=f"Mixed at {hs} · 0 of 4 unanimous · multiseed_robustness_summary.csv",
             icon="activity",
             accent="#3b82f6",
             value_accent=True,
@@ -110,6 +116,24 @@ render_kpi_row(
     ],
     columns=4,
 )
+
+_robust_png = PROJECT_ROOT / "reports" / "figures" / "multiseed_robustness_summary.png"
+if _robust_png.exists():
+    with card_container():
+        render_card_header(
+            "Multi-seed robustness grid",
+            caption="multiseed_robustness_summary.png · 3 comparisons × 4 horizons × 3 seeds",
+        )
+        st.image(str(_robust_png), width="stretch")
+        st.caption(
+            "Green = first-named model better; red = opposite. GNN-vs-LSTM is "
+            "uniformly red (LSTM better, all 12 cells). Attention rows are mixed. "
+            "This plot shows seed-42 point estimates only if you consult "
+            "`attention_vs_temporal_forest_plot.png` — that forest plot is seed-42 "
+            "only. See `multiseed_robustness_summary.csv` for the complete 3-seed "
+            "picture, which shows the Attention-vs-Temporal result is not consistent "
+            "across seeds."
+        )
 
 with card_container():
     render_card_header(
@@ -145,18 +169,22 @@ abl = load_ablation_summary()
 att_abl = abl[abl["Model"] == "CNN-LSTM+Attention"].set_index("Horizon")
 temp_abl = abl[abl["Model"] == "CNN-LSTM-Temporal"].set_index("Horizon")
 finding_rows: list[tuple[str, str]] = []
-for h in kpis["sig_horizons"]:
+for h in (1, 2, 3, 4):
     delta = float(att_abl.loc[h, "Delta_RMSE_vs_previous_stage"])
     temp_rmse = float(temp_abl.loc[h, "RMSE_mean"])
     pct_h = 100.0 * delta / temp_rmse
     direction = "RMSE reduction" if delta < 0 else "RMSE increase"
+    state = str(att_abl.loc[h, "Significant_vs_previous_stage"])
     finding_rows.append(
-        (f"h={h} Att. vs Temporal", f"~{abs(pct_h):.1f}% {direction} (Δ={delta:.4f})")
+        (
+            f"h={h} Att. vs Temporal",
+            f"~{abs(pct_h):.1f}% {direction} (3-seed mean Δ={delta:.4f}); {state}",
+        )
     )
 finding_rows.append(
-    ("Significant horizons (α=0.05)", hs if hs != "none" else "none")
+    ("Unanimous Att.>Temp horizons", "none (0 of 4)")
 )
-finding_rows.append(("Attention vs plain LSTM", "Not established (see caveat)"))
+finding_rows.append(("Attention vs plain LSTM", "Not established (10/12 LSTM better)"))
 
 c_find, c_table = st.columns([1.0, 1.2], gap="medium")
 with c_find:
@@ -248,8 +276,9 @@ st.markdown(
 )
 with st.expander("Secondary Investigation: GNN-LSTM", expanded=False):
     st.caption(
-        "GNN-LSTM is a secondary spatial investigation on an irregular station graph — "
-        "not part of the primary temporal-attention claim."
+        "GNN-LSTM is a secondary spatial investigation on an irregular station graph. "
+        "The negative result is the more robustly evidenced architectural finding: "
+        "LSTM significantly outperforms GNN-LSTM in all 12 tests (4 horizons × 3 seeds)."
     )
     gnn_cmp, gnn_sig = load_gnn_secondary()
     st.markdown(f"##### GNN vs LSTM RMSE ({LABEL_3SEED})")

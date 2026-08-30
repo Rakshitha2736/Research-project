@@ -244,6 +244,8 @@ From HAC-corrected `diebold_mariano(h=horizon)` recomputation (seed 42, paired m
 
 All CIs strictly positive → GNN RMSE significantly **higher** than LSTM on the masked test set at every horizon.
 
+**3-seed extension:** the same direction and significance hold at seeds 13 and 123 for all 4 horizons (12/12 tests). See `reports/tables/multiseed_robustness_summary.csv`. This GNN finding is the more robustly evidenced of the two negative architectural results (Attention-vs-Temporal is Mixed at all horizons; neither Attention improvement at h=2/h=4 is unanimous).
+
 **Status:** **PASS** (DM values HAC-corrected with lag=h−1; no retrain this audit)
 
 ---

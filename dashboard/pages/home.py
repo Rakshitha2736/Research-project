@@ -244,7 +244,7 @@ with col_hi:
     with card_container():
         render_card_header(
             "Performance highlights",
-            caption="ablation_study.csv · significance_results.csv",
+            caption="ablation_study.csv · multiseed_robustness_summary.csv",
         )
         bullets = build_performance_highlights()
         items: list[tuple[str, str]] = []
@@ -252,7 +252,19 @@ with col_hi:
             tone = (
                 "ok"
                 if i == 0
-                else ("caveat" if "LSTM" in b or "Not established" in b else "warn")
+                else (
+                    "caveat"
+                    if any(
+                        k in b
+                        for k in (
+                            "LSTM",
+                            "Not established",
+                            "does not replicate",
+                            "Neither",
+                        )
+                    )
+                    else "warn"
+                )
             )
             short = b if len(b) < 240 else b[:237] + "…"
             items.append((tone, short))

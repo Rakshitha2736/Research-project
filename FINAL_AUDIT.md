@@ -18,6 +18,26 @@ This framing should be stated explicitly in any thesis or paper: attention is th
 
 ---
 
+## Headline findings (complete 3-seed evidence)
+
+This study evaluated two candidate architectural extensions to a temporal CNN-LSTM precipitation forecasting baseline: a graph neural network (GNN-LSTM) modeling inter-station spatial dependence, and an additive attention mechanism (CNN-LSTM+Attention) modeling temporal salience. Both were benchmarked against a plain LSTM baseline across four forecast horizons (1-4 days), using three random seeds per model per horizon and Diebold-Mariano/bootstrap significance testing.
+
+The GNN-LSTM result is robust: across all 4 horizons and all 3 seeds (12 independent tests), LSTM significantly outperforms GNN-LSTM without exception. This finding — that graph-based spatial modeling does not improve forecasting on this sparse, irregular station network — holds unconditionally. Of the two negative architectural results, this is the more robustly evidenced.
+
+The Attention result requires more careful statement. When evaluated with a single seed, CNN-LSTM+Attention appeared to significantly outperform the non-attention CNN-LSTM baseline at two of four horizons (h=2, h=4). Extending this evaluation to three seeds reveals that this result is not robust: at h=2, two of three seeds favor Attention while one significantly reverses the finding; at h=4, two of three seeds favor Attention while one shows no effect. Neither claimed improvement survives unanimous multi-seed replication. Furthermore, when compared directly against the plain LSTM baseline across all 4 horizons and 3 seeds (12 tests), LSTM shows the numerically better result in 10 of 12 cases, reaching significance in 6 — indicating a recurring, though not fully consistent, LSTM advantage over the attention-augmented model.
+
+Taken together, these results support two conclusions. First, neither candidate extension examined here — spatial (GNN) or temporal (attention) — produces a reproducible improvement over a plain LSTM baseline on this dataset. Second, and methodologically, this study demonstrates that single-seed significance testing is materially unreliable for this problem: at least one comparison (Attention vs. LSTM at h=3) produced a statistically significant result at one seed that directly reversed under two independent reruns. This finding motivates mandatory multi-seed evaluation as a minimum standard for future rainfall-forecasting deep learning studies, and is offered as a secondary methodological contribution of this work.
+
+Canonical tables: `reports/tables/significance_results.csv` (seed-level rows retained, including seed 42) and `reports/tables/multiseed_robustness_summary.csv` (12-row consolidation). Figure: `reports/figures/multiseed_robustness_summary.png`.
+
+**Forest-plot note:** `reports/figures/attention_vs_temporal_forest_plot.png` shows seed-42 point estimates only. See `multiseed_robustness_summary.csv` / `.png` for the complete 3-seed picture, which shows this result is not consistent across seeds.
+
+### Methodological contribution — seed sensitivity
+
+Single-seed (seed=42) Diebold-Mariano tests were informative: they first flagged Attention-vs-Temporal at h=2/h=4 and Attention-vs-LSTM at h=3. They are not sufficient as headline claims. The concrete reversal is Attention vs LSTM at h=3: seed 42 DM p=0.00786 (Attention better); seeds 13 and 123 DM p=1.09e-13 and p=7.37e-11 (LSTM better). That pattern is classified **INCONSISTENT** in `multiseed_robustness_summary.csv`. Attention vs Temporal is **MIXED** at all four horizons (not the same seed-42-outlier pattern at every horizon). GNN vs LSTM is **CONSISTENT** at all four horizons.
+
+---
+
 ## 1. Everything Completed
 
 ### Data Pipeline
@@ -45,7 +65,7 @@ This framing should be stated explicitly in any thesis or paper: attention is th
 ### Evaluation
 - [x] All metrics in mm/day (inverse-transformed)
 - [x] Multi-seed aggregation (mean ± std) for LSTM, GNN-LSTM, CNN-LSTM+Attention, CNN-LSTM-Temporal
-- [x] Diebold-Mariano significance test (all 4 horizons, LSTM vs GNN-LSTM; Attention vs Temporal)
+- [x] Diebold-Mariano significance test (all 4 horizons × 3 seeds for GNN_vs_LSTM, Attention_vs_Temporal, Attention_vs_LSTM)
 - [x] Paired t-test (all 4 horizons)
 - [x] Bootstrap 95% CI (1000 resamples, all 4 horizons)
 - [x] Attention-weight interpretability plot (h=4 mean α over test set)
@@ -91,7 +111,9 @@ This framing should be stated explicitly in any thesis or paper: attention is th
 | `PROJECT_STATUS.md` | Project completion status |
 | `FINAL_AUDIT.md` | This file |
 | `reports/tables/master_results.csv` | Consolidated results table (incl. Attention + Temporal multi-seed) |
-| `reports/tables/significance_results.csv` | Pairwise DM / paired-t / bootstrap CI: GNN_vs_LSTM (h=1–4), Attention_vs_Temporal (h=1–4), Attention_vs_LSTM (h=1–4) |
+| `reports/tables/significance_results.csv` | Pairwise DM / paired-t / bootstrap CI: GNN_vs_LSTM, Attention_vs_Temporal, Attention_vs_LSTM (h=1–4 × seeds 13/42/123) |
+| `reports/tables/multiseed_robustness_summary.csv` | 12-row consolidation of 3-seed direction, significance, and consistency verdicts |
+| `reports/figures/multiseed_robustness_summary.png` | Heatmap of the 12-row robustness table |
 | `reports/tables/` | Directory created |
 | `reports/logs/` | Directory created |
 | `reports/figures/attention_weights_h4_mean.png` | Mean attention profile (h=4, seed 42) |
@@ -199,10 +221,11 @@ The following metrics are marked "Not Available" and the reasons are:
 2. **ARIMA coverage is 30/414 stations.** The ARIMA baseline was evaluated on a random 30-station sample due to computational cost of rolling ARIMA. This is adequate as a classical reference but should not be presented as a full-coverage comparison.
 3. **AMP sensitivity:** PyTorch's Automatic Mixed Precision (`torch.amp.autocast`) uses float16 for some operations during training and evaluation, which introduces small rounding differences versus pure float32 — in this project, that shifts RMSE by ~0.0005 depending on which path is used. The canonical results in `mh_multiseed_monitor.log` were produced under CUDA+autocast (matching the training path) and should be the numbers cited in any paper; re-evaluating the same checkpoints in pure FP32 (e.g. on CPU) will not match exactly.
 4. **Stale multiseed summary JSON:** `lstm_baseline_v2_multiseed_summary.json` was written by an earlier run of `train_lstm_baseline_v2_multiseed.py` and records seed-42 RMSE as 9.4584, but the seed-42 checkpoint was subsequently retrained (the current checkpoint evaluates to ~9.4184 per `lstm_baseline_v2_seed42_metrics.json`). The JSON summary was never refreshed after retraining, so it disagrees with the actual checkpoint. The canonical multi-horizon table in `mh_multiseed_monitor.log` uses the current checkpoints and supersedes this file.
-5. **MAE-vs-RMSE divergence:** relative to the non-attention temporal CNN-LSTM, attention often **reduces RMSE** (and is DM-significant at h=2 and h=4) but **does not always reduce MAE** (e.g. higher mean MAE at several horizons). Thesis claims should treat RMSE/DM as the primary error comparison and state MAE explicitly as a limitation of the “attention always helps” narrative.
-6. **Non-monotonic Attn-vs-Temporal significance across horizons:** DM/bootstrap favor attention at **h=2** and **h=4**, but **h=1** and **h=3** are non-significant (CIs include 0). This pattern is plausibly explained by attention's learned strategy shifting from a sharp, persistence-like recency focus at h=1 (day-position **1** / most-recent-day weight = 0.456, ~28× the mid-window baseline ≈0.016) to a much flatter, mildly oldest-day-favoring strategy at h=4 (day-position **30**; range 0.0095, near-uniform). Attention appears to add little beyond what a recency-biased model already captures at h=1, but learns a distinct long-range strategy at h=4 — consistent with h=4 showing both the largest RMSE improvement and strongest significance in this study. h=2/h=3's intermediate, non-significant results remain only partially explained and should still be reported as an open finding. See also §5c and all-samples mean attention profiles.
+5. **MAE-vs-RMSE divergence:** relative to the non-attention temporal CNN-LSTM, attention can **reduce 3-seed-mean RMSE** at some horizons, but that stage-wise gain is **not unanimous across seeds** (Mixed at h=1–4; see Headline findings). MAE does **not** always fall with RMSE (e.g. higher mean MAE at several horizons). Thesis claims should treat RMSE/DM as the primary error comparison, state MAE explicitly, and not describe Attention-vs-Temporal as a confirmed improvement.
 
-   Seasonal breakdown reveals that while CNN-LSTM+Attention significantly outperforms CNN-LSTM-Temporal at h=4 (per ablation/significance testing), LSTM remains numerically best or tied in every season at h=4 (descriptive seasonal RMSE only). Attention-vs-LSTM is formally tested at all horizons (h=1 from `train_cnn_lstm_multiseed_significance.py`; h=2/h=4 from seed-42 `forecast_cache.parquet`; h=3 multi-seed discrepancy check on seeds 13/42/123): **not significant** at h=1, h=2, and h=4. At **h=3**, the result is **seed-dependent**: seed 42 alone shows Attention significantly better (DM p=0.00786; CI on RMSE_attn−RMSE_lstm negative and excludes 0); seeds 13 and 123 both show LSTM significantly better (DM p=1.09e-13 and p=7.37e-11; CIs positive and exclude 0). Majority of seeds and the 3-seed mean point estimate favor LSTM. At h=3, LSTM significantly outperforms Attention in 2 of 3 seeds tested; the remaining seed shows the reverse — illustrating why single-seed significance testing alone is insufficient, and consistent with the project's broader finding that Attention does not establish a consistent advantage over plain LSTM. The Attn-vs-Temporal result (significant at h=2/h=4) remains a separate comparison. Additionally, Attention's h=4 Winter R² (0.001) is the weakest of any model/season/horizon combination, suggesting its aggregate h=4 improvement over Temporal is not uniform across seasonal conditions.
+6. **Non-monotonic Attn-vs-Temporal pattern was a seed-42 observation, not a 3-seed result.** Seed-42 DM/bootstrap favored attention at **h=2** and **h=4** and was non-significant at **h=1** and **h=3**. The complete 3-seed picture is Mixed at every horizon (h=2: 2/3 Attention, 1/3 significant reverse; h=4: 2/3 Attention, 1/3 ns). Interpretability (h=1 recency vs h=4 near-uniform attention) remains a useful qualitative discussion of *why* attention might behave differently by horizon; it does **not** license a claim that attention “significantly improves at h=2/h=4.” See Headline findings and `multiseed_robustness_summary.csv`.
+
+   Seasonal breakdown (seed-42 descriptive RMSE): LSTM remains numerically best or tied in every season at h=4. Attention-vs-LSTM across 12 tests: LSTM numerically better in 10/12, significant in 6. At **h=3** the result is **INCONSISTENT**: seed 42 alone shows Attention significantly better (DM p=0.00786); seeds 13 and 123 both show LSTM significantly better (DM p=1.09e-13 and p=7.37e-11). Additionally, Attention's h=4 Winter R² (0.001) is the weakest of any model/season/horizon combination.
 
 7. **External validity / near-duplicate stations (thesis Limitations):** External validity audit (`reports/tables/external_validity_audit.json`) confirms the dataset reflects genuine, physically plausible Indian weather: correct geographic bounds, correct identification of Meghalaya as a high-rainfall extreme and western Rajasthan as a low-rainfall extreme, correct monsoon seasonality (8.5x JJAS/DJF ratio), and correct elevation-temperature relationships. One data source limitation was identified: 124 station-ID pairs (typically nearby city/airport aliases, e.g. same city listed under 2+ names, 4-35km apart) share long runs of identical rainfall values, indicating these are not fully independent measurement sources despite being treated as distinct stations in the 414-station panel. This has negligible impact on the project's core temporal train/val/test methodology and significance testing (given the very large effect sizes and p-values reported), and if anything would bias the GNN spatial-extension comparison in the GNN's favor (near-duplicate neighbors are trivially predictive) — the GNN's failure to outperform plain LSTM despite this potential advantage strengthens rather than weakens that finding.
 
@@ -230,7 +253,7 @@ Helpers live in `src/eval_attention.py`. Outputs:
 Key empirical findings (seed 42, τ=1 mm, already generated for h=1 and h=4):
 - **h=1 is strongly recency-biased** (peak day-position **1**; recent-7 share ≈ **0.61**). Wet and JJAS samples focus even more on recent days (recent-7 Δ wet−dry ≈ +0.044; monsoon−non ≈ +0.094; CIs exclude 0) and have **lower** attention entropy (more peaked).
 - **h=4 is near-uniform / oldest-peaked** (peak day-position **30**; recent-7 ≈ **0.23**). Conditioning shifts are tiny in magnitude (~0.003–0.005 on recent-7) though CIs still exclude 0 — practically a flat policy.
-- This horizon-dependent attention regime is a useful interpretability result for discussing why Attn-vs-Temporal significance is non-monotonic; do **not** over-claim causality without h=2/3 replication.
+- This horizon-dependent attention regime is useful for discussing *why* attention policies differ by horizon; it does **not** establish a reproducible Attn-vs-Temporal RMSE improvement. Seed-42 forest-plot estimates remain seed-42 only.
 
 ---
 
@@ -242,9 +265,10 @@ This project is an **adaptation and extension** of the base paper: **additive at
 
 Key thesis-ready artifacts:
 - Canonical results table (LSTM, GNN-LSTM, CNN-LSTM+Attention, CNN-LSTM-Temporal × 4 horizons, 3 seeds)
-- Attn-vs-Temporal significance: significant at h=2/h=4, non-significant at h=1/h=3 (non-monotonic; unexplained) — see `significance_results.csv`
-- LSTM vs GNN-LSTM significance at every horizon; bootstrap CIs
-- Attention interpretability figure (`attention_weights_h4_mean.png`)
+- **Primary finding:** neither GNN nor Attention produces a reproducible improvement over plain LSTM; GNN-vs-LSTM is unconditionally LSTM-better (12/12); Attention-vs-Temporal is Mixed at all horizons; Attention-vs-LSTM favors LSTM in 10/12 tests (6 significant) — see Headline findings and `multiseed_robustness_summary.csv`
+- LSTM vs GNN-LSTM significance at every horizon × every seed; bootstrap CIs
+- **Secondary methodological finding:** single-seed significance can reverse (Attention vs LSTM, h=3, seed 42 vs 13/123)
+- Attention interpretability figure (`attention_weights_h4_mean.png`); forest plot is seed-42 only (caption caveat required)
 - Supplementary Transformer ablation at h=1 (single seed)
 - `reports/tables/master_results.csv` for paper tables
 - Independent verification report (92/100 integrity score)
@@ -271,7 +295,7 @@ All planned experiments have been executed:
 - Secondary spatial investigation: GNN-LSTM across 4 horizons × 3 seeds; LSTM backbone baseline likewise
 - Supplementary Transformer ablation at h=1 (seed 42)
 - Classical baselines (Persistence, ARIMA on 30-station sample)
-- Attn-vs-Temporal and LSTM-vs-GNN significance testing completed at all horizons
+- Attn-vs-Temporal, Attn-vs-LSTM, and LSTM-vs-GNN significance testing completed at all horizons (3 seeds; GNN fully consistent; Attention mixed)
 - Attention-weight interpretability at h=4
 - Results independently verified for the pre-attention LSTM/GNN package; Attention/Temporal metrics recorded in master/significance tables from the CUDA+autocast training scripts
 
