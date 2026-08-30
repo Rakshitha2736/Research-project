@@ -1009,10 +1009,15 @@ Not all days are equal; soft-weights let the model focus on informative days.
 
 ## 17.5 Actual result (not speculative)
 Significantly better than CNN-LSTM-Temporal at h=2 and h=4 (DM/bootstrap 
-significance testing, HAC-corrected). NOT shown to outperform plain LSTM at 
-any horizon - Attention-vs-LSTM was formally tested at h=1 (not significant); 
-LSTM remains numerically best across all seasons at h=4. See FINAL_AUDIT.md, 
-ablation_study.csv, and significance_results.csv for full results.
+significance testing, HAC-corrected). Against plain LSTM: not significant at 
+h=1, h=2, and h=4. At h=3, LSTM significantly outperforms Attention in 2 of 3 
+seeds tested (seeds 13 and 123: DM p=1.09e-13 and p=7.37e-11); the remaining 
+seed (42) shows the reverse (DM p=0.00786, Attention better) — illustrating why 
+single-seed significance testing alone is insufficient, and consistent with the 
+project's broader finding that Attention does not establish a consistent 
+advantage over plain LSTM. LSTM remains numerically best across all seasons at 
+h=4 (descriptive). See FINAL_AUDIT.md, ablation_study.csv, and 
+significance_results.csv for full results.
 
 ## 17.6 What stayed fixed across all model comparisons
 Cleaning, contiguous sequences, splits, metrics - only the model architecture 

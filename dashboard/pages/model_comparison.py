@@ -37,10 +37,13 @@ inject_base_css()
 
 HONESTY_CAVEAT = (
     "While CNN-LSTM+Attention significantly outperforms "
-    "CNN-LSTM-Temporal at h=2 and h=4, it has NOT been shown to outperform "
-    "the simpler LSTM baseline — LSTM remains numerically best across all "
-    "seasons at h=4 (see seasonal_performance.csv), and Attention-vs-LSTM "
-    "significance was only formally tested at h=1 (not significant)."
+    "CNN-LSTM-Temporal at h=2 and h=4, it has NOT established a consistent "
+    "advantage over plain LSTM. Attention-vs-LSTM is not significant at "
+    "h=1, h=2, and h=4. At h=3, LSTM significantly outperforms Attention in "
+    "2 of 3 seeds (13 and 123); seed 42 alone shows the reverse — a "
+    "seed-dependent finding, not a resolved Attention win (see "
+    "significance_results.csv / ablation_study.csv). LSTM remains numerically "
+    "best across all seasons at h=4 (seasonal_performance.csv)."
 )
 
 render_page_header(
