@@ -8,6 +8,8 @@ Attention_vs_Temporal,2,42,6.371710e-04,6.371710e-04,-0.0652,-0.0244,RMSE_attn -
 Attention_vs_Temporal,3,42,7.498644e-01,7.498644e-01,-0.0322,0.0212,RMSE_attn - RMSE_temp,No,HAC lag=2 (h=3); from train_cnn_lstm_h23_multiseed_significance.py
 Attention_vs_Temporal,4,42,1.685128e-09,5.006386e-20,-0.1787,-0.1152,RMSE_attn - RMSE_temp,Yes,HAC lag=3 (h=4); from train_cnn_lstm_h4_multiseed_significance.py
 Attention_vs_LSTM,1,42,1.678886e-01,1.678886e-01,-0.0097,0.0780,RMSE_attn - RMSE_lstm,No,HAC lag=0 (h=1); from train_cnn_lstm_multiseed_significance.py
+Attention_vs_LSTM,1,13,4.930765e-07,4.930772e-07,0.0820,0.1937,RMSE_attn - RMSE_lstm,Yes,HAC lag=0 (h=1); CUDA+autocast inference from lstm_baseline_v2_seed13.pt + cnn_lstm_attention_h1_seed13.pt; multi-seed consistency check (Phase 4 follow-up)
+Attention_vs_LSTM,1,123,3.939738e-02,3.939736e-02,0.0000,0.0769,RMSE_attn - RMSE_lstm,Yes,HAC lag=0 (h=1); CUDA+autocast inference from lstm_baseline_v2_seed123.pt + cnn_lstm_attention_h1_seed123.pt; multi-seed consistency check (Phase 4 follow-up)
 Attention_vs_LSTM,2,42,9.472914e-01,9.401524e-01,-0.0227,0.0229,RMSE_attn - RMSE_lstm,No,HAC lag=1 (h=2); from forecast_cache.parquet seed-42 CUDA+autocast preds (no re-inference)
 Attention_vs_LSTM,2,13,4.471505e-05,2.634096e-06,0.0298,0.0719,RMSE_attn - RMSE_lstm,Yes,HAC lag=1 (h=2); CUDA+autocast inference from lstm_h2_seed13.pt + cnn_lstm_attention_h2_seed13.pt; multi-seed consistency check (Phase 4 follow-up)
 Attention_vs_LSTM,2,123,8.884064e-02,4.763678e-02,0.0003,0.0497,RMSE_attn - RMSE_lstm,No,HAC lag=1 (h=2); CUDA+autocast inference from lstm_h2_seed123.pt + cnn_lstm_attention_h2_seed123.pt; multi-seed consistency check (Phase 4 follow-up)
