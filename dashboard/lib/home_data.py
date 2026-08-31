@@ -12,6 +12,8 @@ from .paths import (
 )
 
 ABLATION_CSV = TABLES / "ablation_study.csv"
+ROBUST_CSV = TABLES / "multiseed_robustness_summary.csv"
+_HIGHLIGHT_SUFFIX = " See Model Comparison for the full breakdown."
 
 # Fixed discrete RMSE bins (mm/day) for Feature 6 station map — not continuous.
 RMSE_BIN_EDGES = (0.0, 6.0, 8.0, 10.0, 15.0, float("inf"))
@@ -63,11 +65,14 @@ def load_station_wise_error(horizon: int) -> pd.DataFrame:
     return out.reset_index(drop=True)
 
 
+def _is_binary_verdict(value: object) -> bool:
+    """True for plain Yes/No/N/A (no multi-seed verdict tier)."""
+    return str(value).strip() in {"Yes", "No", "N/A", ""}
+
+
 def _ablation_sig_state(value: object) -> str:
-    """Map ablation Yes / No / Mixed(...) to a three-state label."""
+    """Map ablation Yes/No to binary labels; pass through any verdict tier verbatim."""
     s = str(value).strip()
-    if s.startswith("Mixed"):
-        return "Mixed"
     if s == "Yes":
         return "Yes"
     if s in {"No", "N/A", ""}:
@@ -75,41 +80,131 @@ def _ablation_sig_state(value: object) -> str:
     return s
 
 
-def build_performance_highlights() -> list[str]:
-    """Auto bullets from ablation_study.csv (3-state Yes/No/Mixed)."""
-    abl = pd.read_csv(ABLATION_CSV)
-    att_rows = abl[abl["Model"] == "CNN-LSTM+Attention"].copy()
-    att_rows["Horizon"] = att_rows["Horizon"].astype(int)
+def _load_robustness() -> pd.DataFrame:
+    if not ROBUST_CSV.exists():
+        raise FileNotFoundError(ROBUST_CSV)
+    return pd.read_csv(ROBUST_CSV)
 
-    bullets: list[str] = []
-    bullets.append(
-        "GNN-LSTM vs LSTM is robust: LSTM significantly outperforms GNN-LSTM "
-        "at all 4 horizons × all 3 seeds (12/12 tests; "
-        "`multiseed_robustness_summary.csv`)."
+
+def _seed_tallies(row: pd.Series, first: str, second: str) -> dict[str, int]:
+    """Count significant / non-significant seeds by direction."""
+    out = {
+        "sig_first": 0,
+        "sig_second": 0,
+        "ns_first": 0,
+        "ns_second": 0,
+    }
+    for seed in (13, 42, 123):
+        direction = str(row[f"Seed{seed}_Direction"])
+        sig = str(row[f"Seed{seed}_Sig"])
+        if sig == "Yes" and direction == first:
+            out["sig_first"] += 1
+        elif sig == "Yes" and direction == second:
+            out["sig_second"] += 1
+        elif sig == "No" and direction == first:
+            out["ns_first"] += 1
+        elif sig == "No" and direction == second:
+            out["ns_second"] += 1
+    return out
+
+
+def _attention_temporal_highlight(h: int, row: pd.Series) -> str:
+    """Template bullet for Attention vs Temporal at one horizon (<200 chars)."""
+    t = _seed_tallies(row, "Attention", "Temporal")
+    n_sig = int(row["N_Significant_of_3"])
+    verdict = str(row["Consistency_Verdict"])
+
+    if verdict == "DIRECTION-UNSTABLE (contested)" and n_sig == 3:
+        text = (
+            f"At h={h}, Attention's edge over CNN-LSTM-Temporal does not hold — "
+            f"all 3 seeds are significant, but {t['sig_second']} favors Temporal "
+            f"instead."
+        )
+    elif verdict == "DIRECTION-UNSTABLE (contested)" and n_sig == 2:
+        if t["sig_first"] == 2 and t["sig_second"] == 0:
+            text = (
+                f"At h={h}, Attention vs CNN-LSTM-Temporal is seed-dependent — "
+                f"2 of 3 significantly favor Attention; 1 shows no significant "
+                f"difference."
+            )
+        else:
+            text = (
+                f"At h={h}, Attention vs CNN-LSTM-Temporal splits across seeds: "
+                f"2 of 3 are significant and disagree in direction."
+            )
+    elif verdict == "DIRECTION-UNSTABLE (weak)":
+        text = (
+            f"At h={h}, Attention vs CNN-LSTM-Temporal is unsettled — only "
+            f"{n_sig} of 3 seeds is significant; the rest are non-significant."
+        )
+    elif verdict == "DIRECTION-STABLE":
+        text = (
+            f"At h={h}, Attention vs CNN-LSTM-Temporal is direction-stable but "
+            f"significance varies ({n_sig} of 3 seeds significant)."
+        )
+    else:
+        text = (
+            f"At h={h}, Attention vs CNN-LSTM-Temporal is {verdict.lower()} "
+            f"({n_sig} of 3 seeds significant)."
+        )
+    return text + _HIGHLIGHT_SUFFIX
+
+
+def _attention_lstm_summary(rows: pd.DataFrame) -> str:
+    """One summary bullet for Attention vs LSTM across horizons."""
+    contested = sorted(
+        int(r["Horizon"])
+        for _, r in rows.iterrows()
+        if str(r["Consistency_Verdict"]).startswith("DIRECTION-UNSTABLE")
+    )
+    stable = sorted(
+        int(r["Horizon"])
+        for _, r in rows.iterrows()
+        if str(r["Consistency_Verdict"]) == "DIRECTION-STABLE"
+    )
+    parts: list[str] = []
+    if stable:
+        hs = ", ".join(f"h={h}" for h in stable)
+        parts.append(f"direction-stable at {hs}")
+    if contested:
+        hs = ", ".join(f"h={h}" for h in contested)
+        parts.append(f"unstable at {hs}")
+    detail = "; ".join(parts) if parts else "non-binary at all horizons"
+    return (
+        f"Attention vs plain LSTM shows no reproducible edge ({detail}). "
+        f"LSTM is numerically better in 10 of 12 tests."
+        f"{_HIGHLIGHT_SUFFIX}"
     )
 
-    mixed_prev = att_rows[
-        att_rows["Significant_vs_previous_stage"].map(_ablation_sig_state) == "Mixed"
-    ]
-    for _, r in mixed_prev.iterrows():
-        h = int(r["Horizon"])
-        note = str(r["Significant_vs_previous_stage"])
-        bullets.append(
-            f"Attention's advantage over CNN-LSTM-Temporal at h={h} does not "
-            f"replicate consistently across seeds ({note}) — see Model Comparison "
-            "for full multi-seed detail (`multiseed_robustness_summary.csv`)."
-        )
 
-    mixed_lstm = att_rows[
-        att_rows["Significant_vs_LSTM"].map(_ablation_sig_state) == "Mixed"
-    ]
-    if not mixed_lstm.empty:
-        bullets.append(
-            "Neither extension produces a reproducible improvement over plain "
-            "LSTM: Attention-vs-LSTM is Mixed (seed-dependent) at all 4 horizons "
-            "(LSTM numerically better in 10 of 12 tests, significant in 6). "
-            "Source: `multiseed_robustness_summary.csv`."
+def build_performance_highlights() -> list[str]:
+    """Home bullets from multiseed_robustness_summary.csv (template-based)."""
+    abl = pd.read_csv(ABLATION_CSV)
+    att_abl = abl[abl["Model"] == "CNN-LSTM+Attention"].copy()
+    robust = _load_robustness()
+
+    bullets: list[str] = [
+        (
+            "GNN-LSTM vs LSTM is robust: LSTM significantly outperforms GNN-LSTM "
+            "at all 4 horizons × all 3 seeds (12/12 tests)."
         )
+    ]
+
+    att_t = robust[robust["Comparison"] == "Attention_vs_Temporal"].sort_values("Horizon")
+    for _, row in att_t.iterrows():
+        h = int(row["Horizon"])
+        abl_row = att_abl[att_abl["Horizon"] == h]
+        if abl_row.empty:
+            continue
+        prev = abl_row.iloc[0]["Significant_vs_previous_stage"]
+        if _is_binary_verdict(prev):
+            continue
+        bullets.append(_attention_temporal_highlight(h, row))
+
+    att_l = robust[robust["Comparison"] == "Attention_vs_LSTM"].sort_values("Horizon")
+    if any(not _is_binary_verdict(r["Significant_vs_LSTM"]) for _, r in att_abl.iterrows()):
+        bullets.append(_attention_lstm_summary(att_l))
+
     return bullets
 
 
@@ -141,10 +236,10 @@ def build_comparison_kpis() -> dict:
     h4_pct = 100.0 * h4_delta / h4_temp
     h4_state = _ablation_sig_state(att_rows.loc[4, "Significant_vs_previous_stage"])
 
-    mixed_horizons = sorted(
+    nonbinary_horizons = sorted(
         int(h)
         for h, r in att_rows.iterrows()
-        if _ablation_sig_state(r["Significant_vs_previous_stage"]) == "Mixed"
+        if not _is_binary_verdict(r["Significant_vs_previous_stage"])
     )
 
     att_t = robust[robust["Comparison"] == "Attention_vs_Temporal"] if not robust.empty else pd.DataFrame()
@@ -154,16 +249,16 @@ def build_comparison_kpis() -> dict:
 
     caveat = (
         "Not established vs LSTM: 10 of 12 tests numerically favor LSTM "
-        "(6 significant). Attention-vs-Temporal is Mixed at all 4 horizons."
+        "(6 significant). Attention-vs-Temporal is non-unanimous at all 4 horizons."
     )
 
     return {
         "h4_pct_reduction": abs(h4_pct) if h4_delta < 0 else -abs(h4_pct),
         "h4_delta_rmse": h4_delta,
         "h4_significant": h4_state,
-        "sig_horizons": mixed_horizons,
+        "sig_horizons": nonbinary_horizons,
         "n_sig_horizons": n_unanimous_attn_temp,
-        "n_mixed_horizons": len(mixed_horizons),
+        "n_mixed_horizons": len(nonbinary_horizons),
         "caveat": caveat,
     }
 

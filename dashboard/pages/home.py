@@ -259,7 +259,11 @@ with col_hi:
                         for k in (
                             "LSTM",
                             "Not established",
-                            "does not replicate",
+                            "does not hold",
+                            "splits",
+                            "unsettled",
+                            "seed-dependent",
+                            "no reproducible edge",
                             "Neither",
                         )
                     )
