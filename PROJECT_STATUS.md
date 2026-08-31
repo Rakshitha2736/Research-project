@@ -25,7 +25,8 @@
 | Transformer ablation (h=1) | ✅ Complete | Seed 42 |
 | Statistical significance tests | ✅ Complete | DM, paired-t, bootstrap CI |
 | ARIMA baseline | ✅ Complete | 30-station sample |
-| Persistence baseline | ✅ Complete | RMSE 11.56 |
+| Persistence baseline | ✅ Complete | RMSE 11.56 (h=1–4 in `master_results.csv`) |
+| Climatology baseline | ✅ Complete | RMSE 10.79, R² 0.174 at h=1 (`eval_climatology.py`) |
 | Pipeline automation | ✅ Complete | run_pipeline.py |
 | Independent verification | ✅ Complete | 92/100 integrity score |
 
@@ -53,8 +54,9 @@ All planned experiments have been executed, evaluated, and verified.
 | 2 | GNN-LSTM | 2-layer GCN (8→16→32) + LSTM (64) → FC | h=1,2,3,4 | 13, 42, 123 |
 | 3 | CNN-LSTM-Temporal | Conv1d (16→32) + LSTM (64) → FC | h=1 | 42 |
 | 4 | Transformer Encoder | Pre-norm encoder (d=64, 4-head, 2-layer) → FC | h=1 | 42 |
-| 5 | Persistence | y_pred = last observed rainfall | h=1 | n/a |
-| 6 | ARIMA | Rolling 1-step-ahead | h=1 | n/a |
+| 5 | Persistence | ŷ = rainfall at window_end (= y(T−h)) | h=1–4 | n/a |
+| 6 | Climatology | ŷ = per-station per-season train mean | h=1–4 | n/a |
+| 7 | ARIMA | Rolling 1-step-ahead | h=1 | n/a |
 
 ---
 

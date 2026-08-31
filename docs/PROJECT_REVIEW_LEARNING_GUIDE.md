@@ -911,16 +911,19 @@ Standard regression suite; RMSE comparable to persistence; R² shows skill vs pr
 
 | Model | RMSE | R² |
 |-------|------|-----|
-| Persistence | ~11.56 | ~0.05 |
-| LSTM v1 (seed 42) | ~9.93 | ~0.30 |
-| LSTM v2 (seed 42) | ~9.46 | ~0.37 |
 | LSTM v2 (3 seeds) | **9.39 ± 0.06** | **0.375 ± 0.008** |
+| Climatology (h=1) | **10.79** | **0.174** |
+| Persistence (h=1) | ~11.56 | ~0.05 |
+| LSTM v2 (seed 42) | ~9.46 | ~0.37 |
+| LSTM v1 (seed 42) | ~9.93 | ~0.30 |
 
-**Good here:** beat persistence; stable seeds.  
+*Climatology:* per-station per-season train mean (`eval_climatology.py`; `climatology_baseline.csv`). Beats persistence but loses to all DL models. *Correction:* an earlier ad hoc climatology figure (RMSE ≈ 12.26, R² ≈ −0.07) was never a reproducible artifact — superseded by Phase 5.
+
+**Good here:** beat persistence and climatology; stable seeds.  
 **Not “solved”:** R²~0.37 — expected for daily rainfall (zero-inflated, skewed).  
-**Bad:** worse than persistence; R²≤0; huge seed variance.
+**Bad:** worse than persistence or climatology; R²≤0; huge seed variance.
 
-**Honest viva line:** “Daily rainfall is hard; we beat persistence with stable multi-seed skill, but variance remains — hence advanced models next.”
+**Honest viva line:** “Daily rainfall is hard; we beat classical baselines (climatology and persistence) with stable multi-seed skill, but variance remains — hence advanced models next.”
 
 ---
 
@@ -931,8 +934,8 @@ Standard regression suite; RMSE comparable to persistence; R² shows skill vs pr
 | Cleaning, EDA, features, audit | Done — research-ready |
 | Sequences v1 & v2 | Done — **v2 locked** |
 | LSTM multi-seed | Done — research-ready baseline |
-| Persistence comparison | Recorded in metrics |
-| Climatology baseline script | README says Done — **weak evidence in repo**; admit if asked |
+| Persistence comparison | Recorded in metrics + `master_results.csv` (h=1–4) |
+| Climatology baseline | Done — `eval_climatology.py`; h=1 RMSE 10.7917, R² 0.1741 (supersedes unverified RMSE ≈12.26) |
 | CNN-LSTM+Attention / GNN | Done — Attention: seeds {13,42,123}, h=1–4; vs Temporal Mixed at all horizons (seed-42 h=2/h=4 not unanimous); vs LSTM, LSTM better in 10/12 tests. GNN: LSTM better in 12/12 tests. |
 | Extra metrics / paper ablations | Future |
 
@@ -1018,7 +1021,7 @@ significant reverse; h=4: 2/3 Attention, 1/3 no effect). Neither claimed
 improvement survives unanimous replication.
 
 Attention vs LSTM (12 tests): LSTM numerically better in 10 of 12, significant
-in 6. At h=3 the result is INCONSISTENT: seed 42 DM p=0.00786 (Attention better);
+in 6. At h=3 the result is DIRECTION-UNSTABLE (contested): seed 42 DM p=0.00786 (Attention better);
 seeds 13 and 123 DM p=1.09e-13 and p=7.37e-11 (LSTM better). That reversal is
 the concrete example that single-seed significance testing is materially
 unreliable here — a secondary methodological contribution of this work.
@@ -1050,9 +1053,10 @@ changed between comparisons, enabling a fair, controlled comparison.
 10. **Stations?** — 414 station_ids.  
 11. **Headline metric?** — RMSE (mm/day) and R².  
 12. **Best RMSE?** — 9.39 ± 0.06 (3 seeds).  
-13. **Persistence?** — Tomorrow = today; RMSE ≈ 11.56.  
-14. **Framework?** — PyTorch.  
-15. **Model class file?** — `src/model.py` → `LSTMBaseline`.
+13. **Persistence?** — ŷ = rainfall at window_end; RMSE ≈ 11.56 (h=1).  
+14. **Climatology?** — Per-station per-season train mean; RMSE ≈ 10.79, R² ≈ 0.17 (h=1); beats persistence, loses to LSTM.  
+15. **Framework?** — PyTorch.  
+16. **Model class file?** — `src/model.py` → `LSTMBaseline`.
 
 ### Intermediate (16–35)
 
@@ -1123,8 +1127,8 @@ No — inverse-transform before RMSE/MAE/R².
 **M8. Prove no target leakage.**  
 Point to asserts in `generate_sequences_v2.py`, metadata splits, train-only scalers, contiguous segments. Separately disclose pre-split covariate imputation leakage (FINAL_AUDIT.md §7.8) — do not claim fully leakage-free preprocessing.
 
-**M9. README says climatology Done but no script?**  
-Persistence is recorded. If climatology isn’t in repo, admit it and offer to add before next review.
+**M9. Climatology baseline?**  
+Implemented in Phase 5 (`eval_climatology.py`). h=1: RMSE 10.7917, R² 0.1741 — beats persistence, loses to LSTM. An earlier RMSE ≈12.26 figure was never a saved script; cite `climatology_baseline.csv` only.
 
 **M10. What’s novel?**  
 Reproducible pipeline with temporal-density-informed contiguous windows, station disambiguation, locked multi-seed baseline preparing fair advanced comparison.

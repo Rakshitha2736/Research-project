@@ -24,6 +24,9 @@
 | Transformer | 9.4355 | seed 42 |
 | CNN-LSTM-Temporal | 9.4835 | seed 42 |
 | Persistence baseline | 11.5559 | n/a |
+| Climatology baseline | 10.7917 | n/a |
+
+**Classical baselines (h=1, full test set):** Verified in Phase 5 — `src/persistence_baseline.py`, `eval_climatology.py`; see `reports/tables/climatology_baseline.csv` and `master_results.csv`. Climatology (per-station, per-season train mean) has **positive R² (0.174)** and **beats persistence** (RMSE 10.79 vs 11.56) but **loses to every DL model** (LSTM 9.37). *Correction:* an earlier ad hoc climatology figure (RMSE ≈ 12.26, R² ≈ −0.07) was cited in project discussion but **never saved as a reproducible script**; it is superseded by the Phase 5 implementation above.
 
 LSTM outperforms GNN-LSTM at all four horizons and all three seeds (12/12 Diebold-Mariano tests; CIs strictly positive).
 
@@ -129,6 +132,15 @@ All metrics computed in **mm/day** after inverse-transforming scaled predictions
 | **R²** | 1 − SS_res / SS_tot |
 
 Statistical significance: Diebold-Mariano test, paired t-test, bootstrap 95% CI (1000 resamples).
+
+### Classical baselines (Phase 5 — verified)
+
+| Baseline | h=1 RMSE | h=1 R² | Script |
+|----------|----------|--------|--------|
+| Climatology | 10.7917 | 0.1741 | `eval_climatology.py` |
+| Persistence | 11.5559 | 0.0529 | `src/persistence_baseline.py` |
+
+Climatology beats persistence but all DL models beat climatology. *Correction:* an earlier RMSE ≈ 12.26 / R² ≈ −0.07 climatology figure was never a reproducible script — superseded by Phase 5 (`climatology_baseline.csv`).
 
 ---
 

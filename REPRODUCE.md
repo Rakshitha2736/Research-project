@@ -150,6 +150,14 @@ Test metrics are printed to stdout during training and saved to:
 
 The multi-horizon comparison table is written to stderr by `multiseed_multihorizon.py`.
 
+### Classical baselines (no training)
+
+```powershell
+python -m src.persistence_baseline          # persistence RMSE h=1–4
+python eval_climatology.py                    # climatology RMSE h=1–4 → climatology_baseline.csv
+python refresh_lstm_baseline_v2_metrics.py    # refresh metrics JSON (eval-only, seed 42)
+```
+
 ---
 
 ## 9. Output Locations
@@ -165,6 +173,7 @@ The multi-horizon comparison table is written to stderr by `multiseed_multihoriz
 | Scalers | `models/*.joblib` |
 | Training curves | `reports/figures/*.png` |
 | Results table | `reports/tables/master_results.csv` |
+| Climatology baseline | `reports/tables/climatology_baseline.csv` |
 | Verification report | `PROJECT_VERIFICATION_REPORT.md` |
 
 ---

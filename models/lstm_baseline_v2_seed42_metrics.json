@@ -9,7 +9,12 @@
     "R2": 0.37088848348133807
   },
   "sample_station": "Port Blair_11.67_92.72_73",
-  "persistence_baseline_rmse": 11.5559,
   "device": "cuda",
-  "batch_size": 256
+  "batch_size": 256,
+  "persistence_baseline_mm": {
+    "MSE": 133.53910541527569,
+    "RMSE": 11.555912141206148,
+    "MAE": 3.8580371311436363,
+    "R2": 0.05293406862232475
+  }
 }

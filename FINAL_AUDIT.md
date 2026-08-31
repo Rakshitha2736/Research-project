@@ -34,7 +34,7 @@ Canonical tables: `reports/tables/significance_results.csv` (seed-level rows ret
 
 ### Methodological contribution — seed sensitivity
 
-Single-seed (seed=42) Diebold-Mariano tests were informative: they first flagged Attention-vs-Temporal at h=2/h=4 and Attention-vs-LSTM at h=3. They are not sufficient as headline claims. The concrete reversal is Attention vs LSTM at h=3: seed 42 DM p=0.00786 (Attention better); seeds 13 and 123 DM p=1.09e-13 and p=7.37e-11 (LSTM better). That pattern is classified **INCONSISTENT** in `multiseed_robustness_summary.csv`. Attention vs Temporal is **MIXED** at all four horizons (not the same seed-42-outlier pattern at every horizon). GNN vs LSTM is **CONSISTENT** at all four horizons.
+Single-seed (seed=42) Diebold-Mariano tests were informative: they first flagged Attention-vs-Temporal at h=2/h=4 and Attention-vs-LSTM at h=3. They are not sufficient as headline claims. The concrete reversal is Attention vs LSTM at h=3: seed 42 DM p=0.00786 (Attention better); seeds 13 and 123 DM p=1.09e-13 and p=7.37e-11 (LSTM better). That pattern is classified **DIRECTION-UNSTABLE (contested)** in `multiseed_robustness_summary.csv` (directions disagree; all 3 seeds significant). Attention vs Temporal is **DIRECTION-UNSTABLE** at all four horizons (h=2 and h=3 contested — significant seeds disagree; h=1 and h=4 weak — fewer than two significant seeds, or two significant in the same direction with one contrary lean). GNN vs LSTM is **CONSISTENT** at all four horizons.
 
 ---
 
@@ -60,7 +60,8 @@ Single-seed (seed=42) Diebold-Mariano tests were informative: they first flagged
 - [x] CNN-LSTM-Temporal h=1,2,3,4 (seeds 13, 42, 123 — multi-seed; non-attention comparator)
 - [x] Transformer Encoder h=1 only (seed 42 — single-seed, supplementary ablation)
 - [x] ARIMA baseline (30 of 414 stations — random sample, not full coverage)
-- [x] Persistence baseline
+- [x] Persistence baseline (h=1–4; `src/persistence_baseline.py`)
+- [x] Climatology baseline (h=1–4; `eval_climatology.py`, train-only per-station per-season mean)
 
 ### Evaluation
 - [x] All metrics in mm/day (inverse-transformed)
@@ -130,7 +131,22 @@ Single-seed (seed=42) Diebold-Mariano tests were informative: they first flagged
 
 ---
 
-## 5a. Threshold / categorical skill (eval-only addition)
+## 5b. Classical baselines — Phase 5 correction (climatology)
+
+**Verified sources:** `reports/tables/climatology_baseline.csv`, `eval_climatology.py`, `src/persistence_baseline.py`, `master_results.csv`.
+
+| Baseline | h=1 RMSE | h=1 MAE | h=1 R² | Notes |
+|----------|----------|---------|--------|-------|
+| **LSTM v2** (3-seed mean) | 9.3745 | — | ~0.38 | Primary DL comparator |
+| **Climatology** | **10.7917** | **4.9169** | **0.1741** | Per-station per-season train mean (≤2022-12-31); positive skill |
+| **Persistence** | 11.5559 | 3.8580 | 0.0529 | ŷ = rainfall at window_end |
+| **ARIMA** (30-station) | not in master table | — | — | Sample only |
+
+**Corrected finding:** Properly computed climatology is **not** a zero- or negative-skill floor. It beats persistence (10.79 vs 11.56 RMSE at h=1) but **every DL model beats climatology** (LSTM 9.37).
+
+**Historical correction (transparency):** An earlier project discussion cited climatology as RMSE ≈ **12.26**, MAE ≈ **4.99**, R² ≈ **−0.07**, framed as “worse than useless” / “even persistence beats climatology.” That figure was **never implemented as a saved, reproducible script** (Phase 5 inspection: NOT VERIFIED). It is **superseded** by the Phase 5 `eval_climatology.py` implementation above. Do not cite the old numbers in thesis text.
+
+---
 
 Run `python eval_threshold_skill.py` (default: h=1..4 × seeds 13/42/123 × LSTM/Temporal/Attention + Persistence).
 Helpers: `src/metrics_rainfall.py`.
@@ -210,7 +226,7 @@ The following metrics are marked "Not Available" and the reasons are:
 |-----------------|-----|
 | MAE, MSE, R² for LSTM h=2,3,4 (aggregate) | `multiseed_multihorizon.py` only logs per-seed RMSE to the monitor log; it computes `metrics_mm` (which includes MAE/MSE/R²) internally but only aggregates and prints RMSE mean±std. Re-extracting per-seed full metrics would require re-running eval with CUDA+autocast, which is not done in this audit to preserve reproducibility. |
 | MAE, MSE, R² for GNN-LSTM (all horizons, aggregate) | Same reason: the canonical eval script aggregates only RMSE across seeds. Per-seed full metrics exist transiently during the script run but are not persisted. |
-| MAE, MSE, R² for Persistence baseline | `train_lstm_baseline_v2.py` only recorded persistence RMSE (11.5559); other metrics were not computed for the persistence model. |
+| MAE, MSE, R² for Persistence baseline | Now in `master_results.csv` (h=1–4) and `persistence_baseline_mm` in metrics JSON; computed via `src/persistence_baseline.py`. |
 | All metrics for ARIMA | ARIMA was run on a **random sample of 30 out of 414 stations** via `arima_and_significance.py`. Results were printed to stdout during execution but not saved to a file. The 30-station sample provides a classical-method reference point but is not directly comparable to the full-test-set deep learning metrics. |
 
 ---
@@ -225,7 +241,7 @@ The following metrics are marked "Not Available" and the reasons are:
 
 6. **Non-monotonic Attn-vs-Temporal pattern was a seed-42 observation, not a 3-seed result.** Seed-42 DM/bootstrap favored attention at **h=2** and **h=4** and was non-significant at **h=1** and **h=3**. The complete 3-seed picture is Mixed at every horizon (h=2: 2/3 Attention, 1/3 significant reverse; h=4: 2/3 Attention, 1/3 ns). Interpretability (h=1 recency vs h=4 near-uniform attention) remains a useful qualitative discussion of *why* attention might behave differently by horizon; it does **not** license a claim that attention “significantly improves at h=2/h=4.” See Headline findings and `multiseed_robustness_summary.csv`.
 
-   Seasonal breakdown (seed-42 descriptive RMSE): LSTM remains numerically best or tied in every season at h=4. Attention-vs-LSTM across 12 tests: LSTM numerically better in 10/12, significant in 6. At **h=3** the result is **INCONSISTENT**: seed 42 alone shows Attention significantly better (DM p=0.00786); seeds 13 and 123 both show LSTM significantly better (DM p=1.09e-13 and p=7.37e-11). Additionally, Attention's h=4 Winter R² (0.001) is the weakest of any model/season/horizon combination.
+   Seasonal breakdown (seed-42 descriptive RMSE): LSTM remains numerically best or tied in every season at h=4. Attention-vs-LSTM across 12 tests: LSTM numerically better in 10/12, significant in 6. At **h=3** the result is **DIRECTION-UNSTABLE (contested)**: seed 42 alone shows Attention significantly better (DM p=0.00786); seeds 13 and 123 both show LSTM significantly better (DM p=1.09e-13 and p=7.37e-11). Additionally, Attention's h=4 Winter R² (0.001) is the weakest of any model/season/horizon combination.
 
 7. **External validity / near-duplicate stations (thesis Limitations):** External validity audit (`reports/tables/external_validity_audit.json`) confirms the dataset reflects genuine, physically plausible Indian weather: correct geographic bounds, correct identification of Meghalaya as a high-rainfall extreme and western Rajasthan as a low-rainfall extreme, correct monsoon seasonality (8.5x JJAS/DJF ratio), and correct elevation-temperature relationships. One data source limitation was identified: 124 station-ID pairs (typically nearby city/airport aliases, e.g. same city listed under 2+ names, 4-35km apart) share long runs of identical rainfall values, indicating these are not fully independent measurement sources despite being treated as distinct stations in the 414-station panel. This has negligible impact on the project's core temporal train/val/test methodology and significance testing (given the very large effect sizes and p-values reported), and if anything would bias the GNN spatial-extension comparison in the GNN's favor (near-duplicate neighbors are trivially predictive) — the GNN's failure to outperform plain LSTM despite this potential advantage strengthens rather than weakens that finding.
 
@@ -294,7 +310,7 @@ All planned experiments have been executed:
 - Primary temporal extension: CNN-LSTM+Attention (and Temporal comparator) across 4 horizons × 3 seeds
 - Secondary spatial investigation: GNN-LSTM across 4 horizons × 3 seeds; LSTM backbone baseline likewise
 - Supplementary Transformer ablation at h=1 (seed 42)
-- Classical baselines (Persistence, ARIMA on 30-station sample)
+- Classical baselines (Persistence h=1–4, Climatology h=1–4, ARIMA on 30-station sample)
 - Attn-vs-Temporal, Attn-vs-LSTM, and LSTM-vs-GNN significance testing completed at all horizons (3 seeds; GNN fully consistent; Attention mixed)
 - Attention-weight interpretability at h=4
 - Results independently verified for the pre-attention LSTM/GNN package; Attention/Temporal metrics recorded in master/significance tables from the CUDA+autocast training scripts

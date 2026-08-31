@@ -31,7 +31,7 @@ Build a reproducible deep-learning system with target-date leakage-free sequence
 |------|--------|
 | Primary | LSTM v2 vs GNN-LSTM across horizons h=1,2,3,4 with multi-seed evaluation |
 | Ablations | Temporal CNN-LSTM, Transformer Encoder (h=1, seed 42) |
-| Classical baselines | Persistence; rolling ARIMA on a 30-station sample |
+| Classical baselines | Persistence (h=1–4); climatology (h=1–4, `eval_climatology.py`); rolling ARIMA on a 30-station sample |
 
 ## 1.3 Problem statement
 
@@ -561,7 +561,8 @@ N/A (batch scripts). Closest analogue: CLI invocation → stdout/logs + files on
 | GNN-LSTM training | Spatial+temporal model | `train_gnn_lstm*.py` | masked GCN+LSTM | Complete | Underperforms LSTM |
 | Temporal CNN-LSTM ablation | Local temporal filters | `train_cnn_lstm_temporal_h1.py` | | Complete | h=1 seed42 only; not paper spatial CNN |
 | Transformer ablation | Attention encoder | `train_transformer_h1.py` | | Complete | h=1 seed42 only |
-| Persistence baseline | Naive comparator | recorded in LSTM v2 metrics | last rain→pred | Complete | RMSE only |
+| Persistence baseline | Naive comparator | `master_results.csv` h=1–4 | last rain at window_end | Complete | RMSE/MAE/MSE/R² |
+| Climatology baseline | Seasonal mean comparator | `climatology_baseline.csv` | train-only station×season mean | Complete | RMSE/MAE/MSE/R² h=1–4 |
 | ARIMA baseline | Classical comparator | `arima_and_significance.py` | rolling 1-step | Complete | 30/414 stations; metrics not saved |
 | Diebold-Mariano / bootstrap | Significance | `arima_and_significance`, `multiseed_*` | | Complete | |
 | Pipeline automation | One-command Phase-1 | `run_pipeline.py` | | Complete | Doesn’t cover full experiment matrix |
@@ -641,7 +642,8 @@ N/A. Schema evolution is versioned by filenames (`_v2`, `_h2`, etc.).
 | GNN-LSTM | Masked 2-layer GCN (8→16→32) + LSTM(64)→FC | 1–4 | 13,42,123 |
 | CNN-LSTM-Temporal | Conv1d 16→32 + LSTM→FC | 1 | 42 |
 | Transformer | Pre-norm encoder d=64, 4 heads, 2 layers | 1 | 42 |
-| Persistence | ŷ = last observed rainfall in window | 1 | n/a |
+| Persistence | ŷ = last observed rainfall in window (= y(T−h)) | 1–4 | n/a |
+| Climatology | ŷ = per-station per-season train mean (≤2022-12-31) | 1–4 | n/a |
 | ARIMA | Rolling ARIMA(2,0,2) | 1 | 30-station sample |
 
 ## 9.2 Dataset
@@ -692,7 +694,7 @@ N/A. Schema evolution is versioned by filenames (`_v2`, `_h2`, etc.).
 | 3 | 10.4892 ± 0.0187 | 10.7174 ± 0.0628 | 6.900e-32 | (0.2250, 0.3081) |
 | 4 | 10.5841 ± 0.0178 | 10.9702 ± 0.0326 | 6.975e-40 | (0.3107, 0.4082) |
 
-Ablations (h=1, seed 42, CPU FP32 re-eval in master table): Transformer 9.4355; CNN-LSTM-Temporal 9.4835; Persistence 11.5559.
+Ablations (h=1, seed 42, CPU FP32 re-eval in master table): Transformer 9.4355; CNN-LSTM-Temporal 9.4835; Persistence 11.5559; Climatology 10.7917.
 
 **Finding:** LSTM significantly outperforms GNN-LSTM at every horizon and every seed (12/12 tests; `multiseed_robustness_summary.csv`). This is the more robustly evidenced negative architectural result.
 
@@ -754,7 +756,7 @@ None claimed in status docs (implementation frozen 2026-07-29).
 | Thesis/paper manuscript | 0–10 |
 | Spatial CNN-LSTM-Attention (literal paper) | 0 |
 | Web UI / API / Auth / Deploy | 0 |
-| Climatology baseline script | 0 (persistence exists; climatology weakly evidenced) |
+| Climatology baseline script | 1 (`eval_climatology.py`; supersedes earlier unverified RMSE ≈12.26 figure — see FINAL_AUDIT.md) |
 | Attention visualizations | 0 |
 | Docker packaging | 0 |
 
@@ -804,7 +806,7 @@ None claimed in status docs (implementation frozen 2026-07-29).
 1. Add/renumber notebook 03 or document gap in README only
 2. Multi-seed ablations for CNN/Transformer
 3. Full-station ARIMA (expensive)
-4. Climatology baseline script
+4. ~~Climatology baseline script~~ **Done** — `eval_climatology.py` (Phase 5)
 5. Fill `results/` or remove unused folder
 
 ## Technical Debt
@@ -890,7 +892,7 @@ N/A unless productization starts.
 | Hardcoded machine paths | Portability issue |
 | v1 incomplete y-scaling path | Dead-end risk if used |
 | Dead/legacy code | `generate_sequences.py` + `train_lstm_baseline.py` still present but superseded |
-| Climatology baseline | Mentioned in guide as weakly evidenced |
+| Climatology baseline | `eval_climatology.py` — h=1 RMSE 10.7917, R² 0.1741 (`climatology_baseline.csv`). Supersedes earlier ad hoc RMSE ≈12.26 (never a saved script). |
 
 No systematic `TODO`/`FIXME`/`NotImplemented` stubs found in current Python sources.
 
