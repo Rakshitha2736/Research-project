@@ -28,6 +28,7 @@ import torch
 from torch.amp import autocast
 
 from src.cuda_setup import DEFAULT_BATCH_SIZE, make_loader, require_cuda
+from src.persistence_baseline import data_paths, persistence_mm
 from src.metrics_rainfall import (
     DEFAULT_INTENSITY_EDGES_MM,
     DEFAULT_THRESHOLDS_MM,
@@ -45,22 +46,6 @@ TABLES = BASE / "reports" / "tables"
 SEEDS_DEFAULT = (13, 42, 123)
 HORIZONS_DEFAULT = (1, 2, 3, 4)
 MODELS_DEFAULT = ("lstm", "temporal", "attention", "persistence")
-
-
-def data_paths(horizon: int) -> dict[str, Path]:
-    if horizon == 1:
-        return {
-            "X_test": DATA / "X_test_v2.npy",
-            "y_test": DATA / "y_test_v2.npy",
-            "scaler_y": MODELS / "minmax_scaler_y_v2.joblib",
-            "scaler_x": MODELS / "minmax_scaler_v2.joblib",
-        }
-    return {
-        "X_test": DATA / f"X_test_h{horizon}.npy",
-        "y_test": DATA / f"y_test_h{horizon}.npy",
-        "scaler_y": MODELS / f"minmax_scaler_y_h{horizon}.joblib",
-        "scaler_x": MODELS / "minmax_scaler_v2.joblib",
-    }
 
 
 def ckpt_path(model_name: str, horizon: int, seed: int) -> Path:
@@ -105,14 +90,6 @@ def predict_mm(
     y_pred = scaler_y.inverse_transform(pred_s.reshape(-1, 1)).ravel()
     y_true = scaler_y.inverse_transform(y_scaled.reshape(-1, 1)).ravel()
     return y_true, y_pred
-
-
-def persistence_mm(X: np.ndarray, y_scaled: np.ndarray, scaler_x, scaler_y) -> tuple[np.ndarray, np.ndarray]:
-    """Persistence: last window day's rainfall (feature index 5) in mm."""
-    last_day = X[:, -1, :]  # (N, 8) scaled
-    last_mm = scaler_x.inverse_transform(last_day)[:, 5]  # rainfall feature
-    y_true = scaler_y.inverse_transform(y_scaled.reshape(-1, 1)).ravel()
-    return y_true, last_mm.astype(np.float64)
 
 
 def _agg_mean_std(df: pd.DataFrame, group_cols: list[str], value_cols: list[str]) -> pd.DataFrame:

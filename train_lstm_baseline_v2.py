@@ -29,6 +29,7 @@ from src.cuda_setup import (
     to_device,
 )
 from src.model import LSTMBaseline
+from src.persistence_baseline import eval_persistence_horizon
 
 BASE = Path(__file__).resolve().parent
 DATA = BASE / "data" / "processed"
@@ -261,6 +262,7 @@ def main() -> None:
     y_pred_mm = scaler_y.inverse_transform(y_pred_scaled.reshape(-1, 1)).ravel()
     y_test_mm = scaler_y.inverse_transform(y_test.reshape(-1, 1)).ravel()
     m = metrics_mm(y_test_mm, y_pred_mm)
+    persistence_m = eval_persistence_horizon(1, BASE)
 
     df = pd.read_csv(DATA / "feature_engineered_v2.csv", parse_dates=["date_of_record"])
     test_meta = rebuild_test_meta(df)
@@ -292,7 +294,7 @@ def main() -> None:
                 "best_val_loss_scaled": best_val,
                 "test_metrics_mm": m,
                 "sample_station": sample_station,
-                "persistence_baseline_rmse": 11.5559,
+                "persistence_baseline_mm": persistence_m,
                 "device": str(device),
                 "batch_size": BATCH_SIZE,
             },
@@ -306,6 +308,9 @@ def main() -> None:
     print(f"RMSE: {m['RMSE']:.4f}")
     print(f"MAE:  {m['MAE']:.4f}")
     print(f"R2:   {m['R2']:.4f}")
+    print(f"Persistence RMSE: {persistence_m['RMSE']:.4f}")
+    print(f"Persistence MAE:  {persistence_m['MAE']:.4f}")
+    print(f"Persistence R2:   {persistence_m['R2']:.4f}")
 
 
 if __name__ == "__main__":
