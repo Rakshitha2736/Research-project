@@ -25,3 +25,7 @@ Persistence Baseline,2,Not Applicable,n/a,13.0481,4.4730,170.2517,-0.2020,comput
 Persistence Baseline,3,Not Applicable,n/a,13.6417,4.7168,186.0971,-0.3091,computed via src.persistence_baseline.persistence_mm (last window day rainfall; ŷ=y(T-h))
 Persistence Baseline,4,Not Applicable,n/a,13.9064,4.8407,193.3875,-0.3509,computed via src.persistence_baseline.persistence_mm (last window day rainfall; ŷ=y(T-h))
 ARIMA (30-station sample),1,Not Applicable,n/a,Not Available,Not Available,Not Available,Not Available,ARIMA was run on a random 30/414 station sample only; per-station rolling results printed to stdout but not saved as aggregate metrics — see arima_and_significance.py
+Climatology Baseline,1,Not Applicable,n/a,10.7917,4.9169,116.4608,0.1741,eval_climatology.py; per-station per-season train mean (<=2022-12-31); constant ŷ per (station, season)
+Climatology Baseline,2,Not Applicable,n/a,10.8158,4.9288,116.9814,0.1741,eval_climatology.py; per-station per-season train mean (<=2022-12-31); constant ŷ per (station, season)
+Climatology Baseline,3,Not Applicable,n/a,10.8352,4.9376,117.4025,0.1741,eval_climatology.py; per-station per-season train mean (<=2022-12-31); constant ŷ per (station, season)
+Climatology Baseline,4,Not Applicable,n/a,10.8796,4.9517,118.3648,0.1732,eval_climatology.py; per-station per-season train mean (<=2022-12-31); constant ŷ per (station, season)
