@@ -1,0 +1,11 @@
+{
+  "note": "CUDA+autocast re-eval of existing cnn_lstm_attention_h4_seed42.pt",
+  "test_metrics_mm": {
+    "MSE": 112.80764770507812,
+    "RMSE": 10.621094468324728,
+    "MAE": 4.330939292907715,
+    "R2": 0.21197509666887093
+  },
+  "ablation_3seed_mean_rmse": 10.6294,
+  "ablation_3seed_std_rmse": 0.0941
+}

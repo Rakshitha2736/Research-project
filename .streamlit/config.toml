@@ -1,0 +1,5 @@
+# Streamlit presentation config for local / viva demos.
+# toolbarMode = "minimal" hides Deploy and most toolbar chrome while
+# keeping core app functionality (pages, widgets, charts) unchanged.
+[client]
+toolbarMode = "minimal"

@@ -1,0 +1,43 @@
+{
+  "test_metrics_mm": {
+    "MSE": 88.51913452148438,
+    "RMSE": 9.408460794491539,
+    "MAE": 3.8545310497283936,
+    "R2": 0.37221783768858097
+  },
+  "scope": "sanity_check_only_lstm_h1_seed42",
+  "baseline_seed42_original_pipeline": {
+    "RMSE": 9.418417528710286,
+    "MAE": 3.8285250663757324,
+    "R2": 0.37088848348133807
+  },
+  "trainonly_impute_seed42": {
+    "MSE": 88.51913452148438,
+    "RMSE": 9.408460794491539,
+    "MAE": 3.8545310497283936,
+    "R2": 0.37221783768858097
+  },
+  "delta_RMSE": -0.009956734218746988,
+  "pct_delta_RMSE": -0.10571557470663988,
+  "lstm_h1_3seed_rmse_std": 0.0408,
+  "abs_delta_within_3seed_std": true,
+  "interpretation": "negligible_within_seed_noise",
+  "best_epoch": 15,
+  "stopped_epoch": 30,
+  "n_train": 270109,
+  "n_val": 149720,
+  "n_test": 141263,
+  "covariate_mean_abs_delta_vs_original": {
+    "wind_speed": 0.12031306775535401,
+    "air_pressure": 0.1269060796733948,
+    "min_temp": 0.001116465694423985,
+    "max_temp": 0.0026251146993166016
+  },
+  "rows_with_any_covariate_change": 95843,
+  "artifacts": {
+    "clean": "D:\\project\\Research Project\\RainfallPrediction\\data\\processed\\clean_dataset_trainonly_impute.csv",
+    "feat": "D:\\project\\Research Project\\RainfallPrediction\\data\\processed\\feature_engineered_v2_trainonly_impute.csv",
+    "ckpt": "D:\\project\\Research Project\\RainfallPrediction\\models\\lstm_baseline_v2_seed42_trainonly.pt"
+  },
+  "disclaimer": "Single-model, single-horizon, single-seed sanity check only. Does not speak for Temporal/Attention/GNN/Transformer, other horizons, or other seeds."
+}

@@ -1,0 +1,32 @@
+{
+  "scope": "sanity_check_only_attention_h4_seed42",
+  "baseline_seed42_original_pipeline_reeval": {
+    "MSE": 112.80764770507812,
+    "RMSE": 10.621094468324728,
+    "MAE": 4.330939292907715,
+    "R2": 0.21197509666887093
+  },
+  "ablation_3seed_mean_rmse_for_reference": 10.6294,
+  "trainonly_impute_seed42": {
+    "MSE": 112.35087585449219,
+    "RMSE": 10.599569607040287,
+    "MAE": 4.119774341583252,
+    "R2": 0.21516590337486752
+  },
+  "delta_RMSE": -0.021524861284440533,
+  "pct_delta_RMSE": -0.20266142391101116,
+  "attention_h4_3seed_rmse_std": 0.0941,
+  "abs_delta_within_3seed_std": true,
+  "interpretation": "negligible_within_seed_noise",
+  "mae_r2_note": "Negligible/material verdict is based on RMSE vs established 3-seed std (0.0941); MAE/R2 directional shifts are unassessed against a noise band (no LSTM-style MAE std available for this row either as a single-seed comparison baseline beyond this re-eval).",
+  "best_epoch": 3,
+  "stopped_epoch": 18,
+  "n_train": 268147,
+  "n_val": 149714,
+  "n_test": 139908,
+  "artifacts": {
+    "ckpt": "D:\\project\\Research Project\\RainfallPrediction\\models\\cnn_lstm_attention_h4_seed42_trainonly.pt",
+    "scaler_y": "D:\\project\\Research Project\\RainfallPrediction\\models\\minmax_scaler_y_h4_trainonly.joblib"
+  },
+  "disclaimer": "Single-model, single-horizon, single-seed sanity check only. Does not speak for Temporal/GNN/Transformer/LSTM, other horizons, or other seeds."
+}
