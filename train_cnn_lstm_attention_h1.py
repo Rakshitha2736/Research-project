@@ -1,5 +1,5 @@
 """
-Train CNN-LSTM + additive attention h=1 (8 features, v2 data) — seed 42.
+Train temporal CNN-LSTM + additive attention h=1 (8 features, v2 data) — seed 42.
 Same training protocol as LSTM v2 / temporal CNN-LSTM (batch 256). Requires CUDA.
 """
 
@@ -211,7 +211,9 @@ def main() -> None:
     ax.axvline(best_epoch, color="gray", linestyle="--", label=f"best epoch {best_epoch}")
     ax.set_xlabel("Epoch")
     ax.set_ylabel("MSE (scaled y)")
-    ax.set_title("CNN-LSTM Attention h=1 Training Curve (seed 42, batch 256)")
+    ax.set_title(
+        "Temporal CNN-LSTM+Attention h=1 Training Curve (seed 42, batch 256)"
+    )
     ax.legend()
     plt.tight_layout()
     plt.savefig(FIGURES / "cnn_lstm_attention_h1_training_curve.png", dpi=150)

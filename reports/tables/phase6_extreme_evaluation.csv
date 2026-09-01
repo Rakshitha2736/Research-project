@@ -1,0 +1,347 @@
+# Phase 6 — IMD-tier extreme rainfall evaluation (primary tier scheme).
+# Boundaries: IMD daily scale (see src/imd_tiers.py / dashboard/lib/imd_rainfall.py).
+# Merge rule: tiers with < 100 test samples merged per horizon (see merge log below).
+# Mean_Error_Bias = mean(predicted - actual) mm/day (continuous; NOT contingency frequency bias).
+# GNN-LSTM excluded (graph inference path not shared with flat eval scripts).
+# Secondary cross-check: extreme_rainfall_evaluation.csv (95th-percentile split; different framing).
+# h=1 merges: none (all raw IMD tiers n >= 100)
+# h=2 merges: none (all raw IMD tiers n >= 100)
+# h=3 merges: none (all raw IMD tiers n >= 100)
+# h=4 merges: none (all raw IMD tiers n >= 100)
+Model,Horizon,Tier,Seed,N_samples,RMSE,MAE,Mean_Error_Bias,Source_Tiers
+Persistence Baseline,1,No Rain,n/a,84444,4.7996,0.663298,0.663298,No Rain
+Persistence Baseline,1,Light,n/a,36547,10.171274,4.391559,2.571672,Light
+Persistence Baseline,1,Moderate,n/a,17005,16.720048,11.822388,-3.239876,Moderate
+Persistence Baseline,1,Heavy,n/a,2264,34.528613,29.047306,-19.294214,Heavy
+Persistence Baseline,1,Very Heavy,n/a,821,60.06606,52.524604,-44.348234,Very Heavy
+Persistence Baseline,1,Extremely Heavy,n/a,168,127.085058,108.455356,-93.995833,Extremely Heavy
+Climatology Baseline,1,No Rain,n/a,84444,4.159217,2.565874,2.565874,No Rain
+Climatology Baseline,1,Light,n/a,36547,6.402315,4.657806,4.010252,Light
+Climatology Baseline,1,Moderate,n/a,17005,11.086992,8.715475,-7.071676,Moderate
+Climatology Baseline,1,Heavy,n/a,2264,35.496732,34.067985,-33.985925,Heavy
+Climatology Baseline,1,Very Heavy,n/a,821,70.954496,68.762644,-68.762644,Very Heavy
+Climatology Baseline,1,Extremely Heavy,n/a,168,161.850791,151.48693,-151.48693,Extremely Heavy
+LSTM,1,No Rain,13,84444,2.485831,1.199343,1.035414,No Rain
+LSTM,1,Light,13,36547,6.003392,3.814741,3.027989,Light
+LSTM,1,Moderate,13,17005,11.298605,8.652296,-4.687987,Moderate
+LSTM,1,Heavy,13,2264,30.446921,27.390782,-25.046681,Heavy
+LSTM,1,Very Heavy,13,821,59.719748,54.644746,-53.594169,Very Heavy
+LSTM,1,Extremely Heavy,13,168,139.591038,123.446442,-123.433195,Extremely Heavy
+LSTM,1,No Rain,42,84444,2.675299,1.384797,1.061163,No Rain
+LSTM,1,Light,42,36547,6.199987,3.992051,3.037991,Light
+LSTM,1,Moderate,42,17005,11.643239,8.853119,-4.620801,Moderate
+LSTM,1,Heavy,42,2264,30.714181,27.620851,-24.394309,Heavy
+LSTM,1,Very Heavy,42,821,59.260455,53.741173,-52.255462,Very Heavy
+LSTM,1,Extremely Heavy,42,168,137.794969,122.122025,-121.72362,Extremely Heavy
+LSTM,1,No Rain,123,84444,2.744383,1.663056,1.630442,No Rain
+LSTM,1,Light,123,36547,6.126948,4.110919,3.463956,Light
+LSTM,1,Moderate,123,17005,10.956356,8.378268,-4.506701,Moderate
+LSTM,1,Heavy,123,2264,30.217591,27.262132,-25.386666,Heavy
+LSTM,1,Very Heavy,123,821,59.862485,55.156902,-54.576409,Very Heavy
+LSTM,1,Extremely Heavy,123,168,140.774774,126.669266,-126.669266,Extremely Heavy
+CNN-LSTM-Temporal,1,No Rain,13,84444,2.387287,1.278797,1.266336,No Rain
+CNN-LSTM-Temporal,1,Light,13,36547,5.646107,3.488307,2.590526,Light
+CNN-LSTM-Temporal,1,Moderate,13,17005,11.331604,8.852293,-5.432591,Moderate
+CNN-LSTM-Temporal,1,Heavy,13,2264,31.130812,28.128076,-26.437677,Heavy
+CNN-LSTM-Temporal,1,Very Heavy,13,821,61.344011,56.744035,-55.769848,Very Heavy
+CNN-LSTM-Temporal,1,Extremely Heavy,13,168,141.187066,126.512808,-126.415816,Extremely Heavy
+CNN-LSTM-Temporal,1,No Rain,42,84444,2.443295,1.225443,0.941635,No Rain
+CNN-LSTM-Temporal,1,Light,42,36547,5.770376,3.510976,2.281694,Light
+CNN-LSTM-Temporal,1,Moderate,42,17005,11.596701,9.179773,-5.423892,Moderate
+CNN-LSTM-Temporal,1,Heavy,42,2264,30.873453,27.753644,-26.054334,Heavy
+CNN-LSTM-Temporal,1,Very Heavy,42,821,61.348125,56.675676,-56.090579,Very Heavy
+CNN-LSTM-Temporal,1,Extremely Heavy,42,168,143.114593,129.963816,-129.963816,Extremely Heavy
+CNN-LSTM-Temporal,1,No Rain,123,84444,2.373034,0.941043,0.543567,No Rain
+CNN-LSTM-Temporal,1,Light,123,36547,6.133108,3.643819,2.379778,Light
+CNN-LSTM-Temporal,1,Moderate,123,17005,12.004075,9.313285,-4.800374,Moderate
+CNN-LSTM-Temporal,1,Heavy,123,2264,30.649458,27.244484,-24.153649,Heavy
+CNN-LSTM-Temporal,1,Very Heavy,123,821,59.258597,53.766658,-52.511739,Very Heavy
+CNN-LSTM-Temporal,1,Extremely Heavy,123,168,137.871237,123.196883,-123.059603,Extremely Heavy
+CNN-LSTM+Attention,1,No Rain,13,84444,2.869815,1.834725,1.834682,No Rain
+CNN-LSTM+Attention,1,Light,13,36547,6.110991,3.934833,3.374645,Light
+CNN-LSTM+Attention,1,Moderate,13,17005,11.042666,8.525022,-4.925895,Moderate
+CNN-LSTM+Attention,1,Heavy,13,2264,30.793064,27.787378,-25.979614,Heavy
+CNN-LSTM+Attention,1,Very Heavy,13,821,61.067366,56.555426,-55.829486,Very Heavy
+CNN-LSTM+Attention,1,Extremely Heavy,13,168,140.760191,127.355496,-127.233577,Extremely Heavy
+CNN-LSTM+Attention,1,No Rain,42,84444,2.288291,1.110685,0.981531,No Rain
+CNN-LSTM+Attention,1,Light,42,36547,5.241386,3.297228,2.255081,Light
+CNN-LSTM+Attention,1,Moderate,42,17005,11.402733,9.006877,-6.080293,Moderate
+CNN-LSTM+Attention,1,Heavy,42,2264,31.690879,28.827144,-27.510172,Heavy
+CNN-LSTM+Attention,1,Very Heavy,42,821,62.258743,57.934816,-57.145331,Very Heavy
+CNN-LSTM+Attention,1,Extremely Heavy,42,168,144.249376,130.257087,-130.257087,Extremely Heavy
+CNN-LSTM+Attention,1,No Rain,123,84444,2.582129,1.25559,1.205547,No Rain
+CNN-LSTM+Attention,1,Light,123,36547,6.069453,3.789809,2.969594,Light
+CNN-LSTM+Attention,1,Moderate,123,17005,11.018257,8.67167,-4.740164,Moderate
+CNN-LSTM+Attention,1,Heavy,123,2264,30.17648,27.003213,-25.944814,Heavy
+CNN-LSTM+Attention,1,Very Heavy,123,821,60.764979,56.620089,-56.32846,Very Heavy
+CNN-LSTM+Attention,1,Extremely Heavy,123,168,142.806553,130.473047,-130.473047,Extremely Heavy
+Persistence Baseline,2,No Rain,n/a,84068,5.446239,0.908275,0.908275,No Rain
+Persistence Baseline,2,Light,n/a,36366,12.11508,5.20217,3.234947,Light
+Persistence Baseline,2,Moderate,n/a,16953,17.917083,12.744264,-4.477219,Moderate
+Persistence Baseline,2,Heavy,n/a,2263,38.484195,33.165311,-25.288864,Heavy
+Persistence Baseline,2,Very Heavy,n/a,819,68.657921,61.829304,-54.810745,Very Heavy
+Persistence Baseline,2,Extremely Heavy,n/a,170,142.437344,126.355293,-118.021176,Extremely Heavy
+Climatology Baseline,2,No Rain,n/a,84068,4.166217,2.571216,2.571216,No Rain
+Climatology Baseline,2,Light,n/a,36366,6.415141,4.669246,4.021971,Light
+Climatology Baseline,2,Moderate,n/a,16953,11.095467,8.720996,-7.067408,Moderate
+Climatology Baseline,2,Heavy,n/a,2263,35.461399,34.035757,-33.953661,Heavy
+Climatology Baseline,2,Very Heavy,n/a,819,70.899982,68.71523,-68.71523,Very Heavy
+Climatology Baseline,2,Extremely Heavy,n/a,170,161.475476,151.187262,-151.187262,Extremely Heavy
+LSTM,2,No Rain,13,84068,2.716007,1.477448,0.769476,No Rain
+LSTM,2,Light,13,36366,5.753581,4.079972,2.971251,Light
+LSTM,2,Moderate,13,16953,11.13411,8.736635,-6.835692,Moderate
+LSTM,2,Heavy,13,2263,34.555128,32.412727,-32.007821,Heavy
+LSTM,2,Very Heavy,13,819,69.059517,66.010113,-65.953637,Very Heavy
+LSTM,2,Extremely Heavy,13,170,156.938711,145.809928,-145.809928,Extremely Heavy
+LSTM,2,No Rain,42,84068,3.280244,2.117406,2.050213,No Rain
+LSTM,2,Light,42,36366,6.477779,4.579537,4.02458,Light
+LSTM,2,Moderate,42,16953,10.937362,8.54158,-5.702265,Moderate
+LSTM,2,Heavy,42,2263,33.389139,30.941811,-30.340958,Heavy
+LSTM,2,Very Heavy,42,819,67.191888,63.840912,-63.779307,Very Heavy
+LSTM,2,Extremely Heavy,42,170,154.750552,143.272643,-143.272643,Extremely Heavy
+LSTM,2,No Rain,123,84068,2.663662,1.593962,1.536677,No Rain
+LSTM,2,Light,123,36366,5.541612,3.760518,3.013878,Light
+LSTM,2,Moderate,123,16953,11.332832,8.989928,-6.912466,Moderate
+LSTM,2,Heavy,123,2263,34.488605,32.262115,-31.84928,Heavy
+LSTM,2,Very Heavy,123,819,68.979734,65.926134,-65.738877,Very Heavy
+LSTM,2,Extremely Heavy,123,170,156.572559,145.32168,-145.32168,Extremely Heavy
+CNN-LSTM-Temporal,2,No Rain,13,84068,2.607417,1.458635,1.419155,No Rain
+CNN-LSTM-Temporal,2,Light,13,36366,5.549653,3.752785,2.914595,Light
+CNN-LSTM-Temporal,2,Moderate,13,16953,11.404096,9.040739,-6.894336,Moderate
+CNN-LSTM-Temporal,2,Heavy,13,2263,34.673213,32.417701,-31.899153,Heavy
+CNN-LSTM-Temporal,2,Very Heavy,13,819,69.144404,66.015333,-65.850801,Very Heavy
+CNN-LSTM-Temporal,2,Extremely Heavy,13,170,156.293499,144.97674,-144.97674,Extremely Heavy
+CNN-LSTM-Temporal,2,No Rain,42,84068,2.731649,1.68014,1.648295,No Rain
+CNN-LSTM-Temporal,2,Light,42,36366,5.490113,3.795692,3.082666,Light
+CNN-LSTM-Temporal,2,Moderate,42,16953,11.322614,8.969715,-7.06995,Moderate
+CNN-LSTM-Temporal,2,Heavy,42,2263,34.930073,32.789293,-32.531196,Heavy
+CNN-LSTM-Temporal,2,Very Heavy,42,819,69.398439,66.461967,-66.461967,Very Heavy
+CNN-LSTM-Temporal,2,Extremely Heavy,42,170,158.641608,147.974957,-147.974957,Extremely Heavy
+CNN-LSTM-Temporal,2,No Rain,123,84068,2.722153,1.718714,1.716977,No Rain
+CNN-LSTM-Temporal,2,Light,123,36366,5.524437,3.76277,3.096525,Light
+CNN-LSTM-Temporal,2,Moderate,123,16953,11.350688,9.00052,-7.04791,Moderate
+CNN-LSTM-Temporal,2,Heavy,123,2263,34.979474,32.823244,-32.52223,Heavy
+CNN-LSTM-Temporal,2,Very Heavy,123,819,69.395226,66.344028,-66.344028,Very Heavy
+CNN-LSTM-Temporal,2,Extremely Heavy,123,170,158.223446,147.427299,-147.427299,Extremely Heavy
+CNN-LSTM+Attention,2,No Rain,13,84068,2.701444,1.497138,0.38679,No Rain
+CNN-LSTM+Attention,2,Light,13,36366,5.936396,4.128837,2.801223,Light
+CNN-LSTM+Attention,2,Moderate,13,16953,11.294914,8.96481,-6.615601,Moderate
+CNN-LSTM+Attention,2,Heavy,13,2263,34.239915,31.951579,-31.778128,Heavy
+CNN-LSTM+Attention,2,Very Heavy,13,819,68.873753,65.95671,-65.95671,Very Heavy
+CNN-LSTM+Attention,2,Extremely Heavy,13,170,158.589047,148.020754,-148.020754,Extremely Heavy
+CNN-LSTM+Attention,2,No Rain,42,84068,2.77123,1.665463,1.660948,No Rain
+CNN-LSTM+Attention,2,Light,42,36366,5.79978,3.851751,3.121772,Light
+CNN-LSTM+Attention,2,Moderate,42,16953,11.344979,9.011013,-6.651493,Moderate
+CNN-LSTM+Attention,2,Heavy,42,2263,34.29764,31.962475,-31.433452,Heavy
+CNN-LSTM+Attention,2,Very Heavy,42,819,68.602145,65.490175,-65.352182,Very Heavy
+CNN-LSTM+Attention,2,Extremely Heavy,42,170,156.869715,145.922855,-145.922855,Extremely Heavy
+CNN-LSTM+Attention,2,No Rain,123,84068,2.911507,1.854513,1.840384,No Rain
+CNN-LSTM+Attention,2,Light,123,36366,5.954371,4.045368,3.270506,Light
+CNN-LSTM+Attention,2,Moderate,123,16953,11.198281,8.858304,-6.315874,Moderate
+CNN-LSTM+Attention,2,Heavy,123,2263,33.790741,31.382711,-30.962616,Heavy
+CNN-LSTM+Attention,2,Very Heavy,123,819,68.176712,65.030906,-65.030906,Very Heavy
+CNN-LSTM+Attention,2,Extremely Heavy,123,170,157.224854,146.28362,-146.28362,Extremely Heavy
+Persistence Baseline,3,No Rain,n/a,83918,5.766595,0.997128,0.997128,No Rain
+Persistence Baseline,3,Light,n/a,36190,12.928201,5.538157,3.499842,Light
+Persistence Baseline,3,Moderate,n/a,16909,18.034826,13.142936,-5.086729,Moderate
+Persistence Baseline,3,Heavy,n/a,2271,40.111648,34.559885,-27.262131,Heavy
+Persistence Baseline,3,Very Heavy,n/a,821,70.500549,64.658465,-57.994154,Very Heavy
+Persistence Baseline,3,Extremely Heavy,n/a,170,153.812077,138.197058,-135.417058,Extremely Heavy
+Climatology Baseline,3,No Rain,n/a,83918,4.167818,2.571788,2.571788,No Rain
+Climatology Baseline,3,Light,n/a,36190,6.426864,4.681664,4.035178,Light
+Climatology Baseline,3,Moderate,n/a,16909,11.101227,8.725487,-7.063002,Moderate
+Climatology Baseline,3,Heavy,n/a,2271,35.503445,34.069619,-33.977178,Heavy
+Climatology Baseline,3,Very Heavy,n/a,821,70.870806,68.703614,-68.703614,Very Heavy
+Climatology Baseline,3,Extremely Heavy,n/a,170,161.475476,151.187262,-151.187262,Extremely Heavy
+LSTM,3,No Rain,13,83918,2.68488,1.646779,1.554963,No Rain
+LSTM,3,Light,13,36190,5.301243,3.778379,3.031574,Light
+LSTM,3,Moderate,13,16909,11.348015,8.999996,-7.560845,Moderate
+LSTM,3,Heavy,13,2271,35.87902,34.068774,-33.953359,Heavy
+LSTM,3,Very Heavy,13,821,71.199834,68.629476,-68.629476,Very Heavy
+LSTM,3,Extremely Heavy,13,170,162.522477,152.266066,-152.266066,Extremely Heavy
+LSTM,3,No Rain,42,83918,2.951579,2.061997,2.007088,No Rain
+LSTM,3,Light,42,36190,5.532392,4.03256,3.451848,Light
+LSTM,3,Moderate,42,16909,11.218536,8.814152,-7.205471,Moderate
+LSTM,3,Heavy,42,2271,35.660207,33.788592,-33.5353,Heavy
+LSTM,3,Very Heavy,42,821,70.796463,68.066902,-68.066902,Very Heavy
+LSTM,3,Extremely Heavy,42,170,161.529394,151.003598,-151.003598,Extremely Heavy
+LSTM,3,No Rain,123,83918,2.74734,1.871053,1.834337,No Rain
+LSTM,3,Light,123,36190,5.197079,3.719848,3.056689,Light
+LSTM,3,Moderate,123,16909,11.483182,9.141791,-7.700577,Moderate
+LSTM,3,Heavy,123,2271,36.148767,34.403094,-34.257849,Heavy
+LSTM,3,Very Heavy,123,821,71.300635,68.781043,-68.781043,Very Heavy
+LSTM,3,Extremely Heavy,123,170,162.69652,152.423424,-152.423424,Extremely Heavy
+CNN-LSTM-Temporal,3,No Rain,13,83918,2.603977,1.509619,1.374759,No Rain
+CNN-LSTM-Temporal,3,Light,13,36190,5.095012,3.728095,2.938578,Light
+CNN-LSTM-Temporal,3,Moderate,13,16909,11.412817,9.047489,-7.866237,Moderate
+CNN-LSTM-Temporal,3,Heavy,13,2271,36.828817,35.301708,-35.267392,Heavy
+CNN-LSTM-Temporal,3,Very Heavy,13,821,72.640588,70.46464,-70.46464,Very Heavy
+CNN-LSTM-Temporal,3,Extremely Heavy,13,170,164.910434,155.008194,-155.008194,Extremely Heavy
+CNN-LSTM-Temporal,3,No Rain,42,83918,2.584699,1.639175,1.634277,No Rain
+CNN-LSTM-Temporal,3,Light,42,36190,5.390664,3.594483,2.855752,Light
+CNN-LSTM-Temporal,3,Moderate,42,16909,11.840798,9.424276,-7.5358,Moderate
+CNN-LSTM-Temporal,3,Heavy,42,2271,35.65202,33.510387,-32.861582,Heavy
+CNN-LSTM-Temporal,3,Very Heavy,42,821,70.25497,67.114966,-67.000449,Very Heavy
+CNN-LSTM-Temporal,3,Extremely Heavy,42,170,160.588787,149.839537,-149.839537,Extremely Heavy
+CNN-LSTM-Temporal,3,No Rain,123,83918,2.507209,1.300464,1.175602,No Rain
+CNN-LSTM-Temporal,3,Light,123,36190,5.076762,3.636489,2.66425,Light
+CNN-LSTM-Temporal,3,Moderate,123,16909,11.427555,9.0797,-7.804336,Moderate
+CNN-LSTM-Temporal,3,Heavy,123,2271,36.237706,34.580015,-34.560994,Heavy
+CNN-LSTM-Temporal,3,Very Heavy,123,821,71.925393,69.630303,-69.630303,Very Heavy
+CNN-LSTM-Temporal,3,Extremely Heavy,123,170,164.167795,154.338146,-154.338146,Extremely Heavy
+CNN-LSTM+Attention,3,No Rain,13,83918,2.371178,1.471262,1.430834,No Rain
+CNN-LSTM+Attention,3,Light,13,36190,4.620151,3.238982,2.355219,Light
+CNN-LSTM+Attention,3,Moderate,13,16909,11.821344,9.558752,-8.478597,Moderate
+CNN-LSTM+Attention,3,Heavy,13,2271,36.900023,35.30162,-35.286658,Heavy
+CNN-LSTM+Attention,3,Very Heavy,13,821,72.761058,70.581621,-70.581621,Very Heavy
+CNN-LSTM+Attention,3,Extremely Heavy,13,170,164.97787,155.051774,-155.051774,Extremely Heavy
+CNN-LSTM+Attention,3,No Rain,42,83918,3.246667,2.107784,2.098685,No Rain
+CNN-LSTM+Attention,3,Light,42,36190,6.63572,4.761828,4.23375,Light
+CNN-LSTM+Attention,3,Moderate,42,16909,10.887652,8.493955,-5.631981,Moderate
+CNN-LSTM+Attention,3,Heavy,42,2271,33.846144,31.655961,-31.396687,Heavy
+CNN-LSTM+Attention,3,Very Heavy,42,821,68.747228,65.924541,-65.921427,Very Heavy
+CNN-LSTM+Attention,3,Extremely Heavy,42,170,159.496607,148.524803,-148.524803,Extremely Heavy
+CNN-LSTM+Attention,3,No Rain,123,83918,2.225918,1.210139,0.1482,No Rain
+CNN-LSTM+Attention,3,Light,123,36190,5.176947,3.446841,1.749222,Light
+CNN-LSTM+Attention,3,Moderate,123,16909,12.477273,10.146065,-8.357037,Moderate
+CNN-LSTM+Attention,3,Heavy,123,2271,36.484544,34.367838,-34.077383,Heavy
+CNN-LSTM+Attention,3,Very Heavy,123,821,71.244184,68.413281,-68.413281,Very Heavy
+CNN-LSTM+Attention,3,Extremely Heavy,123,170,162.638941,151.966664,-151.966664,Extremely Heavy
+Persistence Baseline,4,No Rain,n/a,83742,5.795543,1.028288,1.028288,No Rain
+Persistence Baseline,4,Light,n/a,36003,13.406574,5.687007,3.598347,Light
+Persistence Baseline,4,Moderate,n/a,16877,18.750974,13.45783,-5.33468,Moderate
+Persistence Baseline,4,Heavy,n/a,2274,38.982587,35.139578,-28.368865,Heavy
+Persistence Baseline,4,Very Heavy,n/a,828,70.747467,65.696739,-60.825242,Very Heavy
+Persistence Baseline,4,Extremely Heavy,n/a,171,157.087304,143.347952,-141.552631,Extremely Heavy
+Climatology Baseline,4,No Rain,n/a,83742,4.172663,2.574877,2.574877,No Rain
+Climatology Baseline,4,Light,n/a,36003,6.441182,4.696041,4.050409,Light
+Climatology Baseline,4,Moderate,n/a,16877,11.107797,8.727085,-7.05548,Moderate
+Climatology Baseline,4,Heavy,n/a,2274,35.517797,34.085889,-33.978466,Heavy
+Climatology Baseline,4,Very Heavy,n/a,828,70.979953,68.804594,-68.804594,Very Heavy
+Climatology Baseline,4,Extremely Heavy,n/a,171,161.695118,151.44628,-151.44628,Extremely Heavy
+LSTM,4,No Rain,13,83742,3.077323,1.726566,1.389501,No Rain
+LSTM,4,Light,13,36003,6.414656,4.594445,3.746257,Light
+LSTM,4,Moderate,13,16877,11.1592,8.661932,-6.243432,Moderate
+LSTM,4,Heavy,13,2274,34.743557,32.737449,-32.31572,Heavy
+LSTM,4,Very Heavy,13,828,69.861172,67.069273,-67.055175,Very Heavy
+LSTM,4,Extremely Heavy,13,171,161.0911,150.449639,-150.449639,Extremely Heavy
+LSTM,4,No Rain,42,83742,2.675618,1.558296,1.52918,No Rain
+LSTM,4,Light,42,36003,5.372555,3.833494,3.040751,Light
+LSTM,4,Moderate,42,16877,11.43201,9.034378,-7.566143,Moderate
+LSTM,4,Heavy,42,2274,36.254032,34.585821,-34.511125,Heavy
+LSTM,4,Very Heavy,42,828,72.136054,69.758764,-69.758764,Very Heavy
+LSTM,4,Extremely Heavy,42,171,163.017335,152.751805,-152.751805,Extremely Heavy
+LSTM,4,No Rain,123,83742,2.872942,1.737052,1.719923,No Rain
+LSTM,4,Light,123,36003,5.525468,3.921048,3.181169,Light
+LSTM,4,Moderate,123,16877,11.398021,9.030559,-7.382512,Moderate
+LSTM,4,Heavy,123,2274,35.669851,33.830385,-33.787522,Heavy
+LSTM,4,Very Heavy,123,828,71.465336,69.15552,-69.15552,Very Heavy
+LSTM,4,Extremely Heavy,123,171,163.769806,153.840489,-153.840489,Extremely Heavy
+CNN-LSTM-Temporal,4,No Rain,13,83742,2.695989,1.816631,1.800593,No Rain
+CNN-LSTM-Temporal,4,Light,13,36003,4.840507,3.593305,2.938688,Light
+CNN-LSTM-Temporal,4,Moderate,13,16877,11.561471,9.217344,-8.247573,Moderate
+CNN-LSTM-Temporal,4,Heavy,13,2274,37.583382,36.238538,-36.233031,Heavy
+CNN-LSTM-Temporal,4,Very Heavy,13,828,73.853203,71.859638,-71.859638,Very Heavy
+CNN-LSTM-Temporal,4,Extremely Heavy,13,171,166.847906,157.167901,-157.167901,Extremely Heavy
+CNN-LSTM-Temporal,4,No Rain,42,83742,2.492569,1.504715,1.463473,No Rain
+CNN-LSTM-Temporal,4,Light,42,36003,4.747025,3.41927,2.546845,Light
+CNN-LSTM-Temporal,4,Moderate,42,16877,11.805637,9.477772,-8.4852,Moderate
+CNN-LSTM-Temporal,4,Heavy,42,2274,37.671435,36.270211,-36.267592,Heavy
+CNN-LSTM-Temporal,4,Very Heavy,42,828,73.946011,71.916266,-71.916266,Very Heavy
+CNN-LSTM-Temporal,4,Extremely Heavy,42,171,166.96963,157.351742,-157.351742,Extremely Heavy
+CNN-LSTM-Temporal,4,No Rain,123,83742,2.779642,1.704792,1.607557,No Rain
+CNN-LSTM-Temporal,4,Light,123,36003,5.249112,3.889657,3.134625,Light
+CNN-LSTM-Temporal,4,Moderate,123,16877,11.316925,8.946757,-7.733456,Moderate
+CNN-LSTM-Temporal,4,Heavy,123,2274,36.907251,35.475342,-35.462645,Heavy
+CNN-LSTM-Temporal,4,Very Heavy,123,828,73.148896,71.087496,-71.087496,Very Heavy
+CNN-LSTM-Temporal,4,Extremely Heavy,123,171,166.473668,156.834473,-156.834473,Extremely Heavy
+CNN-LSTM+Attention,4,No Rain,13,83742,2.818032,1.535912,1.51648,No Rain
+CNN-LSTM+Attention,4,Light,13,36003,5.823911,4.215563,3.485994,Light
+CNN-LSTM+Attention,4,Moderate,13,16877,11.117069,8.719388,-6.831444,Moderate
+CNN-LSTM+Attention,4,Heavy,13,2274,35.393315,33.566211,-33.52294,Heavy
+CNN-LSTM+Attention,4,Very Heavy,13,828,70.960297,68.61457,-68.61457,Very Heavy
+CNN-LSTM+Attention,4,Extremely Heavy,13,171,162.935269,152.459447,-152.459447,Extremely Heavy
+CNN-LSTM+Attention,4,No Rain,42,83742,2.884848,1.608161,1.087756,No Rain
+CNN-LSTM+Attention,4,Light,42,36003,6.287137,4.424034,3.466717,Light
+CNN-LSTM+Attention,4,Moderate,42,16877,11.589754,9.160954,-6.628633,Moderate
+CNN-LSTM+Attention,4,Heavy,42,2274,35.109902,33.043499,-32.908308,Heavy
+CNN-LSTM+Attention,4,Very Heavy,42,828,70.224939,67.621398,-67.621398,Very Heavy
+CNN-LSTM+Attention,4,Extremely Heavy,42,171,162.173045,151.520843,-151.520843,Extremely Heavy
+CNN-LSTM+Attention,4,No Rain,123,83742,2.618103,1.517411,1.44435,No Rain
+CNN-LSTM+Attention,4,Light,123,36003,5.247774,3.803616,2.989093,Light
+CNN-LSTM+Attention,4,Moderate,123,16877,11.658597,9.316346,-7.975473,Moderate
+CNN-LSTM+Attention,4,Heavy,123,2274,36.905201,35.395533,-35.393187,Heavy
+CNN-LSTM+Attention,4,Very Heavy,123,828,73.116012,70.985999,-70.985999,Very Heavy
+CNN-LSTM+Attention,4,Extremely Heavy,123,171,165.830072,155.929325,-155.929325,Extremely Heavy
+CNN-LSTM+Attention,1,Extremely Heavy,mean ± std,168,142.6054 ± 1.7533,129.3619 ± 1.7409,-129.3212 ± 1.8112,Extremely Heavy
+CNN-LSTM+Attention,1,Heavy,mean ± std,2264,30.8868 ± 0.7615,27.8726 ± 0.9149,-26.4782 ± 0.8939,Heavy
+CNN-LSTM+Attention,1,Light,mean ± std,36547,5.8073 ± 0.4905,3.6740 ± 0.3342,2.8664 ± 0.5669,Light
+CNN-LSTM+Attention,1,Moderate,mean ± std,17005,11.1546 ± 0.2153,8.7345 ± 0.2470,-5.2488 ± 0.7261,Moderate
+CNN-LSTM+Attention,1,No Rain,mean ± std,84444,2.5801 ± 0.2908,1.4003 ± 0.3831,1.3406 ± 0.4423,No Rain
+CNN-LSTM+Attention,1,Very Heavy,mean ± std,821,61.3637 ± 0.7897,57.0368 ± 0.7784,-56.4344 ± 0.6643,Very Heavy
+CNN-LSTM+Attention,2,Extremely Heavy,mean ± std,170,157.5612 ± 0.9077,146.7424 ± 1.1217,-146.7424 ± 1.1217,Extremely Heavy
+CNN-LSTM+Attention,2,Heavy,mean ± std,2263,34.1094 ± 0.2775,31.7656 ± 0.3316,-31.3914 ± 0.4094,Heavy
+CNN-LSTM+Attention,2,Light,mean ± std,36366,5.8968 ± 0.0845,4.0087 ± 0.1421,3.0645 ± 0.2398,Light
+CNN-LSTM+Attention,2,Moderate,mean ± std,16953,11.2794 ± 0.0746,8.9447 ± 0.0783,-6.5277 ± 0.1843,Moderate
+CNN-LSTM+Attention,2,No Rain,mean ± std,84068,2.7947 ± 0.1070,1.6724 ± 0.1788,1.2960 ± 0.7925,No Rain
+CNN-LSTM+Attention,2,Very Heavy,mean ± std,819,68.5509 ± 0.3513,65.4926 ± 0.4629,-65.4466 ± 0.4701,Very Heavy
+CNN-LSTM+Attention,3,Extremely Heavy,mean ± std,170,162.3711 ± 2.7504,151.8477 ± 3.2651,-151.8477 ± 3.2651,Extremely Heavy
+CNN-LSTM+Attention,3,Heavy,mean ± std,2271,35.7436 ± 1.6563,33.7751 ± 1.8937,-33.5869 ± 1.9908,Heavy
+CNN-LSTM+Attention,3,Light,mean ± std,36190,5.4776 ± 1.0409,3.8159 ± 0.8258,2.7794 ± 1.2954,Light
+CNN-LSTM+Attention,3,Moderate,mean ± std,16909,11.7288 ± 0.7988,9.3996 ± 0.8375,-7.4892 ± 1.6096,Moderate
+CNN-LSTM+Attention,3,No Rain,mean ± std,83918,2.6146 ± 0.5522,1.5964 ± 0.4617,1.2259 ± 0.9913,No Rain
+CNN-LSTM+Attention,3,Very Heavy,mean ± std,821,70.9175 ± 2.0268,68.3065 ± 2.3304,-68.3054 ± 2.3320,Very Heavy
+CNN-LSTM+Attention,4,Extremely Heavy,mean ± std,171,163.6461 ± 1.9294,153.3032 ± 2.3222,-153.3032 ± 2.3222,Extremely Heavy
+CNN-LSTM+Attention,4,Heavy,mean ± std,2274,35.8028 ± 0.9652,34.0017 ± 1.2350,-33.9415 ± 1.2942,Heavy
+CNN-LSTM+Attention,4,Light,mean ± std,36003,5.7863 ± 0.5207,4.1477 ± 0.3157,3.3139 ± 0.2815,Light
+CNN-LSTM+Attention,4,Moderate,mean ± std,16877,11.4551 ± 0.2948,9.0656 ± 0.3097,-7.1452 ± 0.7262,Moderate
+CNN-LSTM+Attention,4,No Rain,mean ± std,83742,2.7737 ± 0.1388,1.5538 ± 0.0480,1.3495 ± 0.2296,No Rain
+CNN-LSTM+Attention,4,Very Heavy,mean ± std,828,71.4337 ± 1.5026,69.0740 ± 1.7287,-69.0740 ± 1.7287,Very Heavy
+CNN-LSTM-Temporal,1,Extremely Heavy,mean ± std,168,140.7243 ± 2.6521,126.5578 ± 3.3837,-126.4797 ± 3.4526,Extremely Heavy
+CNN-LSTM-Temporal,1,Heavy,mean ± std,2264,30.8846 ± 0.2409,27.7087 ± 0.4435,-25.5486 ± 1.2231,Heavy
+CNN-LSTM-Temporal,1,Light,mean ± std,36547,5.8499 ± 0.2530,3.5477 ± 0.0840,2.4173 ± 0.1578,Light
+CNN-LSTM-Temporal,1,Moderate,mean ± std,17005,11.6441 ± 0.3387,9.1151 ± 0.2372,-5.2190 ± 0.3625,Moderate
+CNN-LSTM-Temporal,1,No Rain,mean ± std,84444,2.4012 ± 0.0371,1.1484 ± 0.1816,0.9172 ± 0.3620,No Rain
+CNN-LSTM-Temporal,1,Very Heavy,mean ± std,821,60.6502 ± 1.2052,55.7288 ± 1.6996,-54.7907 ± 1.9802,Very Heavy
+CNN-LSTM-Temporal,2,Extremely Heavy,mean ± std,170,157.7195 ± 1.2525,146.7930 ± 1.5966,-146.7930 ± 1.5966,Extremely Heavy
+CNN-LSTM-Temporal,2,Heavy,mean ± std,2263,34.8609 ± 0.1644,32.6767 ± 0.2250,-32.3175 ± 0.3623,Heavy
+CNN-LSTM-Temporal,2,Light,mean ± std,36366,5.5214 ± 0.0299,3.7704 ± 0.0225,3.0313 ± 0.1013,Light
+CNN-LSTM-Temporal,2,Moderate,mean ± std,16953,11.3591 ± 0.0414,9.0037 ± 0.0356,-7.0041 ± 0.0957,Moderate
+CNN-LSTM-Temporal,2,No Rain,mean ± std,84068,2.6871 ± 0.0691,1.6192 ± 0.1404,1.5948 ± 0.1559,No Rain
+CNN-LSTM-Temporal,2,Very Heavy,mean ± std,819,69.3127 ± 0.1457,66.2738 ± 0.2315,-66.2189 ± 0.3242,Very Heavy
+CNN-LSTM-Temporal,3,Extremely Heavy,mean ± std,170,163.2223 ± 2.3108,153.0620 ± 2.8107,-153.0620 ± 2.8107,Extremely Heavy
+CNN-LSTM-Temporal,3,Heavy,mean ± std,2271,36.2395 ± 0.5884,34.4640 ± 0.9013,-34.2300 ± 1.2366,Heavy
+CNN-LSTM-Temporal,3,Light,mean ± std,36190,5.1875 ± 0.1762,3.6530 ± 0.0683,2.8195 ± 0.1407,Light
+CNN-LSTM-Temporal,3,Moderate,mean ± std,16909,11.5604 ± 0.2430,9.1838 ± 0.2089,-7.7355 ± 0.1757,Moderate
+CNN-LSTM-Temporal,3,No Rain,mean ± std,83918,2.5653 ± 0.0512,1.4831 ± 0.1709,1.3949 ± 0.2300,No Rain
+CNN-LSTM-Temporal,3,Very Heavy,mean ± std,821,71.6070 ± 1.2243,69.0700 ± 1.7437,-69.0318 ± 1.8080,Very Heavy
+CNN-LSTM-Temporal,4,Extremely Heavy,mean ± std,171,166.7637 ± 0.2585,157.1180 ± 0.2622,-157.1180 ± 0.2622,Extremely Heavy
+CNN-LSTM-Temporal,4,Heavy,mean ± std,2274,37.3874 ± 0.4181,35.9947 ± 0.4501,-35.9878 ± 0.4551,Heavy
+CNN-LSTM-Temporal,4,Light,mean ± std,36003,4.9455 ± 0.2670,3.6341 ± 0.2378,2.8734 ± 0.2993,Light
+CNN-LSTM-Temporal,4,Moderate,mean ± std,16877,11.5613 ± 0.2444,9.2140 ± 0.2655,-8.1554 ± 0.3843,Moderate
+CNN-LSTM-Temporal,4,No Rain,mean ± std,83742,2.6561 ± 0.1476,1.6754 ± 0.1580,1.6239 ± 0.1692,No Rain
+CNN-LSTM-Temporal,4,Very Heavy,mean ± std,828,73.6494 ± 0.4359,71.6211 ± 0.4630,-71.6211 ± 0.4630,Very Heavy
+LSTM,1,Extremely Heavy,mean ± std,168,139.3869 ± 1.5004,124.0792 ± 2.3387,-123.9420 ± 2.5118,Extremely Heavy
+LSTM,1,Heavy,mean ± std,2264,30.4596 ± 0.2485,27.4246 ± 0.1817,-24.9426 ± 0.5043,Heavy
+LSTM,1,Light,mean ± std,36547,6.1101 ± 0.0994,3.9726 ± 0.1490,3.1766 ± 0.2489,Light
+LSTM,1,Moderate,mean ± std,17005,11.2994 ± 0.3434,8.6279 ± 0.2384,-4.6052 ± 0.0916,Moderate
+LSTM,1,No Rain,mean ± std,84444,2.6352 ± 0.1339,1.4157 ± 0.2334,1.2423 ± 0.3364,No Rain
+LSTM,1,Very Heavy,mean ± std,821,59.6142 ± 0.3146,54.5143 ± 0.7168,-53.4753 ± 1.1650,Very Heavy
+LSTM,2,Extremely Heavy,mean ± std,170,156.0873 ± 1.1720,144.8014 ± 1.3463,-144.8014 ± 1.3463,Extremely Heavy
+LSTM,2,Heavy,mean ± std,2263,34.1443 ± 0.6548,31.8722 ± 0.8093,-31.3994 ± 0.9200,Heavy
+LSTM,2,Light,mean ± std,36366,5.9243 ± 0.4909,4.1400 ± 0.4128,3.3366 ± 0.5962,Light
+LSTM,2,Moderate,mean ± std,16953,11.1348 ± 0.1977,8.7560 ± 0.2248,-6.4835 ± 0.6776,Moderate
+LSTM,2,No Rain,mean ± std,84068,2.8866 ± 0.3419,1.7296 ± 0.3409,1.4521 ± 0.6445,No Rain
+LSTM,2,Very Heavy,mean ± std,819,68.4104 ± 1.0560,65.2591 ± 1.2289,-65.1573 ± 1.1982,Very Heavy
+LSTM,3,Extremely Heavy,mean ± std,170,162.2495 ± 0.6296,151.8977 ± 0.7783,-151.8977 ± 0.7783,Extremely Heavy
+LSTM,3,Heavy,mean ± std,2271,35.8960 ± 0.2447,34.0868 ± 0.3076,-33.9155 ± 0.3628,Heavy
+LSTM,3,Light,mean ± std,36190,5.3436 ± 0.1716,3.8436 ± 0.1662,3.1800 ± 0.2357,Light
+LSTM,3,Moderate,mean ± std,16909,11.3499 ± 0.1323,8.9853 ± 0.1643,-7.4890 ± 0.2553,Moderate
+LSTM,3,No Rain,mean ± std,83918,2.7946 ± 0.1395,1.8599 ± 0.2078,1.7988 ± 0.2281,No Rain
+LSTM,3,Very Heavy,mean ± std,821,71.0990 ± 0.2668,68.4925 ± 0.3763,-68.4925 ± 0.3763,Very Heavy
+LSTM,4,Extremely Heavy,mean ± std,171,162.6261 ± 1.3815,152.3473 ± 1.7312,-152.3473 ± 1.7312,Extremely Heavy
+LSTM,4,Heavy,mean ± std,2274,35.5558 ± 0.7617,33.7179 ± 0.9293,-33.5381 ± 1.1187,Heavy
+LSTM,4,Light,mean ± std,36003,5.7709 ± 0.5627,4.1163 ± 0.4164,3.3227 ± 0.3734,Light
+LSTM,4,Moderate,mean ± std,16877,11.3297 ± 0.1487,8.9090 ± 0.2139,-7.0640 ± 0.7166,Moderate
+LSTM,4,No Rain,mean ± std,83742,2.8753 ± 0.2009,1.6740 ± 0.1003,1.5462 ± 0.1659,No Rain
+LSTM,4,Very Heavy,mean ± std,828,71.1542 ± 1.1689,68.6612 ± 1.4112,-68.6565 ± 1.4192,Very Heavy

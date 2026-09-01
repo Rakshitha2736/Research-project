@@ -187,7 +187,7 @@ def main() -> None:
     ax.axvline(best_epoch, color="gray", linestyle="--", label=f"best epoch {best_epoch}")
     ax.set_xlabel("Epoch")
     ax.set_ylabel("MSE (scaled y)")
-    ax.set_title("CNN-LSTM Temporal h=1 Training Curve (seed 42, batch 256)")
+    ax.set_title("Temporal CNN-LSTM h=1 Training Curve (seed 42, batch 256)")
     ax.legend()
     plt.tight_layout()
     plt.savefig(FIGURES / "cnn_lstm_temporal_h1_training_curve.png", dpi=150)

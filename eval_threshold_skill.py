@@ -14,6 +14,8 @@ Writes:
   reports/tables/threshold_skill_summary.csv   (mean±std over seeds)
   reports/tables/intensity_bins.csv
   reports/tables/intensity_bins_summary.csv
+
+Thresholds (default): 0.1/1/5/10 mm (operational) + 35.6/64.4/124.4 mm (IMD event cutoffs).
 """
 
 from __future__ import annotations
@@ -31,7 +33,7 @@ from src.cuda_setup import DEFAULT_BATCH_SIZE, make_loader, require_cuda
 from src.persistence_baseline import data_paths, persistence_mm
 from src.metrics_rainfall import (
     DEFAULT_INTENSITY_EDGES_MM,
-    DEFAULT_THRESHOLDS_MM,
+    FULL_THRESHOLDS_MM,
     intensity_bin_metrics,
     threshold_skill_table,
     tolerance_accuracy,
@@ -129,7 +131,8 @@ def parse_args() -> argparse.Namespace:
         "--thresholds",
         type=float,
         nargs="+",
-        default=list(DEFAULT_THRESHOLDS_MM),
+        default=list(FULL_THRESHOLDS_MM),
+        help="Operational + IMD event thresholds (mm); default includes 0.1/1/5/10 and 35.6/64.4/124.5",
     )
     return p.parse_args()
 

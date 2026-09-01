@@ -139,3 +139,4 @@ def selected_station_banner(stations: pd.DataFrame) -> None:
         f"Selected: {r['station_name']} ({r['state']} / {r['district']}){note}"
     )
 
+                    

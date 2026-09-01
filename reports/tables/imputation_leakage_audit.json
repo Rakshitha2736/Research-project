@@ -81,34 +81,20 @@
   "leakage_classification": {
     "true_target_leakage": false,
     "covariate_leakage": true,
-    "severity": "minor",
+    "severity": "minor_to_moderate",
     "explanation": "Rainfall is never imputed; target day is excluded from X. Only covariates (temps via linear+median; wind/pressure via median) can use post-2022 observations when filling train-period gaps.",
-    "refined": "Dominant path is station-median fill of wind_speed and air_pressure before split. Temperature linear interpolation does not cross the 2022/2023 boundary. Only 3.2% of h=1 train sequences contain any future-dependent covariate day."
+    "refined": "Dominant path is station-median fill of wind_speed and air_pressure before split. Temperature linear interpolation does not cross the 2022/2023 boundary. Only ~3.2% of h=1 train sequences contain any future-dependent covariate day. Sanity checks (LSTM h=1; Attention h=4 seed=42) measure practical RMSE impact separately."
   },
-  "validity_conclusion": {
-    "published_results_remain_valid": true,
-    "caveat": "Directionally valid for model comparison; not free of preprocessing covariate leakage. Do not claim leakage-free preprocessing.",
-    "should_preprocessing_be_changed": true,
-    "recommended_change": "Fit interpolate/median using only dates <= train_end, then transform val/test. Run a sensitivity retrain if thesis claims hinge on exact RMSE."
-  },
-  "median_shift_magnitudes": {
-    "wind_speed_kmh": {
-      "mean_abs_delta": 1.0231,
-      "p50": 0.9,
-      "p95": 2.6,
-      "max": 3.0
-    },
-    "air_pressure_hPa": {
-      "mean_abs_delta": 0.9465,
-      "p50": 0.9,
-      "p95": 1.95,
-      "max": 3.3
-    },
-    "note": "delta = |full-series station median - train-only station median| for train missing rows where they differ"
-  },
+  "station_name_vs_station_id_count_reconciliation": "Independent spot-checks that count affected stations by station_name (e.g. 180 wind / 182 pressure) are lower than this JSON's station_id counts (185 / 187) because cleaning groupby uses station_name while this audit counts disambiguated station_id=name_lat_lon_elev. Example: station_name 'Agra' maps to 2 station_ids (Agra_27.15_77.97_168, Agra_27.17_78.03_168), so one name-group contributes multiple ids.",
   "temp_linear_cross_split_gaps": {
     "min_temp": 0,
     "max_temp": 0,
-    "interpretation": "No train-period missing temperature uses a post-2022 observation as the next linear-interpolation endpoint."
+    "interpretation": "Train-period missing temperatures whose next linear-interpolation endpoint is post-2022 (0 means no cross-split linear dependence)."
+  },
+  "validity_conclusion": {
+    "published_results_remain_valid": true,
+    "caveat": "Directionally valid for model comparison; not free of preprocessing covariate leakage. Do not claim leakage-free preprocessing. Practical RMSE impact: see imputation_leakage_sanity_*.json.",
+    "should_preprocessing_be_changed": true,
+    "recommended_change": "Fit interpolate/median using only dates <= train_end, then transform val/test. Run a sensitivity retrain if thesis claims hinge on exact RMSE."
   }
 }

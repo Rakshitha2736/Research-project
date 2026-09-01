@@ -148,41 +148,73 @@ Single-seed (seed=42) Diebold-Mariano tests were informative: they first flagged
 
 ---
 
-Run `python eval_threshold_skill.py` (default: h=1..4 × seeds 13/42/123 × LSTM/Temporal/Attention + Persistence).
-Helpers: `src/metrics_rainfall.py`.
+## 6. Phase 6 — Consolidated extreme rainfall evaluation
 
-Outputs:
-- `reports/tables/threshold_skill.csv` / `threshold_skill_summary.csv` — POD, FAR, CSI, Bias, HSS at 0.1/1/5/10 mm
-- `reports/tables/intensity_bins.csv` / `intensity_bins_summary.csv` — RMSE/MAE by observed intensity bin
+**Primary tier scheme (thesis-facing):** India Meteorological Department (IMD) daily intensity classes, boundaries in `src/imd_tiers.py` / `dashboard/lib/imd_rainfall.py`:
+
+| Tier | Observed rainfall (mm/day) |
+|------|---------------------------|
+| No Rain | &lt; 0.1 |
+| Light | 0.1 – 7.5 |
+| Moderate | 7.6 – 35.5 |
+| Heavy | 35.6 – 64.4 |
+| Very Heavy | 64.5 – 124.4 |
+| Extremely Heavy | ≥ 124.5 |
+
+**Justification:** IMD thresholds are established meteorological convention for Indian daily rainfall — not project-invented bins. This replaces the scattered pre-Phase-6 mix of fixed-mm bins, 95th-percentile splits, and dashboard-only IMD labels.
+
+**Merge rule (≥100 test samples per tier per horizon):** Applied before any metric computation. At all horizons h=1–4, every raw IMD tier had n ≥ 100 (Extremely Heavy n ≈ 168–171), so **no merges were required**. Six tiers remain usable at every horizon.
+
+**Run:** `python eval_phase6_extreme.py` (inference only; seeds 13/42/123; h=1..4).
+
+**Models included:** LSTM, CNN-LSTM-Temporal, CNN-LSTM+Attention (3-seed mean±std), Persistence Baseline and Climatology Baseline (deterministic, seed n/a).
+
+**Excluded:** GNN-LSTM — requires graph adjacency + separate GNN inference path not shared with the flat eval scripts (`eval_extreme_rainfall.py` / `eval_threshold_skill.py` pattern).
+
+**Outputs:**
+- `reports/tables/phase6_extreme_evaluation.csv` — per-tier RMSE, MAE, **continuous mean-error bias** (= mean(ŷ − y), mm/day; not contingency frequency bias)
+- `master_results.csv` — additive `Phase 6 IMD Tier` headline rows (most severe tier: Extremely Heavy, 3-seed mean±std RMSE per DL model)
+
+**Headline (Extremely Heavy tier RMSE, 3-seed mean±std):**
+
+| Model | h=1 | h=2 | h=3 | h=4 |
+|-------|-----|-----|-----|-----|
+| LSTM | 139.39 ± 1.50 | 156.09 ± 1.17 | 162.25 ± 0.63 | 162.63 ± 1.38 |
+| CNN-LSTM-Temporal | 140.72 ± 2.65 | 157.72 ± 1.25 | 163.22 ± 2.31 | 166.76 ± 0.26 |
+| CNN-LSTM+Attention | 142.61 ± 1.75 | 157.56 ± 0.91 | 162.37 ± 2.75 | 163.65 ± 1.93 |
+
+All models show large negative mean-error bias on severe tiers (systematic under-forecasting of extreme rainfall). RMSE on Extremely Heavy days (~140–167 mm) dwarfs full-test RMSE (~9–11 mm).
+
+**Seed stability (Extremely Heavy tier):** Unlike full-test RMSE (Phase 4: std ≈ 0.02–0.08 mm on ~9–10 mm scale), extreme-tier RMSE shows **material seed sensitivity at some horizons** — coefficient of variation ~1–2% on ~140–165 mm RMSE. h=1: all three DL models flagged seed-sensitive (CV &gt; 1%). h=2: all stable. h=3: LSTM stable; Temporal and Attention seed-sensitive. h=4: LSTM and Temporal stable; Attention seed-sensitive. **Do not cite a single-seed extreme-tier ranking as definitive**; use 3-seed mean±std and report instability where present.
+
+### Threshold / categorical skill (consolidated from prior §5a)
+
+**Run:** `python eval_threshold_skill.py` (default: h=1..4 × seeds 13/42/123 × LSTM/Temporal/Attention + Persistence).
+
+**Thresholds:** Operational set **0.1 / 1 / 5 / 10 mm** (unchanged) **plus IMD event cutoffs 35.6 / 64.4 / 124.4 mm** (additive). Helpers: `src/metrics_rainfall.py` (`FULL_THRESHOLDS_MM`).
+
+**Outputs:**
+- `reports/tables/threshold_skill.csv` / `threshold_skill_summary.csv` — POD, FAR, CSI, frequency Bias, HSS, Accuracy
+- `reports/tables/intensity_bins.csv` / `intensity_bins_summary.csv` — RMSE/MAE by fixed-mm observed bins
 - `reports/tables/tolerance_accuracy.csv` / `tolerance_accuracy_summary.csv` — |err|≤1/2/5 mm
 
-No training; architecture unchanged. Use summary CSVs for thesis tables.
+**CSI @ IMD boundaries (LSTM h=1, seed 42):** 35.6 mm CSI ≈ 0.20; 64.4 mm ≈ 0.12; 124.4 mm ≈ 0.03 — categorical skill collapses at severe thresholds (few hits, many misses).
 
-**Provenance note (rain/no-rain contingency):** Rain/no-rain contingency counts in `threshold_skill.csv` were computed via a separate CUDA+autocast inference session (`eval_threshold_skill.py`, 2026-08-05) on the same seed-42/13/123 checkpoints used throughout this project, not literally reused prediction arrays from the original significance-testing session. Because `CNNLSTMAttention` and `CNNLSTMTemporalBaseline` contain no dropout or batch-normalization layers, forward-pass outputs are deterministic given fixed weights, device, and precision mode, so this re-inference is expected to be numerically equivalent to the original evaluation to within floating-point tolerance. This is a documented provenance note, not a re-run of training or a new experiment. Downstream rain/no-rain Precision/Recall/F1 tables derived from these counts (e.g. `reports/tables/rain_classification_metrics.csv`) inherit this provenance.
+**Rain/no-rain F1 table:** `reports/tables/rain_classification_metrics.csv` — **reports F1 only, not CSI**; for CSI/POD/FAR/Bias see `threshold_skill.csv`. Derived from contingency counts at 1 mm (seed 42).
 
-**Headline (CSI @ 1 mm, mean±std over 3 seeds):** Persistence has the highest CSI at every horizon (e.g. h=1 CSI ≈ 0.58) because DL models run very high POD (~0.89–0.94) but also high FAR (~0.46–0.53) — typical MSE-regression over-forecasting of rain events. Among DL models, rankings vs Temporal/LSTM vary by horizon (see `threshold_skill_summary.csv`). Intensity bins show RMSE exploding on ≥10 mm days (~25 mm RMSE for Attention h=1). Thesis claim: report continuous RMSE **and** categorical skill; do not imply MSE optimality transfers to CSI.
+**Headline (CSI @ 1 mm, mean±std over 3 seeds):** Persistence has the highest CSI at every horizon (h=1 ≈ 0.58) because DL models run very high POD (~0.89–0.94) but also high FAR (~0.46–0.53). Thesis claim: report continuous RMSE **and** categorical skill; do not imply MSE optimality transfers to CSI.
 
----
+### Secondary cross-check: 95th-percentile split (retained, different framing)
 
-## 5b. Extreme vs Normal rainfall subset evaluation (eval-only addition)
+Run `python eval_extreme_rainfall.py` (seed 42 only). Splits by **true-target 95th percentile** (~21.5–21.7 mm) into Normal vs Extreme subsets — a **dataset-relative** definition, not IMD. Kept as-is in `reports/tables/extreme_rainfall_evaluation.csv` for comparison; do not conflate with IMD Extremely Heavy (≥ 124.5 mm).
 
-Run `python eval_extreme_rainfall.py` (seed 42 only; LSTM / Temporal / Attention; h=1..4). Splits each test set by the **true-target 95th percentile** and reports RMSE/MAE/R² on Extreme vs Normal subsets.
-
-Outputs:
-- `reports/tables/extreme_rainfall_evaluation.csv`
-- `reports/figures/extreme_rainfall_rmse_comparison.png`
-
-**Provenance note (extreme-day metrics):** Extreme/Normal RMSE/MAE/R² in `extreme_rainfall_evaluation.csv` were computed via a **separate** CUDA+autocast re-inference session (`eval_extreme_rainfall.py`) on the same seed-42 checkpoints used throughout this project, not literally reused prediction arrays from the original significance-testing session or from `eval_threshold_skill.py`. Because `CNNLSTMAttention` and `CNNLSTMTemporalBaseline` contain no dropout or batch-normalization layers, forward-pass outputs are deterministic given fixed weights, device, and precision mode, so this re-inference is expected to be numerically equivalent to those earlier evaluations to within floating-point tolerance. This is a documented provenance note (same precedent as Feature 3 / §5a), not a re-run of training or a new experiment.
-
-**R² on Normal subset:** R² values on the Normal subset are negative for all models/horizons. This is an expected statistical artifact of computing R² on a variance-truncated subset (the 95% of days with lowest rainfall have very low target variance, shrinking R²'s denominator disproportionately to the model's absolute error), NOT evidence the models perform poorly on typical days — their absolute RMSE/MAE on the Normal subset (~4.3–5.0 mm RMSE) is in fact considerably better than their Extreme-subset performance (~36–45 mm RMSE), consistent with expectations. RMSE and MAE, not R², should be used to interpret Normal-vs-Extreme performance in this table. *(Note: CNN-LSTM-Temporal at h=4 Normal is a near-zero exception with R² ≈ +0.029; the artifact still applies — do not interpret subset R² as overall skill.)*
-
-**Absolute Extreme-RMSE ranking:** LSTM has the lowest absolute Extreme-RMSE at h=1–2; CNN-LSTM+Attention has the lowest absolute Extreme-RMSE at h=3–4.
+**Provenance:** All Phase 6 metrics use separate CUDA+autocast re-inference on existing checkpoints (same convention as prior eval-only additions). No training; deterministic forward passes given fixed weights/device/precision.
 
 ---
 
 ## 5c. Attention Extreme vs Normal comparison (eval-only addition)
 
-Run `python analyze_attention_extreme_vs_normal.py` (Attention seed 42; h=1..4). Splits attention weights by the **same** true-target 95th-percentile Extreme/Normal definition as §5b.
+Run `python analyze_attention_extreme_vs_normal.py` (Attention seed 42; h=1..4). Splits attention weights by the **same** true-target 95th-percentile Extreme/Normal definition as the Phase 6 secondary cross-check (`extreme_rainfall_evaluation.csv`).
 
 Outputs:
 - `reports/tables/attention_extreme_vs_normal.csv`
@@ -200,7 +232,7 @@ Run `python eval_station_wise_error.py` (Attention seed 42; h=1 and h=4). Per-st
 
 **Provenance note:** Continuous `y_pred` arrays were not on disk; predictions come from a **separate** CUDA+autocast inference session on `cnn_lstm_attention_h{1,4}_seed42.pt`, with `station_id` from `rebuild_test_meta` and lat/lon from `feature_engineered_v2.csv` (same Features 3–5 convention).
 
-**Cross-reference to §5b:** The strong correlation between station RMSE and station rainfall variance (r=0.89–0.93) is consistent with, and best interpreted alongside, the Extreme Rainfall Subset Evaluation (Feature 4 / Section 5b): high-RMSE stations are largely those with more frequent or more severe extreme-rainfall days, and all three deep learning models (LSTM, Temporal, Attention) showed 8–10× worse RMSE on extreme vs normal days regardless of station. This map does not indicate a distinct new failure mode — it is the geographic expression of the same extreme-rainfall difficulty already documented in Section 5b.
+**Cross-reference to Phase 6:** The strong correlation between station RMSE and station rainfall variance (r=0.89–0.93) is consistent with, and best interpreted alongside, the IMD-tier evaluation (Phase 6 / `phase6_extreme_evaluation.csv`): high-RMSE stations are largely those with more frequent or more severe extreme-rainfall days, and all three deep learning models showed dramatically worse RMSE on IMD Extremely Heavy days (~140–167 mm RMSE) regardless of station. This map does not indicate a distinct new failure mode — it is the geographic expression of the same extreme-rainfall difficulty already documented in Phase 6.
 
 ---
 
@@ -218,7 +250,7 @@ These are non-critical enhancements that do **not** affect research validity:
 
 ---
 
-## 6. Explanation of "Not Available" Entries in master_results.csv
+## 7. Explanation of "Not Available" Entries in master_results.csv
 
 The following metrics are marked "Not Available" and the reasons are:
 
@@ -231,7 +263,7 @@ The following metrics are marked "Not Available" and the reasons are:
 
 ---
 
-## 7. Stated Limitations (carried forward from project audit)
+## 8. Stated Limitations (carried forward from project audit)
 
 1. **Transformer remains a single-seed (seed 42) ablation at h=1 only.** CNN-LSTM+Attention and CNN-LSTM-Temporal are now multi-seed at h=1–4; footnote Transformer as supplementary only.
 2. **ARIMA coverage is 30/414 stations.** The ARIMA baseline was evaluated on a random 30-station sample due to computational cost of rolling ARIMA. This is adequate as a classical reference but should not be presented as a full-coverage comparison.
@@ -273,7 +305,7 @@ Key empirical findings (seed 42, τ=1 mm, already generated for h=1 and h=4):
 
 ---
 
-## 8. Is the Repository Ready for Thesis Writing?
+## 9. Is the Repository Ready for Thesis Writing?
 
 **YES.**
 
@@ -291,7 +323,7 @@ Key thesis-ready artifacts:
 
 ---
 
-## 9. Is the Repository Ready for GitHub Submission?
+## 10. Is the Repository Ready for GitHub Submission?
 
 **YES**, with minor considerations:
 
@@ -302,7 +334,7 @@ Key thesis-ready artifacts:
 
 ---
 
-## 10. Is the Experimental Phase Complete?
+## 11. Is the Experimental Phase Complete?
 
 **YES.**
 
@@ -317,7 +349,7 @@ All planned experiments have been executed:
 
 ---
 
-## 11. Is Further Coding Required?
+## 12. Is Further Coding Required?
 
 **NO.**
 

@@ -149,7 +149,7 @@ def plot_f1(df: pd.DataFrame) -> None:
     }
     labels = {
         "LSTM": "LSTM",
-        "CNN-LSTM-Temporal": "CNN-LSTM",
+        "CNN-LSTM-Temporal": "CNN-LSTM-Temporal",
         "CNN-LSTM+Attention": "CNN-LSTM+Attention",
     }
 
@@ -219,7 +219,11 @@ def main() -> None:
     skill = pd.read_csv(SKILL_CSV)
     metrics = build_metrics(skill)
     TABLES.mkdir(parents=True, exist_ok=True)
-    metrics.to_csv(OUT_CSV, index=False)
+    header = (
+        "# This table reports F1, not CSI. For CSI/POD/FAR/Bias, see threshold_skill.csv.\n"
+        "# Derived from threshold_skill.csv contingency counts (seed=42, threshold_mm=1.0).\n"
+    )
+    OUT_CSV.write_text(header + metrics.to_csv(index=False), encoding="utf-8")
     print(f"\nWrote {OUT_CSV}")
 
     plot_f1(metrics)

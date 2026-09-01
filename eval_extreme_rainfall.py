@@ -198,7 +198,7 @@ def plot_rmse(df: pd.DataFrame) -> None:
     }
     labels_short = {
         "LSTM": "LSTM",
-        "CNN-LSTM-Temporal": "CNN-LSTM",
+        "CNN-LSTM-Temporal": "CNN-LSTM-Temporal",
         "CNN-LSTM+Attention": "CNN-LSTM+Attn",
     }
 

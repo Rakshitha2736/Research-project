@@ -280,12 +280,53 @@ def main() -> None:
             "Only covariates (temps via linear+median; wind/pressure via median) "
             "can use post-2022 observations when filling train-period gaps."
         ),
+        "refined": (
+            "Dominant path is station-median fill of wind_speed and air_pressure "
+            "before split. Temperature linear interpolation does not cross the "
+            "2022/2023 boundary. Only ~3.2% of h=1 train sequences contain any "
+            "future-dependent covariate day. Sanity checks (LSTM h=1; Attention "
+            "h=4 seed=42) measure practical RMSE impact separately."
+        ),
     }
+    # station_name vs station_id count reconciliation (concrete example)
+    _name_id = pd.DataFrame(
+        {"station_name": raw["station_name"].astype(str), "station_id": sid.astype(str)}
+    )
+    _n_per_name = _name_id.groupby("station_name")["station_id"].nunique()
+    _multi = _n_per_name[_n_per_name > 1].sort_values(ascending=False)
+    if len(_multi):
+        _ex = str(_multi.index[0])
+        _ids = sorted(
+            _name_id.loc[_name_id["station_name"] == _ex, "station_id"].unique().tolist()
+        )
+        findings["station_name_vs_station_id_count_reconciliation"] = (
+            "Independent spot-checks that count affected stations by station_name "
+            "(e.g. 180 wind / 182 pressure) are lower than this JSON's station_id "
+            "counts (185 / 187) because cleaning groupby uses station_name while "
+            "this audit counts disambiguated station_id=name_lat_lon_elev. "
+            f"Example: station_name '{_ex}' maps to {len(_ids)} station_ids "
+            f"({', '.join(_ids)}), so one name-group contributes multiple ids."
+        )
+    else:
+        findings["station_name_vs_station_id_count_reconciliation"] = (
+            "No multi-id station_name found in this run."
+        )
+
+    findings["temp_linear_cross_split_gaps"] = {
+        "min_temp": int((lin_min & train_row).sum()),
+        "max_temp": int((lin_max & train_row).sum()),
+        "interpretation": (
+            "Train-period missing temperatures whose next linear-interpolation "
+            "endpoint is post-2022 (0 means no cross-split linear dependence)."
+        ),
+    }
+
     findings["validity_conclusion"] = {
         "published_results_remain_valid": True,
         "caveat": (
             "Directionally valid for model comparison; not free of preprocessing "
-            "covariate leakage. Do not claim leakage-free preprocessing."
+            "covariate leakage. Do not claim leakage-free preprocessing. "
+            "Practical RMSE impact: see imputation_leakage_sanity_*.json."
         ),
         "should_preprocessing_be_changed": True,
         "recommended_change": (

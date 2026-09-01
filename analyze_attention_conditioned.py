@@ -1,5 +1,5 @@
 """
-Conditioned attention analysis for CNN-LSTM + Bahdanau Attention.
+Conditioned attention analysis for temporal CNN-LSTM + Bahdanau Attention.
 
 Keeps the architecture frozen. For each horizon:
   - mean α overall

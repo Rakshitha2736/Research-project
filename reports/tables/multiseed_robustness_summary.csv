@@ -3,11 +3,11 @@ GNN_vs_LSTM,1,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
 GNN_vs_LSTM,2,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
 GNN_vs_LSTM,3,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
 GNN_vs_LSTM,4,LSTM,Yes,LSTM,Yes,LSTM,Yes,CONSISTENT,3
-Attention_vs_Temporal,1,Temporal,Yes,Attention,No,Attention,No,MIXED,1
-Attention_vs_Temporal,2,Temporal,Yes,Attention,Yes,Attention,Yes,MIXED,3
-Attention_vs_Temporal,3,Attention,Yes,Attention,No,Temporal,Yes,MIXED,2
-Attention_vs_Temporal,4,Attention,Yes,Attention,Yes,Temporal,No,MIXED,2
-Attention_vs_LSTM,1,LSTM,Yes,LSTM,No,LSTM,Yes,INCONSISTENT,2
-Attention_vs_LSTM,2,LSTM,Yes,LSTM,No,LSTM,No,MIXED,1
-Attention_vs_LSTM,3,LSTM,Yes,Attention,Yes,LSTM,Yes,INCONSISTENT,3
-Attention_vs_LSTM,4,Attention,No,LSTM,No,LSTM,Yes,MIXED,1
+Attention_vs_Temporal,1,Temporal,Yes,Attention,No,Attention,No,DIRECTION-UNSTABLE (weak),1
+Attention_vs_Temporal,2,Temporal,Yes,Attention,Yes,Attention,Yes,DIRECTION-UNSTABLE (contested),3
+Attention_vs_Temporal,3,Attention,Yes,Attention,No,Temporal,Yes,DIRECTION-UNSTABLE (contested),2
+Attention_vs_Temporal,4,Attention,Yes,Attention,Yes,Temporal,No,DIRECTION-UNSTABLE (contested),2
+Attention_vs_LSTM,1,LSTM,Yes,LSTM,No,LSTM,Yes,DIRECTION-STABLE,2
+Attention_vs_LSTM,2,LSTM,Yes,LSTM,No,LSTM,No,DIRECTION-STABLE,1
+Attention_vs_LSTM,3,LSTM,Yes,Attention,Yes,LSTM,Yes,DIRECTION-UNSTABLE (contested),3
+Attention_vs_LSTM,4,Attention,No,LSTM,No,LSTM,Yes,DIRECTION-UNSTABLE (weak),1

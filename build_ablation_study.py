@@ -500,7 +500,7 @@ def plot_ablation_bars(ablation: pd.DataFrame) -> None:
     }
     labels = {
         "LSTM": "LSTM",
-        "CNN-LSTM-Temporal": "CNN-LSTM",
+        "CNN-LSTM-Temporal": "CNN-LSTM-Temporal",
         "CNN-LSTM+Attention": "CNN-LSTM+Attention",
     }
 

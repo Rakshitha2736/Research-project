@@ -7,6 +7,9 @@ from typing import Sequence
 import numpy as np
 
 DEFAULT_THRESHOLDS_MM = (0.1, 1.0, 5.0, 10.0)
+# IMD heavy / very heavy / extremely heavy lower bounds (24 h accumulated rainfall).
+IMD_EVENT_THRESHOLDS_MM = (35.6, 64.4, 124.4)
+FULL_THRESHOLDS_MM = tuple(sorted(set(DEFAULT_THRESHOLDS_MM + IMD_EVENT_THRESHOLDS_MM)))
 DEFAULT_INTENSITY_EDGES_MM = (0.0, 0.1, 1.0, 5.0, 10.0, np.inf)
 
 

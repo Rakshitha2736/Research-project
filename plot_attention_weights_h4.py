@@ -78,7 +78,9 @@ def main() -> None:
     ax.bar(days_before, mean_for_plot, width=0.8, color="#2c6e8a", edgecolor="none")
     ax.set_xlabel("Days before target (1 = most recent, 30 = oldest)")
     ax.set_ylabel("Mean attention weight")
-    ax.set_title(f"CNN-LSTM Attention — mean α over test set (h={H}, seed {SEED})")
+    ax.set_title(
+        f"Temporal CNN-LSTM+Attention — mean α over test set (h={H}, seed {SEED})"
+    )
     ax.set_xticks([1, 5, 10, 15, 20, 25, 30])
     ax.set_xlim(0.5, 30.5)
     ax.axvline(peak_day, color="gray", linestyle="--", linewidth=1, label=f"peak day={peak_day}")
